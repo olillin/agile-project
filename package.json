@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest --passWithNoTests",
     "format": "oxfmt",
     "format:check": "oxfmt --check"
   },
@@ -24,6 +25,7 @@
     "eslint-config-next": "16.2.4",
     "oxfmt": "^0.46.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.4"
   }
 }
