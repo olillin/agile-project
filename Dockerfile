@@ -30,6 +30,9 @@ COPY --from=dependencies /app/node_modules ./node_modules
 # Copy application source code
 COPY . .
 
+# Generate the Prisma client
+RUN npx prisma generate
+
 ENV NODE_ENV=production
 
 # Disable Next.js anonymous telemetry data about general usage.
@@ -77,4 +80,4 @@ USER node
 EXPOSE 3000
 
 # Start Next.js standalone server
-CMD ["node", "server.js"]
+CMD ["/bin/sh", "-c", "pnpm exec prisma migrate deploy && node server.js"]
