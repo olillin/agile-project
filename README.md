@@ -55,7 +55,7 @@ pnpm prisma generate
 Then you can import the Prisma Client in your code:
 
 ```typescript
-import { prisma } from '@/lib/prisma'
+import { prisma } from "@/lib/prisma";
 ```
 
 See the official Prisma Client documentation for how to write queries with Prisma: <https://www.prisma.io/docs/orm/prisma-client/queries/crud>.
@@ -84,4 +84,3 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 ## Deployment
 
 Use the `compose.prod.yaml` file.
-

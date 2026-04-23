@@ -4,36 +4,36 @@
 name: dont-spill-the-tea
 
 services:
-    server:
-        image: 'ghcr.io/olillin/agile-project:latest'
-        container_name: dont-spill-the-tea-server
-        restart: always
-        environment:
-            NODE_ENV: production
-            DATABASE_URL: postgresql://postgres:<DATABASE PASSWORD>@db:5432/dont-spill-the-tea
+  server:
+    image: "ghcr.io/olillin/agile-project:latest"
+    container_name: dont-spill-the-tea-server
+    restart: always
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:<DATABASE PASSWORD>@db:5432/dont-spill-the-tea
 
-        ports:
-            - '3000:3000'
+    ports:
+      - "3000:3000"
 
-        depends_on:
-            db:
-                condition: service_healthy
-    db:
-        image: postgres:18
-        container_name: strecklista-backend-db
-        restart: always
-        user: postgres
-        volumes:
-            - db-data:/var/lib/postgresql
-        environment:
-            - POSTGRES_DB=strecklista
-            - POSTGRES_PASSWORD=<DATABASE PASSWORD>
-        expose:
-            - 5432
-        healthcheck:
-            test: ['CMD', 'pg_isready']
-            interval: 10s
-            timeout: 5s
-            retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:18
+    container_name: strecklista-backend-db
+    restart: always
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql
+    environment:
+      - POSTGRES_DB=strecklista
+      - POSTGRES_PASSWORD=<DATABASE PASSWORD>
+    expose:
+      - 5432
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 volumes:
-    db-data:
+  db-data:

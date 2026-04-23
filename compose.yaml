@@ -6,20 +6,20 @@
 name: dont-spill-the-tea
 
 services:
-    db:
-        image: postgres:18
-        container_name: dont-spill-the-tea-dev-db
-        restart: unless-stopped
-        user: postgres
-        environment:
-            - POSTGRES_DB=dont-spill-the-tea
-            - POSTGRES_PASSWORD=secret-dev-password
+  db:
+    image: postgres:18
+    container_name: dont-spill-the-tea-dev-db
+    restart: unless-stopped
+    user: postgres
+    environment:
+      - POSTGRES_DB=dont-spill-the-tea
+      - POSTGRES_PASSWORD=secret-dev-password
 
-        ports:
-            - '5432:5432'
+    ports:
+      - "5432:5432"
 
-        healthcheck:
-            test: ['CMD', 'pg_isready']
-            interval: 10s
-            timeout: 5s
-            retries: 5
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
