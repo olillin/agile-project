@@ -25,6 +25,7 @@ jobs:
           cache: pnpm
       - name: Install dependencies with pnpm
         run: pnpm install
+      - run: pnpm prisma generate
       - run: pnpm build
   test:
     runs-on: ubuntu-latest
