@@ -1,5 +1,3 @@
-import { useEffect, useRef, useState } from "react";
-import { Drawer } from "vaul";
 import { CupRating } from "@/components/brand/CupRating";
 import { Eyebrow } from "@/components/brand/Eyebrow";
 import { LinePill } from "@/components/brand/LinePill";
@@ -7,6 +5,8 @@ import { MealPhoto } from "@/components/brand/MealPhoto";
 import { Tag } from "@/components/brand/Tag";
 import { FOCUS_RING } from "@/lib/styles";
 import type { Day, Option, RatingPayload } from "@/lib/types";
+import { useEffect, useRef, useState } from "react";
+import { Drawer } from "vaul";
 import { ClimateTag } from "./ClimateTag";
 import { RatingBlock } from "./RatingBlock";
 
@@ -28,33 +28,29 @@ type Props = {
 export function MealSheet({ option, day, onClose, onSubmit }: Props) {
   const open = option !== null;
   const [display, setDisplay] = useState<{ option: Option; day: Day } | null>(
-    null,
+    null
   );
 
   // Cache the last non-null meal so content stays visible through the close
   // animation after the parent clears `option`. React sanctions this
   // "adjusting state from props" pattern when guarded against re-entry.
-  if (
-    option &&
-    day &&
-    (display?.option !== option || display?.day !== day)
-  ) {
+  if (option && day && (display?.option !== option || display?.day !== day)) {
     setDisplay({ option, day });
   }
 
   return (
     <Drawer.Root
       open={open}
-      onOpenChange={(o) => {
+      onOpenChange={o => {
         if (!o) onClose();
       }}
-      onAnimationEnd={(isOpen) => {
+      onAnimationEnd={isOpen => {
         if (!isOpen) setDisplay(null);
       }}
     >
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-40 bg-ink/45 backdrop-blur-[4px]" />
-        <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 mt-24 flex max-h-[92dvh] flex-col rounded-t-[28px] bg-cream shadow-[0_-8px_32px_rgba(0,0,0,0.2)] outline-none">
+        <Drawer.Overlay className="bg-ink/45 fixed inset-0 z-40 backdrop-blur-[4px]" />
+        <Drawer.Content className="bg-cream fixed right-0 bottom-0 left-0 z-50 mt-24 flex max-h-[92dvh] flex-col rounded-t-[28px] shadow-[0_-8px_32px_rgba(0,0,0,0.2)] outline-none">
           <Drawer.Title className="sr-only">
             {display?.option.name ?? "Meal detail"}
           </Drawer.Title>
@@ -62,8 +58,8 @@ export function MealSheet({ option, day, onClose, onSubmit }: Props) {
             Rate this meal and leave an optional comment for the kitchen.
           </Drawer.Description>
 
-          <div className="relative z-20 flex items-center justify-center rounded-t-[28px] bg-cream px-4 pb-2.5 pt-2.5">
-            <Drawer.Handle className="!h-1 !w-[38px] !rounded-[2px] !bg-ink/15" />
+          <div className="bg-cream relative z-20 flex items-center justify-center rounded-t-[28px] px-4 pt-2.5 pb-2.5">
+            <Drawer.Handle className="!bg-ink/15 !h-1 !w-[38px] !rounded-[2px]" />
           </div>
 
           {display && (
@@ -107,7 +103,7 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
   }, [rating]);
 
   const toggleTag = (t: string) => {
-    setTags((prev) => {
+    setTags(prev => {
       const next = new Set(prev);
       if (next.has(t)) next.delete(t);
       else next.add(t);
@@ -125,7 +121,7 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
         window.clearTimeout(submitTimerRef.current);
       }
     },
-    [],
+    []
   );
 
   const handleSubmit = () => {
@@ -157,7 +153,7 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
         <div
           ref={scrollRef}
           className="relative flex-1 overflow-y-auto"
-          onScroll={(e) => {
+          onScroll={e => {
             const next = e.currentTarget.scrollTop > 4;
             if (next === scrolledRef.current) return;
             scrolledRef.current = next;
@@ -167,7 +163,7 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
           <div
             ref={gradientRef}
             aria-hidden
-            className="pointer-events-none sticky top-0 z-10 -mb-5 h-5 bg-gradient-to-b from-cream to-transparent opacity-0 transition-opacity duration-200"
+            className="from-cream pointer-events-none sticky top-0 z-10 -mb-5 h-5 bg-gradient-to-b to-transparent opacity-0 transition-opacity duration-200"
           />
           <MealPhoto
             color={option.color}
@@ -175,7 +171,7 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
             height={200}
             className="mx-4 mt-1 rounded-[20px]"
           >
-            <LinePill className="absolute left-3 top-3" size="md">
+            <LinePill className="absolute top-3 left-3" size="md">
               {option.line}
             </LinePill>
           </MealPhoto>
@@ -183,7 +179,7 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
           <div className="px-5 pt-4.5">
             <Eyebrow>{day.date}</Eyebrow>
             <h2
-              className="mt-1 font-serif text-ink"
+              className="text-ink mt-1 font-serif"
               style={{
                 fontSize: 30,
                 letterSpacing: -0.5,
@@ -194,7 +190,7 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
             </h2>
 
             <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-              {option.tags.map((t) => (
+              {option.tags.map(t => (
                 <Tag key={t}>{t}</Tag>
               ))}
               <ClimateTag
@@ -204,7 +200,7 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
             </div>
 
             <p
-              className="mt-3.5 text-ink-muted"
+              className="text-ink-muted mt-3.5"
               style={{ fontSize: 14, lineHeight: 1.5 }}
             >
               {option.desc}
@@ -222,7 +218,7 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
         </div>
 
         <div
-          className="border-t border-ink/6 bg-cream px-5 pt-3.5"
+          className="border-ink/6 bg-cream border-t px-5 pt-3.5"
           style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 22px)" }}
         >
           <button
@@ -257,20 +253,20 @@ function ThankYouView({ rating }: { rating: number }) {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
       <h2
-        className="font-serif text-ink animate-thanks-in"
+        className="text-ink animate-thanks-in font-serif"
         style={{ fontSize: 40, letterSpacing: -0.5, ...delay(0) }}
       >
         Thanks
       </h2>
       <p
-        className="mt-1.5 text-ink-muted animate-thanks-in"
+        className="text-ink-muted animate-thanks-in mt-1.5"
         style={{ fontSize: 14, lineHeight: 1.5, ...delay(1) }}
       >
         We heard you.
       </p>
 
       <div
-        className="mt-7 animate-thanks-in"
+        className="animate-thanks-in mt-7"
         style={delay(2)}
         aria-label={`You rated ${rating} out of 5`}
       >

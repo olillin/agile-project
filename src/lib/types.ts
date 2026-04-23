@@ -2,12 +2,7 @@ export type ClimateLabel = "low" | "medium" | "high";
 
 export type MealLine = "Vegetarian" | "Nordic" | "Street food";
 
-export type DietTag =
-  | "vegetarian"
-  | "vegan"
-  | "fish"
-  | "meat"
-  | "gluten-free";
+export type DietTag = "vegetarian" | "vegan" | "fish" | "meat" | "gluten-free";
 
 export type Option = {
   id: string;

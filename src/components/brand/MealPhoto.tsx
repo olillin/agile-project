@@ -6,7 +6,13 @@ type Props = {
   children?: React.ReactNode;
 };
 
-export function MealPhoto({ color, pattern, height, className, children }: Props) {
+export function MealPhoto({
+  color,
+  pattern,
+  height,
+  className,
+  children,
+}: Props) {
   return (
     <div
       className={`relative overflow-hidden ${className ?? ""}`}

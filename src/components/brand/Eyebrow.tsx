@@ -12,7 +12,7 @@ const SIZES = {
 export function Eyebrow({ children, size = "md", className }: Props) {
   return (
     <span
-      className={`text-ink-soft uppercase font-semibold ${className ?? ""}`}
+      className={`text-ink-soft font-semibold uppercase ${className ?? ""}`}
       style={SIZES[size]}
     >
       {children}

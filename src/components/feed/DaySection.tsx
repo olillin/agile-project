@@ -16,7 +16,7 @@ export function DaySection({ day, onOpen, ratedIds }: Props) {
     <section className="mb-7">
       <header className="flex items-baseline justify-between px-1 pb-2.5">
         <h2
-          className={`font-serif ${day.isToday ? "italic text-amber" : "text-ink"}`}
+          className={`font-serif ${day.isToday ? "text-amber italic" : "text-ink"}`}
           style={{ fontSize: 22, letterSpacing: -0.3 }}
         >
           {day.label}
@@ -27,7 +27,7 @@ export function DaySection({ day, onOpen, ratedIds }: Props) {
         <OptionCard option={hero} onOpen={open} rated={ratedIds.has(hero.id)} />
       </div>
       <div className="grid grid-cols-2 items-stretch gap-2.5">
-        {rest.map((o) => (
+        {rest.map(o => (
           <OptionCard
             key={o.id}
             option={o}

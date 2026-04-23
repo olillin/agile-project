@@ -11,20 +11,20 @@ type Props = {
 
 export function FeedScreen({ onOpen, ratedIds }: Props) {
   return (
-    <div className="min-h-[100svh] bg-cream pb-10">
+    <div className="bg-cream min-h-[100svh] pb-10">
       <FeedHeader />
-      <div className="px-4 pb-2 pt-6">
+      <div className="px-4 pt-6 pb-2">
         <Eyebrow>School</Eyebrow>
         <h1
-          className="mt-1 font-serif leading-[1.05] text-ink"
+          className="text-ink mt-1 font-serif leading-[1.05]"
           style={{ fontSize: 34, letterSpacing: -0.6 }}
         >
-          <span className="italic text-amber">Chalmers</span>
+          <span className="text-amber italic">Chalmers</span>
           <span className="text-ink-muted"> kårrestaurangen</span>
         </h1>
       </div>
       <div className="px-4 pt-6">
-        {DAYS.map((day) => (
+        {DAYS.map(day => (
           <DaySection
             key={day.id}
             day={day}

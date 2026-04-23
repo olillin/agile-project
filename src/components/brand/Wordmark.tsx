@@ -5,7 +5,7 @@ type Props = {
 export function Wordmark({ size = 22 }: Props) {
   return (
     <span
-      className="font-serif italic inline-flex items-baseline text-ink"
+      className="text-ink inline-flex items-baseline font-serif italic"
       style={{
         fontSize: size,
         lineHeight: 1,

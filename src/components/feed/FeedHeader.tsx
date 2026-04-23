@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { FOCUS_RING } from "@/lib/styles";
+import Link from "next/link";
 
 export function FeedHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-ink/10 bg-paper supports-[backdrop-filter]:bg-paper/70 backdrop-blur-md pt-[env(safe-area-inset-top)]">
+    <header className="border-ink/10 bg-paper supports-[backdrop-filter]:bg-paper/70 sticky top-0 z-30 border-b pt-[env(safe-area-inset-top)] backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-screen-sm items-center px-4">
         <Link
           href="/"

@@ -1,6 +1,6 @@
-import { Leaf } from "lucide-react";
 import { Tag } from "@/components/brand/Tag";
 import type { ClimateLabel } from "@/lib/types";
+import { Leaf } from "lucide-react";
 
 type Props = {
   climate: number;

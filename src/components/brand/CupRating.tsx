@@ -20,7 +20,7 @@ export function CupRating({
       aria-label={interactive ? "Rating" : undefined}
       style={{ gap: size * 0.18 }}
     >
-      {[1, 2, 3, 4, 5].map((i) => {
+      {[1, 2, 3, 4, 5].map(i => {
         const fill = value >= i ? 1 : value >= i - 0.5 ? 0.5 : 0;
         if (!interactive) {
           return <TeaCup key={i} size={size} fill={fill} />;
@@ -33,7 +33,7 @@ export function CupRating({
             aria-checked={value === i}
             aria-label={`${i} cup${i === 1 ? "" : "s"}`}
             onClick={() => onChange?.(i)}
-            className="cursor-pointer bg-transparent border-0 p-0 transition-transform active:scale-95"
+            className="cursor-pointer border-0 bg-transparent p-0 transition-transform active:scale-95"
           >
             <TeaCup size={size} fill={fill} />
           </button>

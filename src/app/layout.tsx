@@ -36,7 +36,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${instrumentSerif.variable} antialiased`}
     >
-      <body className="font-sans min-h-[100svh] bg-cream text-ink">
+      <body className="bg-cream text-ink min-h-[100svh] font-sans">
         {children}
       </body>
     </html>

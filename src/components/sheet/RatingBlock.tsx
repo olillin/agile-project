@@ -24,9 +24,9 @@ export function RatingBlock({
     rating >= 4 ? QUICK_TAGS.positive : rating > 0 ? QUICK_TAGS.negative : [];
 
   return (
-    <div className="mt-3.5 rounded-[16px] border border-ink/6 bg-paper p-[18px]">
+    <div className="border-ink/6 bg-paper mt-3.5 rounded-[16px] border p-[18px]">
       <h3
-        className="text-center font-serif text-ink"
+        className="text-ink text-center font-serif"
         style={{ fontSize: 20, letterSpacing: -0.2 }}
       >
         How was it?
@@ -36,18 +36,18 @@ export function RatingBlock({
       </div>
 
       {rating > 0 && (
-        <div className="mt-4 animate-dst-fade">
+        <div className="animate-dst-fade mt-4">
           <Eyebrow size="sm" className="mb-2 block">
             {rating >= 4 ? "What made it good?" : "What was off?"}
             <span
-              className="ml-1.5 normal-case font-normal text-ink-muted"
+              className="text-ink-muted ml-1.5 font-normal normal-case"
               style={{ letterSpacing: 0 }}
             >
               · optional
             </span>
           </Eyebrow>
           <div className="flex flex-wrap gap-1.5">
-            {suggested.map((t) => {
+            {suggested.map(t => {
               const on = tags.has(t);
               return (
                 <button
@@ -57,8 +57,8 @@ export function RatingBlock({
                   aria-pressed={on}
                   className={`rounded-full transition-colors ${FOCUS_RING.paper} ${
                     on
-                      ? "bg-ink text-paper border border-ink font-semibold"
-                      : "border border-ink/15 bg-transparent text-ink font-medium"
+                      ? "bg-ink text-paper border-ink border font-semibold"
+                      : "border-ink/15 text-ink border bg-transparent font-medium"
                   }`}
                   style={{ fontSize: 12, padding: "7px 12px" }}
                 >
@@ -69,10 +69,10 @@ export function RatingBlock({
           </div>
           <textarea
             value={note}
-            onChange={(e) => setNote(e.target.value)}
+            onChange={e => setNote(e.target.value)}
             placeholder="Add a note for the kitchen… (optional)"
             rows={2}
-            className="mt-3 w-full resize-none rounded-[12px] border border-ink/10 bg-cream px-3 py-2.5 text-ink outline-none"
+            className="border-ink/10 bg-cream text-ink mt-3 w-full resize-none rounded-[12px] border px-3 py-2.5 outline-none"
             style={{ fontSize: 16, lineHeight: 1.4 }}
           />
         </div>

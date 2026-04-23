@@ -13,7 +13,7 @@ export function LinePill({ children, size = "sm", className }: Props) {
   const s = SIZES[size];
   return (
     <span
-      className={`rounded-full uppercase font-semibold text-ink backdrop-blur-md ${s.bg} ${className ?? ""}`}
+      className={`text-ink rounded-full font-semibold uppercase backdrop-blur-md ${s.bg} ${className ?? ""}`}
       style={{ fontSize: 10, letterSpacing: 0.8, padding: s.padding }}
     >
       {children}
