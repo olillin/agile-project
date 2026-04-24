@@ -1,24 +1,76 @@
+# Don't Spill the Tea
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Prerequisites
+
+This project uses these tools:
+
+- [Node.js 24](https://nodejs.org/en/download)
+- [pnpm](https://pnpm.io/installation)
+- [Docker Compose](https://docs.docker.com/compose/install)
+
+If using [Nix](https://nixos.org), simply run `nix develop` to install these.
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+And generate the Prisma Client:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm prisma generate
+```
+
+Then run the development server:
+
+```bash
+pnpm dev
+```
+
+This will also run a development database in the background using Docker Compose, to stop it run:
+
+```bash
+docker compose down
+```
+
+Open <http://localhost:3000> with your browser to see the current website.
+
+You can edit the page by modifying the files in `src/app`. The page auto-updates as you edit.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+### Prisma
+
+To work with Prisma you need to generate the Prisma client. You can do so by running:
+
+```bash
+pnpm prisma generate
+```
+
+Then you can import the Prisma Client in your code:
+
+```typescript
+import { prisma } from "@/lib/prisma";
+```
+
+See the official Prisma Client documentation for how to write queries with Prisma: <https://www.prisma.io/docs/orm/prisma-client/queries/crud>.
+
+#### Updating the Schema
+
+See [Overview of Prisma Schema](https://www.prisma.io/docs/orm/prisma-schema/overview) for the schema syntax.
+After modification you can run [`pnpm prisma db push`](https://www.prisma.io/docs/orm/reference/prisma-cli-reference#db-push) to test the new schema in the database.
+Remember to regenerate the Prisma Client afterwards with [`pnpm prisma generate`](https://www.prisma.io/docs/orm/reference/prisma-cli-reference#generate).
+
+When you are done you can create a migration with the [migrate](https://www.prisma.io/docs/orm/reference/prisma-cli-reference#migrate-dev) command:
+
+```bash
+pnpm prisma migrate dev --name add_lorem_ipsum_example
+```
 
 ## Learn More
 
@@ -29,8 +81,6 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Use the `compose.prod.yaml` file.
