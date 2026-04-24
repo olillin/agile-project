@@ -12,9 +12,11 @@
     "test": "vitest --passWithNoTests"
   },
   "dependencies": {
+    "lucide-react": "^1.8.0",
     "next": "16.2.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "vaul": "^1.1.2"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
