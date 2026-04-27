@@ -23,8 +23,8 @@ model Review {
   comment String?
   lunchId Int
   lunch   Lunch   @relation(fields: [lunchId], references: [id])
-  userId  Int
-  user    User    @relation(fields: [userId], references: [id])
+  userId  Int?
+  user    User?   @relation(fields: [userId], references: [id])
 }
 
 model Lunch {
