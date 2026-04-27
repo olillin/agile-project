@@ -1,19 +1,38 @@
-import prisma from "@/lib/prisma";
+"use client";
 
-export default async function Home() {
-  const users = await prisma.user.findMany();
+import { FeedScreen } from "@/components/feed/FeedScreen";
+import { MealSheet } from "@/components/sheet/MealSheet";
+import type { Day, Option, RatingPayload } from "@/lib/types";
+import { useState } from "react";
+
+type Opened = { option: Option; day: Day };
+
+export default function Home() {
+  const [opened, setOpened] = useState<Opened | null>(null);
+  const [ratedIds, setRatedIds] = useState<Set<string>>(new Set());
+
+  const handleSubmit = (payload: RatingPayload) => {
+    console.log("rating submitted", payload);
+    setRatedIds(prev => {
+      const next = new Set(prev);
+      next.add(payload.optionId);
+      return next;
+    });
+    setOpened(null);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center -mt-16">
-      <h1 className="text-4xl font-bold mb-8 font-[family-name:var(--font-geist-sans)] text-[#333333]">
-        Superblog
-      </h1>
-      <ol className="list-decimal list-inside font-[family-name:var(--font-geist-sans)]">
-        {users.map((user) => (
-          <li key={user.id} className="mb-2">
-            {user.name}
-          </li>
-        ))}
-      </ol>
-    </div>
+    <main className="relative">
+      <FeedScreen
+        onOpen={(option, day) => setOpened({ option, day })}
+        ratedIds={ratedIds}
+      />
+      <MealSheet
+        option={opened?.option ?? null}
+        day={opened?.day ?? null}
+        onClose={() => setOpened(null)}
+        onSubmit={handleSubmit}
+      />
+    </main>
   );
 }
