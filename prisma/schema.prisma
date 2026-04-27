@@ -10,3 +10,35 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id      Int      @id @default(autoincrement())
+  name    String
+  reviews Review[]
+}
+
+model Review {
+  id      Int     @id @default(autoincrement())
+  rating  Int
+  comment String?
+  lunchId Int
+  lunch   Lunch   @relation(fields: [lunchId], references: [id])
+  userId  Int
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model Lunch {
+  id          Int          @id @default(autoincrement())
+  name        String
+  ingredients Ingredient[]
+  reviews     Review[]
+}
+
+model Ingredient {
+  id      Int     @id @default(autoincrement())
+  name    String
+  unit    String
+  amount  Decimal
+  lunchId Int
+  lunch   Lunch   @relation(fields: [lunchId], references: [id])
+}
