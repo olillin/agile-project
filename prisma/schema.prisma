@@ -30,6 +30,7 @@ model Review {
 model Lunch {
   id          Int          @id @default(autoincrement())
   name        String
+  eco_score   Decimal
   ingredients Ingredient[]
   reviews     Review[]
 }
