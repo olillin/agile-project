@@ -9,11 +9,14 @@ type Ingredient = {
 };
 
 export async function eco_score(ingredients: Ingredient[]) {
-  let call = api_url + "score?ingredients=";
+  let call = api_url + "score?";
 
   call += ingredients
-    .map(i => `${i.amount}%22${i.name}%20${i.unit}%22`)
-    .join("%2C");
+    .map(
+      ({ amount, unit, name }) =>
+        `ingredients=${encodeURIComponent(`${amount} ${unit} of ${name}`)}`
+    )
+    .join("&");
 
   const data = await fetch(call, {
     method: "POST",
