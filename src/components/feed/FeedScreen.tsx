@@ -4,12 +4,20 @@ import type { Day, Option } from "@/lib/types";
 import { DaySection } from "./DaySection";
 import { FeedHeader } from "./FeedHeader";
 
+import { useEffect } from "react";
+import { getAll } from "@/services/lunchService";
+
 type Props = {
   onOpen: (option: Option, day: Day) => void;
   ratedIds: Set<string>;
 };
 
 export function FeedScreen({ onOpen, ratedIds }: Props) {
+  // Example code snippet showing how to interact with the lunch service.
+  useEffect(() => {
+    console.log(getAll());
+  }, []);
+
   return (
     <div className="bg-cream min-h-[100svh] pb-10">
       <FeedHeader />

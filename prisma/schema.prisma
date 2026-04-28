@@ -18,30 +18,30 @@ model User {
 }
 
 model Review {
-  id      Int     @id @default(autoincrement())
+  id      Int      @id @default(autoincrement())
   rating  Int
   comment String?
   date    DateTime
   lunchId Int
-  lunch   Lunch   @relation(fields: [lunchId], references: [id])
+  lunch   Lunch    @relation(fields: [lunchId], references: [id])
   userId  Int?
-  user    User?   @relation(fields: [userId], references: [id])
+  user    User?    @relation(fields: [userId], references: [id])
 }
 
 model Lunch {
   id          Int          @id @default(autoincrement())
   name        String
-  eco_score   Decimal
+  eco_score   Float
   ingredients Ingredient[]
   servings    DateTime[]
   reviews     Review[]
 }
 
 model Ingredient {
-  id      Int     @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   name    String
   unit    String
-  amount  Decimal
+  amount  Float
   lunchId Int
-  lunch   Lunch   @relation(fields: [lunchId], references: [id])
+  lunch   Lunch  @relation(fields: [lunchId], references: [id])
 }
