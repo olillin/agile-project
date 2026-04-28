@@ -1,4 +1,5 @@
 import { Wordmark } from "@/components/brand/Wordmark";
+import { LoginButton } from "@/components/LoginButton";
 import { FOCUS_RING } from "@/lib/styles";
 import Link from "next/link";
 
@@ -13,6 +14,7 @@ export function FeedHeader() {
         >
           <Wordmark size={20} />
         </Link>
+        <LoginButton />
       </div>
     </header>
   );
