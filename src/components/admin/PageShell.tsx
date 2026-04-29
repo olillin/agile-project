@@ -25,15 +25,16 @@ export function PageShell({ title, subtitle, actions, children }: Props) {
             {title}
           </div>
           {subtitle && (
-            <div
-              className="text-ink-muted text-body"
-              style={{ marginTop: 4 }}
-            >
+            <div className="text-ink-muted text-body" style={{ marginTop: 4 }}>
               {subtitle}
             </div>
           )}
         </div>
-        {actions && <div className="flex" style={{ gap: 8 }}>{actions}</div>}
+        {actions && (
+          <div className="flex" style={{ gap: 8 }}>
+            {actions}
+          </div>
+        )}
       </div>
       {children}
     </div>

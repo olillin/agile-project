@@ -14,11 +14,7 @@ export function RatingHistogram({ dist, total }: Props) {
         const n = dist[i] ?? 0;
         const sharePct = total === 0 ? 0 : (n / total) * 100;
         return (
-          <div
-            key={star}
-            className="flex items-center"
-            style={{ gap: 10 }}
-          >
+          <div key={star} className="flex items-center" style={{ gap: 10 }}>
             <div
               className="text-ink-muted text-meta flex items-center tabular-nums"
               style={{ width: 50, gap: 4 }}
@@ -27,7 +23,7 @@ export function RatingHistogram({ dist, total }: Props) {
               <TeaCup size={11} fill={1} />
             </div>
             <div
-              className="flex-1 overflow-hidden rounded-[3px] bg-ink/[0.04]"
+              className="bg-ink/[0.04] flex-1 overflow-hidden rounded-[3px]"
               style={{ height: 14 }}
             >
               <div

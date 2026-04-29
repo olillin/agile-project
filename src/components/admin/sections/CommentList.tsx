@@ -1,9 +1,9 @@
 "use client";
 
-import { CupRating } from "@/components/brand/CupRating";
 import { Pill } from "@/components/admin/Pill";
 import { SectionHead } from "@/components/admin/SectionHead";
 import { SelectFilter } from "@/components/admin/SelectFilter";
+import { CupRating } from "@/components/brand/CupRating";
 import { relativeDays } from "@/lib/admin/relative-time";
 import type { MealComment } from "@/lib/admin/types";
 import { FOCUS_RING } from "@/lib/styles";
@@ -26,7 +26,7 @@ export function CommentList({ comments, pageSize = 5 }: Props) {
       next.sort(
         (a, b) =>
           (relativeDays(a.when) ?? Infinity) -
-          (relativeDays(b.when) ?? Infinity),
+          (relativeDays(b.when) ?? Infinity)
       );
     if (sort === "highest") next.sort((a, b) => b.rating - a.rating);
     if (sort === "lowest") next.sort((a, b) => a.rating - b.rating);
@@ -58,10 +58,7 @@ export function CommentList({ comments, pageSize = 5 }: Props) {
               <option value="highest">Highest rating</option>
               <option value="lowest">Lowest rating</option>
             </SelectFilter>
-            <div
-              className="bg-ink/[0.10]"
-              style={{ width: 1, height: 18 }}
-            />
+            <div className="bg-ink/[0.10]" style={{ width: 1, height: 18 }} />
             <div className="flex items-center" style={{ gap: 4 }}>
               <PageBtn
                 disabled={safePage === 1}
@@ -100,8 +97,7 @@ export function CommentList({ comments, pageSize = 5 }: Props) {
             key={c.id}
             style={{
               padding: "12px 0",
-              borderTop:
-                i === 0 ? "none" : "1px solid rgba(26,24,21,0.06)",
+              borderTop: i === 0 ? "none" : "1px solid rgba(26,24,21,0.06)",
             }}
           >
             <div
@@ -118,10 +114,7 @@ export function CommentList({ comments, pageSize = 5 }: Props) {
               &ldquo;{c.text}&rdquo;
             </div>
             {c.tags.length > 0 && (
-              <div
-                className="flex flex-wrap"
-                style={{ gap: 4, marginTop: 6 }}
-              >
+              <div className="flex flex-wrap" style={{ gap: 4, marginTop: 6 }}>
                 {c.tags.map(t => (
                   <Pill key={t} tone="neutral">
                     {t}

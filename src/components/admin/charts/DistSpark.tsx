@@ -10,12 +10,7 @@ export function DistSpark({ dist, width = 52, height = 16 }: Props) {
   const max = Math.max(...dist, 1);
   const w = width / 5;
   return (
-    <svg
-      width={width}
-      height={height}
-      style={{ display: "block" }}
-      aria-hidden
-    >
+    <svg width={width} height={height} style={{ display: "block" }} aria-hidden>
       {dist.map((n, i) => {
         const h = (n / max) * (height - 2);
         return (

@@ -23,19 +23,14 @@ export function Sparkline({
     height - ((d - min) / range) * (height - 4) - 2,
   ]);
   const path = pts
-    .map((p, i) => `${i === 0 ? "M" : "L"}${p[0].toFixed(1)},${p[1].toFixed(1)}`)
+    .map(
+      (p, i) => `${i === 0 ? "M" : "L"}${p[0].toFixed(1)},${p[1].toFixed(1)}`
+    )
     .join(" ");
-  const area = fill
-    ? `${path} L${width},${height} L0,${height} Z`
-    : null;
+  const area = fill ? `${path} L${width},${height} L0,${height} Z` : null;
   const last = pts[pts.length - 1];
   return (
-    <svg
-      width={width}
-      height={height}
-      style={{ display: "block" }}
-      aria-hidden
-    >
+    <svg width={width} height={height} style={{ display: "block" }} aria-hidden>
       {area && <path d={area} fill={fill} opacity={0.3} />}
       <path
         d={path}

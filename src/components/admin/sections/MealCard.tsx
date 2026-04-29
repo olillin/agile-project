@@ -1,7 +1,7 @@
-import { CupRating } from "@/components/brand/CupRating";
 import { DistSpark } from "@/components/admin/charts/DistSpark";
 import { MealThumb } from "@/components/admin/MealThumb";
 import { Pill } from "@/components/admin/Pill";
+import { CupRating } from "@/components/brand/CupRating";
 import { climateTone, ratingColor } from "@/lib/admin/colors";
 import { NEW_TAG } from "@/lib/admin/types";
 import type { MealStat } from "@/lib/admin/types";

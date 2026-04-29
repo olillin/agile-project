@@ -22,11 +22,7 @@ export function TrendCard() {
         style={{ gap: 14, marginTop: 8 }}
       >
         {TREND_SERIES.map(s => (
-          <div
-            key={s.name}
-            className="flex items-center"
-            style={{ gap: 5 }}
-          >
+          <div key={s.name} className="flex items-center" style={{ gap: 5 }}>
             <span
               style={{
                 width: 10,
@@ -51,7 +47,9 @@ export function TrendCard() {
       >
         {TREND_FOOTNOTES.map(s => (
           <div key={s.label}>
-            <div className="text-ink-soft text-eyebrow uppercase">{s.label}</div>
+            <div className="text-ink-soft text-eyebrow uppercase">
+              {s.label}
+            </div>
             <div
               className="text-feature font-serif"
               style={{ color: s.tone, marginTop: 4 }}

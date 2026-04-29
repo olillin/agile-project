@@ -1,11 +1,7 @@
 "use client";
 
 import { Wordmark } from "@/components/brand/Wordmark";
-import {
-  MANAGER,
-  SUGGESTIONS_BADGE,
-  WEEK_STAT,
-} from "@/lib/admin/fixtures";
+import { MANAGER, SUGGESTIONS_BADGE, WEEK_STAT } from "@/lib/admin/fixtures";
 import { FOCUS_RING } from "@/lib/styles";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -49,10 +45,7 @@ export function Sidebar() {
     >
       <div style={{ padding: "0 8px 20px" }}>
         <Wordmark size={18} />
-        <div
-          className="text-ink-soft text-meta"
-          style={{ marginTop: 4 }}
-        >
+        <div className="text-ink-soft text-meta" style={{ marginTop: 4 }}>
           {MANAGER.school}
         </div>
       </div>
@@ -116,10 +109,7 @@ export function Sidebar() {
           marginBottom: 8,
         }}
       >
-        <div
-          className="text-tea font-semibold"
-          style={{ marginBottom: 4 }}
-        >
+        <div className="text-tea font-semibold" style={{ marginBottom: 4 }}>
           {WEEK_STAT.week}
         </div>
         {WEEK_STAT.ratingsThisWeek} ratings this week

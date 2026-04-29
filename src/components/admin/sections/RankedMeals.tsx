@@ -37,7 +37,7 @@ export function RankedMeals({ meals }: Props) {
 
   const totalVotes = useMemo(
     () => meals.reduce((acc, m) => acc + m.votes, 0),
-    [meals],
+    [meals]
   );
 
   const filtered = useMemo(() => {

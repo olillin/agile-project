@@ -1,14 +1,13 @@
 import { Button } from "@/components/admin/Button";
 import { Card } from "@/components/admin/Card";
-import { PageShell } from "@/components/admin/PageShell";
-import { CommentList } from "@/components/admin/sections/CommentList";
 import { RatingHistogram } from "@/components/admin/charts/RatingHistogram";
 import { TagBars } from "@/components/admin/charts/TagBars";
 import { TrendChart } from "@/components/admin/charts/TrendChart";
+import { PageShell } from "@/components/admin/PageShell";
 import { Pill } from "@/components/admin/Pill";
 import { SectionHead } from "@/components/admin/SectionHead";
+import { CommentList } from "@/components/admin/sections/CommentList";
 import { CupRating } from "@/components/brand/CupRating";
-import { FOCUS_RING } from "@/lib/styles";
 import {
   getCommentsForMeal,
   getMealById,
@@ -18,8 +17,9 @@ import {
   MEALS,
 } from "@/lib/admin/fixtures";
 import { NEW_TAG } from "@/lib/admin/types";
-import { notFound } from "next/navigation";
+import { FOCUS_RING } from "@/lib/styles";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
   return MEALS.map(m => ({ id: m.id }));
@@ -65,10 +65,7 @@ export default async function MealDetailPage({ params }: PageProps) {
         </>
       }
       subtitle={
-        <div
-          className="flex flex-wrap items-center"
-          style={{ gap: 4 }}
-        >
+        <div className="flex flex-wrap items-center" style={{ gap: 4 }}>
           <Pill tone="tea">{meal.line}</Pill>
           {visibleTags.map(t => (
             <Pill key={t} tone="neutral">
@@ -93,13 +90,8 @@ export default async function MealDetailPage({ params }: PageProps) {
         }}
       >
         <Card padding={18}>
-          <div className="text-ink-soft text-eyebrow-lg uppercase">
-            Average
-          </div>
-          <div
-            className="flex items-baseline"
-            style={{ gap: 8, marginTop: 4 }}
-          >
+          <div className="text-ink-soft text-eyebrow-lg uppercase">Average</div>
+          <div className="flex items-baseline" style={{ gap: 8, marginTop: 4 }}>
             <div
               className="text-ink text-kpi font-serif"
               style={{ lineHeight: 1 }}
@@ -108,34 +100,24 @@ export default async function MealDetailPage({ params }: PageProps) {
             </div>
             <CupRating value={Math.round(avg)} size={14} />
           </div>
-          <div
-            className="text-ink-muted text-meta"
-            style={{ marginTop: 8 }}
-          >
+          <div className="text-ink-muted text-meta" style={{ marginTop: 8 }}>
             {total} ratings · {comments.length} comments
           </div>
         </Card>
         <Card padding={18}>
-          <div className="text-ink-soft text-eyebrow-lg uppercase">
-            Served
-          </div>
+          <div className="text-ink-soft text-eyebrow-lg uppercase">Served</div>
           <div
             className="text-ink text-kpi font-serif"
             style={{ lineHeight: 1, marginTop: 4 }}
           >
             9<span className="text-ink-muted text-back"> ×</span>
           </div>
-          <div
-            className="text-ink-muted text-meta"
-            style={{ marginTop: 8 }}
-          >
+          <div className="text-ink-muted text-meta" style={{ marginTop: 8 }}>
             Last on {meal.lastServed}
           </div>
         </Card>
         <Card padding={18}>
-          <div className="text-ink-soft text-eyebrow-lg uppercase">
-            Climate
-          </div>
+          <div className="text-ink-soft text-eyebrow-lg uppercase">Climate</div>
           <div
             className="text-ink text-kpi font-serif"
             style={{ lineHeight: 1, marginTop: 4 }}
@@ -148,10 +130,7 @@ export default async function MealDetailPage({ params }: PageProps) {
               kg CO₂e
             </span>
           </div>
-          <div
-            className="text-ink-muted text-meta"
-            style={{ marginTop: 8 }}
-          >
+          <div className="text-ink-muted text-meta" style={{ marginTop: 8 }}>
             per portion
           </div>
         </Card>
@@ -203,10 +182,7 @@ export default async function MealDetailPage({ params }: PageProps) {
         style={{ gridTemplateColumns: "1fr 1.5fr", gap: 16 }}
       >
         <Card>
-          <SectionHead
-            title="What students said"
-            sub="Quick-tag frequencies"
-          />
+          <SectionHead title="What students said" sub="Quick-tag frequencies" />
           <TagBars items={MEAL_TAG_BARS} />
         </Card>
         <Card>

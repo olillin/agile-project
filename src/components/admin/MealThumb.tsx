@@ -8,9 +8,7 @@ type Props = {
 };
 
 export function MealThumb({ meal, showNewBadge = true }: Props) {
-  const hash = meal.id
-    .split("")
-    .reduce((a, c) => a + c.charCodeAt(0), 0);
+  const hash = meal.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
   const baseH = (hash * 37) % 360;
   const bg = `hsl(${baseH} 35% 78%)`;
   const accent = `hsl(${(baseH + 40) % 360} 45% 62%)`;
@@ -36,7 +34,13 @@ export function MealThumb({ meal, showNewBadge = true }: Props) {
         style={{ display: "block" }}
         aria-hidden
       >
-        <ellipse cx="60" cy="56" rx="44" ry="20" fill="rgba(255,255,255,0.55)" />
+        <ellipse
+          cx="60"
+          cy="56"
+          rx="44"
+          ry="20"
+          fill="rgba(255,255,255,0.55)"
+        />
         <ellipse cx="60" cy="54" rx="38" ry="17" fill="rgba(255,255,255,0.8)" />
         {hasSoup && (
           <>
@@ -109,7 +113,14 @@ export function MealThumb({ meal, showNewBadge = true }: Props) {
           <>
             <ellipse cx="60" cy="52" rx="22" ry="10" fill={accent} />
             <ellipse cx="54" cy="48" rx="6" ry="3" fill={dark} opacity="0.35" />
-            <ellipse cx="68" cy="52" rx="5" ry="2.5" fill={dark} opacity="0.3" />
+            <ellipse
+              cx="68"
+              cy="52"
+              rx="5"
+              ry="2.5"
+              fill={dark}
+              opacity="0.3"
+            />
           </>
         )}
         <circle cx="44" cy="46" r="1.2" fill="var(--color-sage)" />

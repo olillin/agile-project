@@ -24,7 +24,7 @@ export function TagBars({ items, defaultColor = "var(--color-tea)" }: Props) {
               {it.label}
             </div>
             <div
-              className="flex-1 overflow-hidden rounded-[3px] bg-ink/[0.04]"
+              className="bg-ink/[0.04] flex-1 overflow-hidden rounded-[3px]"
               style={{ height: 18 }}
             >
               <div

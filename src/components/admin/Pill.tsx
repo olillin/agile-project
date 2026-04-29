@@ -25,7 +25,7 @@ type Props = {
 export function Pill({ tone = "neutral", children }: Props) {
   return (
     <span
-      className={`inline-flex items-center justify-center whitespace-nowrap rounded-full font-semibold ${TONE[tone]}`}
+      className={`inline-flex items-center justify-center rounded-full font-semibold whitespace-nowrap ${TONE[tone]}`}
       style={{
         fontSize: 11,
         padding: "3px 8px",

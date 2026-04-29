@@ -14,7 +14,13 @@ import { useMemo, useState } from "react";
 type Props = { meals: MealStat[] };
 
 type LineKey = "all" | MealLine;
-type DietKey = "all" | "vegetarian" | "vegan" | "fish" | "meat" | typeof NEW_TAG;
+type DietKey =
+  | "all"
+  | "vegetarian"
+  | "vegan"
+  | "fish"
+  | "meat"
+  | typeof NEW_TAG;
 type SortKey = "rating" | "rating-asc" | "votes" | "name" | "co2";
 type ViewKey = "grid" | "table";
 
@@ -142,9 +148,7 @@ export function MealsBrowser({ meals }: Props) {
               key={o.k}
               active={line === o.k}
               onClick={() => setLine(o.k)}
-              count={
-                o.k === "all" ? meals.length : lineCounts[o.k as MealLine]
-              }
+              count={o.k === "all" ? meals.length : lineCounts[o.k as MealLine]}
             >
               {o.label}
             </Chip>
@@ -153,11 +157,7 @@ export function MealsBrowser({ meals }: Props) {
 
         <FilterRow label="Diet">
           {DIET_OPTIONS.map(o => (
-            <Chip
-              key={o.k}
-              active={diet === o.k}
-              onClick={() => setDiet(o.k)}
-            >
+            <Chip key={o.k} active={diet === o.k} onClick={() => setDiet(o.k)}>
               {o.label}
             </Chip>
           ))}
@@ -169,8 +169,7 @@ export function MealsBrowser({ meals }: Props) {
         style={{ marginBottom: 12 }}
       >
         <div className="text-ink-muted">
-          Showing{" "}
-          <strong className="text-ink">{filtered.length}</strong> of{" "}
+          Showing <strong className="text-ink">{filtered.length}</strong> of{" "}
           {meals.length} meals
         </div>
         <div className="text-ink-muted">
