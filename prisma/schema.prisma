@@ -30,7 +30,7 @@ model Review {
 
 model Lunch {
   id          Int          @id @default(autoincrement())
-  name        String
+  name        String       @unique
   eco_score   Float
   ingredients Ingredient[]
   servings    DateTime[]
