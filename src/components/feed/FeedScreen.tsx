@@ -1,10 +1,10 @@
 import { Eyebrow } from "@/components/brand/Eyebrow";
-import { DAYS } from "@/lib/fixtures";
+import { getDays } from "@/services/lunchService";
 import type { Day, Option } from "@/lib/types";
 import { DaySection } from "./DaySection";
 import { FeedHeader } from "./FeedHeader";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getAll } from "@/services/lunchService";
 
 type Props = {
@@ -13,9 +13,12 @@ type Props = {
 };
 
 export function FeedScreen({ onOpen, ratedIds }: Props) {
-  // Example code snippet showing how to interact with the lunch service.
+  const [days, setDays] = useState<Day[]>([]);
   useEffect(() => {
-    console.log(getAll());
+      async function f() {
+          setDays(await getDays());
+      }
+      f();
   }, []);
 
   return (
@@ -32,7 +35,7 @@ export function FeedScreen({ onOpen, ratedIds }: Props) {
         </h1>
       </div>
       <div className="px-4 pt-6">
-        {DAYS.map(day => (
+        {days.map(day => (
           <DaySection
             key={day.id}
             day={day}

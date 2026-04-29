@@ -1,6 +1,7 @@
 'use server';
 import { Ingredient } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { Day } from "@/lib/types";
 
 export async function getAll() {
     return await prisma.lunch.findMany();
@@ -41,4 +42,45 @@ export async function addlunch(
         }
     })
     return lunch;
+}
+
+export async function getDays(): Day[] {
+    let dayMap = new Map<Date, Lunch[]>();
+    const lunches = await getAll();
+
+    lunches.forEach((lunch) => {
+        lunch.servings.forEach((date) => {
+            let ls = dayMap.get(date);
+            if (ls == undefined) {
+                dayMap.set(date, [lunch]);
+            } else {
+                ls.push(lunch);
+                dayMap.set(date, );
+            }
+        });
+    });
+
+    let days: Day[] = [];
+    dayMap.forEach((options, date) => {
+        days.push({
+            id: "a",
+            label: "b",
+            date: date.toString(),
+            isToday: true,
+            options: options.map((lunch) => {
+                return {
+                id: lunch.id,
+                line: "d",
+                name: lunch.name,
+                color: "#C87865",
+                pattern: 45,
+                tags: [],
+                climate: lunch.eco_score,
+                climateLabel: "e",
+                desc: "f",
+            };}),
+        });
+    });
+
+    return days;
 }
