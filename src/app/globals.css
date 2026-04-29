@@ -22,6 +22,39 @@
   --font-sans: var(--font-geist-sans);
   --font-serif: var(--font-instrument-serif);
 
+  /* Typography scale — single source of truth. Adjust sizes here. */
+  --text-tiny: 11px;
+
+  --text-eyebrow: 11px;
+  --text-eyebrow--letter-spacing: 1px;
+  --text-eyebrow--font-weight: 600;
+
+  --text-caption: 11px;
+  --text-caption--letter-spacing: 0.4px;
+  --text-caption--font-weight: 500;
+
+  --text-meta: 12px;
+
+  --text-eyebrow-lg: 12px;
+  --text-eyebrow-lg--letter-spacing: 1px;
+  --text-eyebrow-lg--font-weight: 600;
+
+  --text-body: 14px;
+
+  --text-back: 18px;
+
+  --text-section: 20px;
+  --text-section--letter-spacing: -0.3px;
+
+  --text-feature: 24px;
+  --text-feature--letter-spacing: -0.3px;
+
+  --text-display: 32px;
+  --text-display--letter-spacing: -0.6px;
+
+  --text-kpi: 40px;
+  --text-kpi--letter-spacing: -1px;
+
   --animate-dst-fade: dst-fade 240ms ease;
   --animate-check-pop: check-pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
   --animate-thanks-in: thanks-in 360ms cubic-bezier(0.16, 1, 0.3, 1);
