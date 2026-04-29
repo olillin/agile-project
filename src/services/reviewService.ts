@@ -15,5 +15,5 @@ export async function addReview(rating: number, lunchId: number, user?: number, 
             userId: user
         }
     })
-
+    return review
 }
