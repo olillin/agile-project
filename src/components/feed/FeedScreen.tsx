@@ -1,5 +1,5 @@
 import { Eyebrow } from "@/components/brand/Eyebrow";
-import { getDays } from "@/services/lunchService";
+import { getDays, getLunchesByDate } from "@/services/lunchService";
 import type { Day, Option } from "@/lib/types";
 import { DaySection } from "./DaySection";
 import { FeedHeader } from "./FeedHeader";
