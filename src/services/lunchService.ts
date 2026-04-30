@@ -9,17 +9,23 @@ export async function getAll() {
 
 
 
-export async function getLunch(id_or_name: number | string) {
-    if (typeof id_or_name === 'number') {
+export async function getLunch(identifier: number | string): Lunch | Lunch[] {
+    if (typeof identifier === 'number') {
         return await prisma.lunch.findUnique({
-            where: { id: id_or_name }
+            where: { id: identifier }
         });
     }
-    if (typeof id_or_name === 'string') {
+    if (typeof identifier === 'string') {
         return await prisma.lunch.findUnique({
-            where: { name: id_or_name }
+            where: { name: identifier }
         });
     }
+}
+
+export async function getLunchesByDate(date: DateTime): Lunch[] {
+    return await prisma.lunch.findMany({
+        where: { servings: { has: date } }
+    });
 }
 
 export async function deleteLunch(id: number) {
@@ -64,7 +70,7 @@ export async function getDays(): Day[] {
                 dayMap.set(date, [lunch]);
             } else {
                 ls.push(lunch);
-                dayMap.set(date,);
+                dayMap.set(date, ls);
             }
         });
     });
