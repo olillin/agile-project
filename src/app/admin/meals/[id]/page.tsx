@@ -2,18 +2,16 @@ import { Button } from "@/components/admin/Button";
 import { Card } from "@/components/admin/Card";
 import { RatingHistogram } from "@/components/admin/charts/RatingHistogram";
 import { TagBars } from "@/components/admin/charts/TagBars";
-import { TrendChart } from "@/components/admin/charts/TrendChart";
 import { PageShell } from "@/components/admin/PageShell";
 import { Pill } from "@/components/admin/Pill";
 import { SectionHead } from "@/components/admin/SectionHead";
 import { CommentList } from "@/components/admin/sections/CommentList";
+import { MealTrendCard } from "@/components/admin/sections/MealTrendCard";
 import { CupRating } from "@/components/brand/CupRating";
 import {
   getCommentsForMeal,
   getMealById,
   MEAL_TAG_BARS,
-  MEAL_TREND_SAMPLE,
-  MEAL_TREND_X_LABELS,
   MEALS,
 } from "@/lib/admin/fixtures";
 import { NEW_TAG } from "@/lib/admin/types";
@@ -157,24 +155,7 @@ export default async function MealDetailPage({ params }: PageProps) {
             Distribution is {interpretDistribution(meal.distribution)}
           </div>
         </Card>
-        <Card>
-          <SectionHead
-            title="Rating over time"
-            sub="Each serving, most recent right"
-          />
-          <TrendChart
-            width={560}
-            height={200}
-            xLabels={MEAL_TREND_X_LABELS}
-            series={[
-              {
-                name: "avg",
-                color: "var(--color-tea)",
-                data: MEAL_TREND_SAMPLE,
-              },
-            ]}
-          />
-        </Card>
+        <MealTrendCard />
       </div>
 
       <div
