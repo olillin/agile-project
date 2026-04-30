@@ -9,15 +9,20 @@ export async function getAll() {
 
 
 
-export async function getLunch(id_or_name: number | string) {
-    if (typeof id_or_name === 'number') {
+export async function getLunch(identifier: Date | number | string): Lunch | Lunch[] {
+    if (typeof identifier === 'number') {
         return await prisma.lunch.findUnique({
             where: { id: id_or_name }
         });
     }
-    if (typeof id_or_name === 'string') {
+    if (typeof identifier === 'string') {
         return await prisma.lunch.findUnique({
             where: { name: id_or_name }
+        });
+    }
+    if (typeof identifier === 'Date') {
+        return await prisma.lunch.findUnique({
+            where: { servings: { some: identifier } }
         });
     }
 }
