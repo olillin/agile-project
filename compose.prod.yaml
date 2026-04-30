@@ -35,5 +35,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  green-bite:
+    image: arienshibani/green-bite:latest
+    container_name: green-bite-dev
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
 volumes:
   db-data:

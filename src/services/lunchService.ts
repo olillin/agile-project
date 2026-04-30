@@ -7,10 +7,19 @@ export async function getAll() {
     return await prisma.lunch.findMany();
 }
 
-export async function getLunch(id: number) {
-    return await prisma.lunch.findUnique({
-        where: { id }
-    });
+
+
+export async function getLunch(id_or_name: number | string) {
+    if (typeof id_or_name === 'number') {
+        return await prisma.lunch.findUnique({
+            where: { id: id_or_name }
+        });
+    }
+    if (typeof id_or_name === 'string') {
+        return await prisma.lunch.findUnique({
+            where: { name: id_or_name }
+        });
+    }
 }
 
 export async function deleteLunch(id: number) {
@@ -55,7 +64,7 @@ export async function getDays(): Day[] {
                 dayMap.set(date, [lunch]);
             } else {
                 ls.push(lunch);
-                dayMap.set(date, );
+                dayMap.set(date,);
             }
         });
     });
@@ -69,16 +78,17 @@ export async function getDays(): Day[] {
             isToday: true,
             options: options.map((lunch) => {
                 return {
-                id: lunch.id,
-                line: "d",
-                name: lunch.name,
-                color: "#C87865",
-                pattern: 45,
-                tags: [],
-                climate: lunch.eco_score,
-                climateLabel: "e",
-                desc: "f",
-            };}),
+                    id: lunch.id,
+                    line: "d",
+                    name: lunch.name,
+                    color: "#C87865",
+                    pattern: 45,
+                    tags: [],
+                    climate: lunch.eco_score,
+                    climateLabel: "e",
+                    desc: "f",
+                };
+            }),
         });
     });
 
