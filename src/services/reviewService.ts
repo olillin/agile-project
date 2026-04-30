@@ -17,3 +17,13 @@ export async function addReview(rating: number, lunchId: number, user?: number, 
     })
     return review
 }
+
+export async function getAll() {
+    return await prisma.review.findMany()
+}
+
+export async function getReview(id: number) {
+    return await prisma.review.findUnique({
+        where: { id: id }
+    })
+}
