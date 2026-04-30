@@ -11,18 +11,18 @@ import {
 import { FOCUS_RING } from "@/lib/styles";
 import { useState } from "react";
 
-type RangeKey = "7d" | "10d" | "1y";
+type RangeKey = "7d" | "30d" | "1y";
 
-const RANGE_KEYS: RangeKey[] = ["7d", "10d", "1y"];
+const RANGE_KEYS: RangeKey[] = ["7d", "30d", "1y"];
 
 const RANGE_SUBTITLE: Record<RangeKey, string> = {
   "7d": "Last 7 days",
-  "10d": "Last 10 days",
+  "30d": "Last 30 days",
   "1y": "Last year",
 };
 
 export function TrendCard() {
-  const [range, setRange] = useState<RangeKey>("10d");
+  const [range, setRange] = useState<RangeKey>("30d");
 
   return (
     <Card style={{ minWidth: 0, overflow: "hidden" }}>
