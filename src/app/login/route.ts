@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Mocked login route. Redirects directly to the callback instead of a login page.
 export function GET(req: NextRequest) {
-  // Mock redirect directly to callback instead of login page.
   return NextResponse.redirect(new URL("/callback", req.url));
 }

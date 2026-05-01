@@ -6,15 +6,23 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 
+/** Properties stored in the session token. */
 export interface SessionPayload extends JWTPayload {
+  /** First name of the user. */
   given_name: string;
+  /** Last name of the user. */
   family_name: string;
+  /** Expiration time of the session cookie as a timestamp in seconds. */
   exp: number;
 }
 
-// Mock authentication does not require a secure secret
+// The mocked authentication does not require a secure secret since it does not
+// intend to offer any actual security
 const secretKey = "my-secret";
 const encodedKey = new TextEncoder().encode(secretKey);
+
+/** Time before a session expires in milliseconds. */
+const sessionExpireAfter = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
 /**
  * Encrypt a session as a JWT.
@@ -47,19 +55,25 @@ export async function decrypt(
   }
 }
 
+/**
+ * Create a new session for an authenticated user.
+ * @param firstName First name of the user.
+ * @param firstName Last name of the user.
+ */
 export async function createSession(firstName: string, lastName: string) {
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  // Calculate the session expiration
+  const expiresAt = new Date(Date.now() + sessionExpireAfter);
   const expiresAtSeconds = expiresAt.getTime() / 1000;
-  console.log("encrypting");
+
+  // Create a new session
   const session = await encrypt({
     given_name: firstName,
     family_name: lastName,
     exp: expiresAtSeconds,
   });
-  console.log("getting store");
-  const cookieStore = await cookies();
 
-  console.log("setting session");
+  // Store the session in a cookie
+  const cookieStore = await cookies();
   cookieStore.set("session", session, {
     httpOnly: true,
     secure: true,
@@ -69,7 +83,12 @@ export async function createSession(firstName: string, lastName: string) {
   });
 }
 
+/**
+ * Update the current session to extend the cookie expiration time.
+ * Note that the token will still expire in the same time.
+ */
 export async function updateSession() {
+  // Get the current session
   const session = (await cookies()).get("session")?.value;
   const payload = await decrypt(session);
 
@@ -77,18 +96,23 @@ export async function updateSession() {
     return null;
   }
 
-  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  // Calculate the new expiration
+  const expiresAt = new Date(Date.now() + sessionExpireAfter);
 
+  // Create a new session with the new expiration time.
   const cookieStore = await cookies();
   cookieStore.set("session", session, {
     httpOnly: true,
     secure: true,
-    expires: expires,
+    expires: expiresAt,
     sameSite: "lax",
     path: "/",
   });
 }
 
+/**
+ * Delete the current session cookie, leaving the user unauthenticated.
+ */
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete("session");
@@ -111,7 +135,9 @@ export const verifySession = cache(
     // Check if session does not exist or has expired
     const currentTimeSeconds = Date.now() / 1000;
     if (session?.exp == undefined || session.exp <= currentTimeSeconds) {
-      // Mock redirect to homepage instead of login
+      // The mocked authentication redirects to the homepage instead of the
+      // login page since the mocked login would instantly re-authenticate
+      // the user.
       redirect("/");
     }
 
