@@ -1,6 +1,7 @@
 "use client";
 
 import { Wordmark } from "@/components/brand/Wordmark";
+import { LogoutButton } from "@/components/LogoutButton";
 import { MANAGER, SUGGESTIONS_BADGE, WEEK_STAT } from "@/lib/admin/fixtures";
 import { FOCUS_RING } from "@/lib/styles";
 import Link from "next/link";
@@ -136,15 +137,11 @@ export function Sidebar() {
           </div>
           <div className="text-ink-soft text-tiny">{MANAGER.role}</div>
         </div>
-        <button
-          type="button"
+        <LogoutButton
           title="Log out"
           aria-label="Log out"
           className={`text-rose hover:bg-rose/10 flex items-center justify-center rounded-md transition-colors ${FOCUS_RING.paper}`}
-          style={{ width: 26, height: 26, cursor: "pointer" }}
-          onClick={() => {
-            // TODO(backend): wire to /api/auth/signout
-          }}
+          style={{ width: 26, height: 26 }}
         >
           <svg
             width="14"
@@ -161,7 +158,7 @@ export function Sidebar() {
             <polyline points="16 17 21 12 16 7" />
             <line x1="21" y1="12" x2="9" y2="12" />
           </svg>
-        </button>
+        </LogoutButton>
       </div>
     </aside>
   );

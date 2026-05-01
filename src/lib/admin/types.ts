@@ -17,9 +17,7 @@ export type MealStat = {
   lastServed: string;
 };
 
-// Comments are intentionally anonymous — no studentId, no fingerprint, no
-// device ID. Privacy-driven product decision; do not add identifiers here
-// without a sign-off from product/legal.
+// Comments are intentionally anonymous
 export type MealComment = {
   id: number;
   mealId: string;
