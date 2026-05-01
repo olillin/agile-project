@@ -4,4 +4,7 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  test: {
+    setupFiles: ["./tests/setup.ts"],
+  },
 });
