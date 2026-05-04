@@ -2,6 +2,7 @@
   "name": "dont-spill-the-tea",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "clean": "rm -r .next/",
@@ -40,6 +41,7 @@
     "prettier-plugin-prisma": "^5.0.0",
     "prettier-plugin-tailwindcss": "0.0.0-insiders.f7d2598",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "vitest": "^4.1.4"
   },
