@@ -74,12 +74,13 @@ export function MealCard({ meal }: Props) {
         )}
 
         <div
-          className="border-ink/[0.06] text-ink-soft text-tiny flex items-center justify-between border-t"
+          className="border-ink/[0.06] text-ink-soft text-tiny flex flex-wrap items-center justify-between border-t"
           style={{ paddingTop: 8, gap: 8 }}
         >
           <span className="tabular-nums">
             {meal.rating != null ? `${meal.votes} votes` : "—"}
           </span>
+          <span className="tabular-nums">Last {meal.lastServed}</span>
           <span className="tabular-nums">{meal.co2} kg CO₂e</span>
           {tone && <Pill tone={tone}>{meal.climate}</Pill>}
         </div>

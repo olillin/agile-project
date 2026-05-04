@@ -1,9 +1,9 @@
 "use client";
 
-import { Card } from "@/components/admin/Card";
 import { MealCard } from "@/components/admin/sections/MealCard";
 import { MealsTable } from "@/components/admin/sections/MealsTable";
 import { SelectFilter } from "@/components/admin/SelectFilter";
+import { Card } from "@/components/ui/Card";
 import { MEAL_LINES } from "@/lib/admin/colors";
 import { NEW_TAG } from "@/lib/admin/types";
 import type { MealStat } from "@/lib/admin/types";
@@ -14,29 +14,40 @@ import { useMemo, useState } from "react";
 type Props = { meals: MealStat[] };
 
 type LineKey = "all" | MealLine;
-type DietKey =
-  | "all"
-  | "vegetarian"
-  | "vegan"
-  | "fish"
-  | "meat"
-  | typeof NEW_TAG;
+type DietKey = "all" | "vegetarian" | "vegan" | "fish" | "meat";
+type StatusKey = "all" | "served" | typeof NEW_TAG;
 type SortKey = "rating" | "rating-asc" | "votes" | "name" | "co2";
 type ViewKey = "grid" | "table";
 
-const LINE_OPTIONS: { k: LineKey; label: string }[] = [
-  { k: "all", label: "All" },
-  ...MEAL_LINES.map(l => ({ k: l, label: l })),
-];
+const LINE_KEYS: readonly LineKey[] = ["all", ...MEAL_LINES];
+const LINE_LABELS = {
+  all: "All",
+  Nordic: "Nordic",
+  Vegetarian: "Vegetarian",
+  "Street food": "Street food",
+} satisfies Record<LineKey, string>;
 
-const DIET_OPTIONS: { k: DietKey; label: string }[] = [
-  { k: "all", label: "Any" },
-  { k: "vegetarian", label: "Vegetarian" },
-  { k: "vegan", label: "Vegan" },
-  { k: "fish", label: "Contains fish" },
-  { k: "meat", label: "Contains meat" },
-  { k: NEW_TAG, label: "New" },
+const DIET_KEYS: readonly DietKey[] = [
+  "all",
+  "vegetarian",
+  "vegan",
+  "fish",
+  "meat",
 ];
+const DIET_LABELS = {
+  all: "Any",
+  vegetarian: "Vegetarian",
+  vegan: "Vegan",
+  fish: "Contains fish",
+  meat: "Contains meat",
+} satisfies Record<DietKey, string>;
+
+const STATUS_KEYS: readonly StatusKey[] = ["all", "served", NEW_TAG];
+const STATUS_LABELS = {
+  all: "All",
+  served: "Served",
+  [NEW_TAG]: "New",
+} satisfies Record<StatusKey, string>;
 
 const SORT_COMPARE: Record<SortKey, (a: MealStat, b: MealStat) => number> = {
   rating: (a, b) => (b.rating ?? -1) - (a.rating ?? -1),
@@ -50,15 +61,18 @@ export function MealsBrowser({ meals }: Props) {
   const [view, setView] = useState<ViewKey>("grid");
   const [line, setLine] = useState<LineKey>("all");
   const [diet, setDiet] = useState<DietKey>("all");
-  const [q, setQ] = useState("");
+  const [status, setStatus] = useState<StatusKey>("all");
+  const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("rating");
 
   const filtered = useMemo(() => {
-    const lower = q.trim().toLowerCase();
+    const lower = query.trim().toLowerCase();
     return meals
       .filter(m => {
         if (line !== "all" && m.line !== line) return false;
         if (diet !== "all" && !m.tags.includes(diet)) return false;
+        if (status === NEW_TAG && !m.tags.includes(NEW_TAG)) return false;
+        if (status === "served" && m.tags.includes(NEW_TAG)) return false;
         if (lower) {
           const matches =
             m.name.toLowerCase().includes(lower) ||
@@ -68,7 +82,7 @@ export function MealsBrowser({ meals }: Props) {
         return true;
       })
       .sort(SORT_COMPARE[sort]);
-  }, [meals, line, diet, q, sort]);
+  }, [meals, line, diet, status, query, sort]);
 
   const lineCounts = useMemo(() => {
     const counts: Record<MealLine, number> = {
@@ -82,6 +96,31 @@ export function MealsBrowser({ meals }: Props) {
     return counts;
   }, [meals]);
 
+  const dietCounts = useMemo(() => {
+    const counts: Record<DietKey, number> = {
+      all: meals.length,
+      vegetarian: 0,
+      vegan: 0,
+      fish: 0,
+      meat: 0,
+    };
+    meals.forEach(m => {
+      DIET_KEYS.forEach(key => {
+        if (key !== "all" && m.tags.includes(key)) counts[key] += 1;
+      });
+    });
+    return counts;
+  }, [meals]);
+
+  const statusCounts = useMemo(() => {
+    const newCount = meals.filter(m => m.tags.includes(NEW_TAG)).length;
+    return {
+      all: meals.length,
+      served: meals.length - newCount,
+      [NEW_TAG]: newCount,
+    } satisfies Record<StatusKey, number>;
+  }, [meals]);
+
   return (
     <>
       <Card padding={14} style={{ marginBottom: 12 }}>
@@ -92,16 +131,16 @@ export function MealsBrowser({ meals }: Props) {
           >
             <SearchIcon />
             <input
-              value={q}
-              onChange={e => setQ(e.target.value)}
+              value={query}
+              onChange={e => setQuery(e.target.value)}
               placeholder="Search meals, ingredients, tags…"
               className={`text-ink text-body flex-1 rounded-sm bg-transparent outline-none ${FOCUS_RING.cream}`}
               style={{ fontFamily: "inherit" }}
             />
-            {q && (
+            {query && (
               <button
                 type="button"
-                onClick={() => setQ("")}
+                onClick={() => setQuery("")}
                 aria-label="Clear search"
                 className={`text-ink-soft text-meta cursor-pointer rounded-sm ${FOCUS_RING.cream}`}
               >
@@ -143,22 +182,40 @@ export function MealsBrowser({ meals }: Props) {
         </div>
 
         <FilterRow label="Line">
-          {LINE_OPTIONS.map(o => (
+          {LINE_KEYS.map(key => (
             <Chip
-              key={o.k}
-              active={line === o.k}
-              onClick={() => setLine(o.k)}
-              count={o.k === "all" ? meals.length : lineCounts[o.k as MealLine]}
+              key={key}
+              active={line === key}
+              onClick={() => setLine(key)}
+              count={key === "all" ? meals.length : lineCounts[key]}
             >
-              {o.label}
+              {LINE_LABELS[key]}
             </Chip>
           ))}
         </FilterRow>
 
         <FilterRow label="Diet">
-          {DIET_OPTIONS.map(o => (
-            <Chip key={o.k} active={diet === o.k} onClick={() => setDiet(o.k)}>
-              {o.label}
+          {DIET_KEYS.map(key => (
+            <Chip
+              key={key}
+              active={diet === key}
+              onClick={() => setDiet(key)}
+              count={dietCounts[key]}
+            >
+              {DIET_LABELS[key]}
+            </Chip>
+          ))}
+        </FilterRow>
+
+        <FilterRow label="Status">
+          {STATUS_KEYS.map(key => (
+            <Chip
+              key={key}
+              active={status === key}
+              onClick={() => setStatus(key)}
+              count={statusCounts[key]}
+            >
+              {STATUS_LABELS[key]}
             </Chip>
           ))}
         </FilterRow>
@@ -183,7 +240,7 @@ export function MealsBrowser({ meals }: Props) {
             No meals match those filters.
           </div>
           <div className="text-ink-muted text-meta" style={{ marginTop: 6 }}>
-            Try clearing the collection or widening your search.
+            Try clearing the filters or widening your search.
           </div>
         </Card>
       ) : view === "grid" ? (

@@ -1,5 +1,3 @@
-import { Button } from "@/components/admin/Button";
-import { Card } from "@/components/admin/Card";
 import { RatingHistogram } from "@/components/admin/charts/RatingHistogram";
 import { TagBars } from "@/components/admin/charts/TagBars";
 import { PageShell } from "@/components/admin/PageShell";
@@ -8,12 +6,19 @@ import { SectionHead } from "@/components/admin/SectionHead";
 import { CommentList } from "@/components/admin/sections/CommentList";
 import { MealTrendCard } from "@/components/admin/sections/MealTrendCard";
 import { CupRating } from "@/components/brand/CupRating";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import {
   getCommentsForMeal,
   getMealById,
   MEAL_TAG_BARS,
   MEALS,
 } from "@/lib/admin/fixtures";
+import {
+  interpretRatingDistribution,
+  ratingAverage,
+  ratingTotal,
+} from "@/lib/admin/ratings";
 import { NEW_TAG } from "@/lib/admin/types";
 import { FOCUS_RING } from "@/lib/styles";
 import Link from "next/link";
@@ -25,25 +30,14 @@ export function generateStaticParams() {
 
 type PageProps = { params: Promise<{ id: string }> };
 
-function interpretDistribution(dist: readonly number[]): string {
-  const lows = dist[0] ?? 0;
-  const highs = dist[4] ?? 0;
-  if (highs > lows * 4) return "strongly positive — most students love it.";
-  if (lows > highs) return "polarized — many strong dislikes.";
-  return "mixed.";
-}
-
 export default async function MealDetailPage({ params }: PageProps) {
   const { id } = await params;
   const meal = getMealById(id);
   if (!meal) notFound();
 
   const comments = getCommentsForMeal(meal.id);
-  const total = meal.distribution.reduce((a, b) => a + b, 0);
-  const avg =
-    total > 0
-      ? meal.distribution.reduce((s, n, i) => s + n * (i + 1), 0) / total
-      : 0;
+  const total = ratingTotal(meal.distribution);
+  const avg = ratingAverage(meal.distribution);
   const visibleTags = meal.tags.filter(t => t !== NEW_TAG);
 
   return (
@@ -108,7 +102,7 @@ export default async function MealDetailPage({ params }: PageProps) {
             className="text-ink text-kpi font-serif"
             style={{ lineHeight: 1, marginTop: 4 }}
           >
-            9<span className="text-ink-muted text-back"> ×</span>
+            9<span className="text-ink-muted text-back"> times</span>
           </div>
           <div className="text-ink-muted text-meta" style={{ marginTop: 8 }}>
             Last on {meal.lastServed}
@@ -147,12 +141,12 @@ export default async function MealDetailPage({ params }: PageProps) {
             title="Rating distribution"
             sub="How students actually scored it"
           />
-          <RatingHistogram dist={meal.distribution} total={total} />
+          <RatingHistogram dist={meal.distribution} />
           <div
             className="text-ink-muted text-meta border-ink/[0.06] border-t"
             style={{ marginTop: 14, paddingTop: 14, lineHeight: 1.5 }}
           >
-            Distribution is {interpretDistribution(meal.distribution)}
+            Distribution is {interpretRatingDistribution(meal.distribution)}
           </div>
         </Card>
         <MealTrendCard />

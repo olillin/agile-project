@@ -14,7 +14,7 @@ type Props = { meals: MealStat[] };
 
 type LineKey = "all" | MealLine;
 type RangeKey = "7d" | "30d";
-type SortKey = "top" | "bottom" | "votes";
+type SortKey = "top" | "bottom" | "votes" | "latest";
 
 const RANGE_DAYS: Record<RangeKey, number> = {
   "7d": 7,
@@ -25,6 +25,9 @@ const SORT_COMPARE: Record<SortKey, (a: MealStat, b: MealStat) => number> = {
   top: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
   bottom: (a, b) => (a.rating ?? 0) - (b.rating ?? 0),
   votes: (a, b) => b.votes - a.votes,
+  latest: (a, b) =>
+    (relativeDays(a.lastServed) ?? Infinity) -
+    (relativeDays(b.lastServed) ?? Infinity),
 };
 
 const RANGE_KEYS = Object.keys(RANGE_DAYS) as RangeKey[];
@@ -111,6 +114,7 @@ export function RankedMeals({ meals }: Props) {
             <option value="top">Highest rated</option>
             <option value="bottom">Lowest rated</option>
             <option value="votes">Most votes</option>
+            <option value="latest">Latest served</option>
           </SelectFilter>
         </div>
       </div>
@@ -118,7 +122,7 @@ export function RankedMeals({ meals }: Props) {
       <div
         className="text-ink-soft text-eyebrow grid uppercase"
         style={{
-          gridTemplateColumns: "3px 240px 1fr 60px 80px",
+          gridTemplateColumns: "3px 220px 1fr 90px 60px 80px",
           gap: 14,
           padding: "0 0 8px 0",
         }}
@@ -126,6 +130,7 @@ export function RankedMeals({ meals }: Props) {
         <div />
         <div>Meal · line</div>
         <div>Rating</div>
+        <div style={{ textAlign: "right" }}>Last served</div>
         <div style={{ textAlign: "right" }}>Avg</div>
         <div style={{ textAlign: "right" }}>Votes</div>
       </div>
@@ -139,7 +144,7 @@ export function RankedMeals({ meals }: Props) {
             href={`/admin/meals/${m.id}`}
             className={`hover:bg-ink/[0.03] grid items-center transition-colors ${FOCUS_RING.paper}`}
             style={{
-              gridTemplateColumns: "3px 240px 1fr 60px 80px",
+              gridTemplateColumns: "3px 220px 1fr 90px 60px 80px",
               gap: 14,
               marginBottom: 6,
               padding: "6px 0",
@@ -180,6 +185,9 @@ export function RankedMeals({ meals }: Props) {
                   borderRadius: 4,
                 }}
               />
+            </div>
+            <div className="text-ink-soft text-meta text-right tabular-nums">
+              {m.lastServed}
             </div>
             <div
               className="text-body text-right font-semibold tabular-nums"

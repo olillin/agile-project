@@ -1,8 +1,8 @@
 "use client";
 
-import { Card } from "@/components/admin/Card";
 import { TrendChart } from "@/components/admin/charts/TrendChart";
 import { SectionHead } from "@/components/admin/SectionHead";
+import { Card } from "@/components/ui/Card";
 import {
   TREND_FOOTNOTES,
   TREND_SERIES,

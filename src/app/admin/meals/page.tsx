@@ -1,6 +1,6 @@
-import { Button } from "@/components/admin/Button";
 import { PageShell } from "@/components/admin/PageShell";
 import { MealsBrowser } from "@/components/admin/sections/MealsBrowser";
+import { Button } from "@/components/ui/Button";
 import { MEALS } from "@/lib/admin/fixtures";
 
 export default function AdminMealsPage() {

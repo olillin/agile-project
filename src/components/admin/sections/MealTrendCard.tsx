@@ -1,8 +1,8 @@
 "use client";
 
-import { Card } from "@/components/admin/Card";
 import { TrendChart } from "@/components/admin/charts/TrendChart";
 import { SectionHead } from "@/components/admin/SectionHead";
+import { Card } from "@/components/ui/Card";
 import { MEAL_TREND_SAMPLE, MEAL_TREND_X_LABELS } from "@/lib/admin/fixtures";
 import { FOCUS_RING } from "@/lib/styles";
 import { useState } from "react";

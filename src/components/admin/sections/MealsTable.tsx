@@ -1,6 +1,6 @@
-import { Card } from "@/components/admin/Card";
 import { MealThumb } from "@/components/admin/MealThumb";
 import { Pill } from "@/components/admin/Pill";
+import { Card } from "@/components/ui/Card";
 import { ratingColor } from "@/lib/admin/colors";
 import { NEW_TAG } from "@/lib/admin/types";
 import type { MealStat } from "@/lib/admin/types";

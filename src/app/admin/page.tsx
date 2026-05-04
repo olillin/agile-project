@@ -1,9 +1,9 @@
-import { Button } from "@/components/admin/Button";
-import { Card } from "@/components/admin/Card";
 import { PageShell } from "@/components/admin/PageShell";
 import { KpiStrip } from "@/components/admin/sections/KpiStrip";
 import { RankedMeals } from "@/components/admin/sections/RankedMeals";
 import { TrendCard } from "@/components/admin/sections/TrendCard";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { KPIS, MANAGER, MEALS } from "@/lib/admin/fixtures";
 
 function formatToday() {

@@ -29,7 +29,7 @@ export function Pill({ tone = "neutral", children }: Props) {
       style={{
         fontSize: 11,
         padding: "3px 8px",
-        letterSpacing: 0.4,
+        letterSpacing: 0,
         lineHeight: 1.4,
       }}
     >

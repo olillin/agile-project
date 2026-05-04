@@ -1,12 +1,14 @@
 import { TeaCup } from "@/components/brand/TeaCup";
 import { DIST_COLORS } from "@/lib/admin/colors";
+import { ratingTotal } from "@/lib/admin/ratings";
 
 type Props = {
   dist: readonly number[];
-  total: number;
 };
 
-export function RatingHistogram({ dist, total }: Props) {
+export function RatingHistogram({ dist }: Props) {
+  const total = ratingTotal(dist);
+
   return (
     <div className="flex w-full flex-col" style={{ gap: 6 }}>
       {[5, 4, 3, 2, 1].map(star => {

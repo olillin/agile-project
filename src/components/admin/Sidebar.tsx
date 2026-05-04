@@ -29,12 +29,21 @@ const ITEMS: NavItem[] = [
 
 function isActive(item: NavItem, pathname: string) {
   if (!item.matchPrefix) return false;
-  if (item.matchPrefix === "/admin") return pathname === "/admin";
-  return pathname.startsWith(item.matchPrefix);
+  return (
+    pathname === item.matchPrefix || pathname.startsWith(`${item.matchPrefix}/`)
+  );
+}
+
+function activeNavKey(pathname: string): string | null {
+  const activeItem = ITEMS.filter(it => isActive(it, pathname)).sort(
+    (a, b) => (b.matchPrefix?.length ?? 0) - (a.matchPrefix?.length ?? 0)
+  )[0];
+  return activeItem?.key ?? null;
 }
 
 export function Sidebar() {
   const pathname = usePathname() ?? "";
+  const activeKey = activeNavKey(pathname);
   return (
     <aside
       className="bg-paper border-ink/[0.06] flex h-full flex-col border-r font-sans"
@@ -53,7 +62,7 @@ export function Sidebar() {
 
       <nav className="flex flex-col" style={{ gap: 2 }}>
         {ITEMS.map(it => {
-          const active = isActive(it, pathname);
+          const active = activeKey === it.key;
           const stateClass = active
             ? "bg-tea text-paper font-medium"
             : it.href
@@ -126,7 +135,7 @@ export function Sidebar() {
             width: 28,
             height: 28,
             borderRadius: 999,
-            letterSpacing: 0.3,
+            letterSpacing: 0,
           }}
         >
           {MANAGER.initials}
