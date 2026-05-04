@@ -1,5 +1,5 @@
 'use server';
-import { Ingredient } from "@/generated/prisma/client";
+import { Ingredient, Lunch } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { Day } from "@/lib/types";
 
@@ -9,7 +9,7 @@ export async function getAll() {
 
 
 
-export async function getLunch(identifier: number | string): Lunch | Lunch[] {
+export async function getLunch(identifier: number | string): Promise<Lunch | Lunch[] | null> {
     if (typeof identifier === 'number') {
         return await prisma.lunch.findUnique({
             where: { id: identifier }
@@ -20,9 +20,10 @@ export async function getLunch(identifier: number | string): Lunch | Lunch[] {
             where: { name: identifier }
         });
     }
+    return null;
 }
 
-export async function getLunchesByDate(date: DateTime): Lunch[] {
+export async function getLunchesByDate(date: Date): Promise<Lunch[]> {
     return await prisma.lunch.findMany({
         where: { servings: { has: date } }
     });
@@ -59,7 +60,7 @@ export async function addlunch(
     return lunch;
 }
 
-export async function getDays(): Day[] {
+export async function getDays(): Promise<Day[]> {
     let dayMap = new Map<Date, Lunch[]>();
     const lunches = await getAll();
 
@@ -84,14 +85,14 @@ export async function getDays(): Day[] {
             isToday: true,
             options: options.map((lunch) => {
                 return {
-                    id: lunch.id,
-                    line: "d",
+                    id: lunch.id.toString(),
+                    line: "Vegetarian",
                     name: lunch.name,
                     color: "#C87865",
                     pattern: 45,
                     tags: [],
                     climate: lunch.eco_score,
-                    climateLabel: "e",
+                    climateLabel: "low",
                     desc: "f",
                 };
             }),

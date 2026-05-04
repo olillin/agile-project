@@ -1,8 +1,9 @@
+'use server'
 import { Ingredient, Lunch, Prisma, Review } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
 
-export async function addReview(rating: number, lunchId: number, user?: number, comment?: string) {
+export async function addReview(rating: number, lunchId: number, user: number | null, comment?: string) {
 
     let currentDate = new Date(Date.now())
 

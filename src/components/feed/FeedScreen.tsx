@@ -5,7 +5,6 @@ import { DaySection } from "./DaySection";
 import { FeedHeader } from "./FeedHeader";
 
 import { useEffect, useState } from "react";
-import { getAll } from "@/services/lunchService";
 
 type Props = {
   onOpen: (option: Option, day: Day) => void;
@@ -15,10 +14,10 @@ type Props = {
 export function FeedScreen({ onOpen, ratedIds }: Props) {
   const [days, setDays] = useState<Day[]>([]);
   useEffect(() => {
-      async function f() {
-          setDays(await getDays());
-      }
-      f();
+    async function f() {
+      setDays(await getDays());
+    }
+    f();
   }, []);
 
   return (
