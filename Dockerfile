@@ -5,6 +5,9 @@ FROM node:${NODE_VERSION} AS base
 # Set working directory
 WORKDIR /app
 
+# Install pnpm
+RUN yarn global add pnpm
+
 # ============================================
 # Stage 1: Dependencies Installation Stage
 # ============================================
@@ -16,7 +19,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Install project dependencies with frozen lockfile for reproducible builds
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
-    corepack enable pnpm && pnpm install --frozen-lockfile;
+    pnpm install --frozen-lockfile;
 
 # ============================================
 # Stage 2: Build Next.js application in standalone mode
@@ -31,7 +34,7 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
 # Generate the Prisma client
-RUN npx prisma generate
+RUN pnpm exec prisma generate
 
 ENV NODE_ENV=production
 
@@ -44,7 +47,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # .next/cache/fetch-cache from being included in the final image, meaning
 # cached fetch responses from the build won't be available at runtime.
 RUN --mount=type=cache,target=/app/.next/cache \
-    corepack enable pnpm && pnpm build;
+    pnpm build;
 
 # ============================================
 # Stage 3: Run Next.js application
@@ -61,13 +64,14 @@ ENV HOSTNAME="0.0.0.0"
 # Learn more here: https://nextjs.org/telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown node:node .next
+# Set owner for /app directory
+RUN chown node:node /app
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/prisma ./prisma
+COPY --from=builder --chown=node:node /app/prisma.config.ts ./prisma.config.ts
 
 # If you want to persist the fetch cache generated during the build so that
 # cached responses are available immediately on startup, uncomment this line:
@@ -75,6 +79,10 @@ COPY --from=builder --chown=node:node /app/.next/standalone ./
 
 # Switch to non-root user for security best practices
 USER node
+
+# Install Prisma
+RUN --mount=type=cache,target=/pnpm/store \
+    pnpm add prisma
 
 # Expose port 3000 to allow HTTP traffic
 EXPOSE 3000
