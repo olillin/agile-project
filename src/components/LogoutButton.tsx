@@ -1,13 +1,16 @@
 import Link from "next/link";
-import { ReactNode } from "react";
+import { ComponentProps } from "react";
 
-type Props = {
-  children?: ReactNode;
-};
+type Props = Omit<ComponentProps<typeof Link>, "href" | "prefetch">;
 
-export function LogoutButton({ children }: Props) {
+export function LogoutButton({ children, className, ...props }: Props) {
   return (
-    <Link className="text-ink font-serif" href="/logout">
+    <Link
+      {...props}
+      href="/logout"
+      prefetch={false}
+      className={className ?? "text-ink font-serif"}
+    >
       {children ?? "Logout"}
     </Link>
   );
