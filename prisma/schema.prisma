@@ -21,7 +21,13 @@ model Review {
   id      Int      @id @default(autoincrement())
   rating  Int
   comment String?
-  date    DateTime
+  posted  DateTime
+  // We assume that the review is for the latest serving.
+  // Personally I find it confusing and a bit overwhelming
+  // if the UI handles different servings of the same lunch
+  // as different lunches cluttering the UI and making our
+  // users lifes and ours harder. We just assume it's a review
+  // for the latest servings.
   lunchId Int
   lunch   Lunch    @relation(fields: [lunchId], references: [id])
   userId  Int?
