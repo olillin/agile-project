@@ -14,16 +14,11 @@ If using [Nix](https://nixos.org), simply run `nix develop` to install these.
 
 ## Getting Started
 
-First, install dependencies:
+First, run the command below to install dependencies. This will also create a
+`.env` file and generate the Prisma Client automatically.
 
 ```bash
 pnpm install
-```
-
-And generate the Prisma Client:
-
-```bash
-pnpm prisma generate
 ```
 
 Then run the development server:
@@ -32,7 +27,8 @@ Then run the development server:
 pnpm dev
 ```
 
-This will also run a development database in the background using Docker Compose, to stop it run:
+This will also run a development environment in the background using Docker
+Compose. When you are done you can stop it by running:
 
 ```bash
 docker compose down
@@ -40,7 +36,7 @@ docker compose down
 
 Open <http://localhost:3000> with your browser to see the current website.
 
-You can edit the page by modifying the files in `src/app`. The page auto-updates as you edit.
+You can edit the page by modifying the files in `src/`. The page auto-updates as you edit.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
@@ -51,6 +47,10 @@ To work with Prisma you need to generate the Prisma client. You can do so by run
 ```bash
 pnpm prisma generate
 ```
+
+> [!TIP]
+> In this project this happens automatically when installing dependencies
+> using the [`postinstall` script](https://docs.npmjs.com/cli/v8/using-npm/scripts#pre--post-scripts).
 
 Then you can import the Prisma Client in your code:
 

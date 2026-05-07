@@ -8,8 +8,8 @@
     "dev": "docker compose up -d && next dev",
     "format": "prettier --write --list-different .",
     "format:check": "prettier --check .",
+    "postinstall": "(copy-env-cli || true) && prisma generate",
     "lint": "eslint",
-    "prisma": "dotenv -e .env.development -- pnpm exec prisma",
     "start": "node .next/standalone/server.js",
     "test": "vitest --passWithNoTests"
   },
@@ -31,6 +31,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "copy-env-cli": "^1.0.0",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",

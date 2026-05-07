@@ -54,6 +54,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.14)
+      copy-env-cli:
+        specifier: ^1.0.0
+        version: 1.0.0
       dotenv-cli:
         specifier: ^11.0.0
         version: 11.0.0
@@ -1380,6 +1383,10 @@ packages:
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
+
+  copy-env-cli@1.0.0:
+    resolution: {integrity: sha512-a3Y8GDArgLeeFz3gw7ibkZHaGBfRgEI16gpVoju/KTwJKAnxYoDh5iFrz0gCfzkmvU/l/bIKVlOM8X2sAQTjXg==}
+    hasBin: true
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -4245,6 +4252,8 @@ snapshots:
   confbox@0.2.4: {}
 
   convert-source-map@2.0.0: {}
+
+  copy-env-cli@1.0.0: {}
 
   cross-spawn@7.0.6:
     dependencies:
