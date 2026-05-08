@@ -34,7 +34,7 @@ model Lunch {
   name        String       @unique
   line        String       @default("Vegetarian")
   description String       @default("")
-  ecoScore    Float        @map("eco_score")
+  ecoScore    Float
   ingredients Ingredient[]
   servings    Serving[]
 }
