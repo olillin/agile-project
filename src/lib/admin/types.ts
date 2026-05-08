@@ -35,6 +35,7 @@ export type MealStat = {
 };
 
 export type IngredientRow = {
+  id: string;
   name: string;
   amount: string;
   unit: IngredientUnit;
@@ -51,7 +52,7 @@ export type MealForm = {
   line: MealLine;
   tags: string[];
   ingredients: IngredientRow[];
-  photo: PhotoRef & { file?: File };
+  photo: PhotoRef;
   climate: ClimateFormState;
 };
 

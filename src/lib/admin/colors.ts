@@ -34,3 +34,10 @@ export function climateTone(c: ClimateBucket): PillTone | null {
   if (c === "high") return "bad";
   return null;
 }
+
+export function kgToBucket(kg: number | null): ClimateBucket {
+  if (kg == null) return null;
+  if (kg <= 1.0) return "low";
+  if (kg <= 2.0) return "med";
+  return "high";
+}

@@ -1,4 +1,4 @@
-// TODO(backend): replace with API calls once Prisma models land.
+// TODO: replace with API calls once Prisma models land.
 import { LINE_COLOR } from "./colors";
 import type { Kpi, MealComment, MealStat, TrendSeries } from "./types";
 

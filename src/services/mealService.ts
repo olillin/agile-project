@@ -1,9 +1,9 @@
-// NOTE: In-memory stub. Swap for real backend calls when the API lands.
+// TODO: In-memory stub. Swap for real backend calls when the API lands.
 
+import { kgToBucket } from "@/lib/admin/colors";
 import { MEALS } from "@/lib/admin/fixtures";
 import {
   NEW_TAG,
-  type ClimateBucket,
   type Ingredient,
   type IngredientRow,
   type MealStat,
@@ -60,12 +60,6 @@ function parseIngredients(rows: IngredientRow[]): Ingredient[] {
   }));
 }
 
-function climateBucket(kg: number): ClimateBucket {
-  if (kg <= 1.0) return "low";
-  if (kg <= 2.0) return "med";
-  return "high";
-}
-
 export async function calculateClimate(rows: IngredientRow[]): Promise<number> {
   await wait(FAKE_LATENCY_MS);
   const validCount = rows.reduce((c, r) => c + (isValidRow(r) ? 1 : 0), 0);
@@ -86,7 +80,7 @@ export async function createMeal(input: MealInput): Promise<MealStat> {
     votes: 0,
     distribution: [0, 0, 0, 0, 0],
     co2,
-    climate: input.co2 != null ? climateBucket(co2) : null,
+    climate: input.co2 != null ? kgToBucket(co2) : null,
     lastServed: "never",
     ingredients: parseIngredients(input.ingredients),
     photo: input.photo,
@@ -111,7 +105,7 @@ export async function updateMeal(
     ingredients: parseIngredients(patch.ingredients),
     photo: patch.photo,
     co2,
-    climate: patch.co2 != null ? climateBucket(co2) : existing.climate,
+    climate: patch.co2 != null ? kgToBucket(co2) : existing.climate,
   };
   MEALS[i] = updated;
   return updated;
