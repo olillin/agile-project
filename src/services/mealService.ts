@@ -1,4 +1,8 @@
 // TODO: In-memory stub. Swap for real backend calls when the API lands.
+//
+// MEALS lives in fixtures and is mutated only here. Returned MealStats are
+// cloned so callers can't reach into the store via the returned reference;
+// the seed re-initializes on each module load (HMR / fresh server start).
 
 import { kgToBucket } from "@/lib/admin/colors";
 import { MEALS } from "@/lib/admin/fixtures";
@@ -32,7 +36,7 @@ function slugify(name: string): string {
     name
       .toLowerCase()
       .normalize("NFKD")
-      .replace(/[̀-ͯ]/g, "")
+      .replace(/[\u0300-\u036F]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "") || "meal"
   );
@@ -86,7 +90,7 @@ export async function createMeal(input: MealInput): Promise<MealStat> {
     photo: input.photo ?? undefined,
   };
   MEALS.push(meal);
-  return meal;
+  return structuredClone(meal);
 }
 
 export async function updateMeal(
@@ -110,7 +114,7 @@ export async function updateMeal(
     climate: kgToBucket(co2),
   };
   MEALS[i] = updated;
-  return updated;
+  return structuredClone(updated);
 }
 
 export async function deleteMeal(id: string): Promise<void> {
