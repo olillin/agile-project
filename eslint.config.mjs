@@ -1,11 +1,18 @@
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import eslintConfigPrettier from "eslint-config-prettier/flat";
+import noCommentedCodePlugin from "eslint-plugin-no-commented-code";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    rules: {
+      "no-commented-code/no-commented-code": "warn",
+    },
+    plugins: { "no-commented-code": noCommentedCodePlugin },
+  },
   eslintConfigPrettier,
   // Override default ignores of eslint-config-next.
   globalIgnores([

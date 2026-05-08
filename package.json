@@ -36,6 +36,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-no-commented-code": "^1.0.10",
     "prettier": "^3.8.3",
     "prettier-plugin-packagejson": "^3.0.2",
     "prettier-plugin-prisma": "^5.0.0",

@@ -69,6 +69,9 @@ importers:
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.4(jiti@2.6.1))
+      eslint-plugin-no-commented-code:
+        specifier: ^1.0.10
+        version: 1.0.10
       prettier:
         specifier: ^3.8.3
         version: 3.8.3
@@ -1622,6 +1625,9 @@ packages:
     engines: {node: '>=4.0'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9
+
+  eslint-plugin-no-commented-code@1.0.10:
+    resolution: {integrity: sha512-F8tBlF1WUdivVE9+KoDY4CTIO5kP4Gb4rRBp9UxAxcuemhwMXdT5bpvox7hBVL15SlxeVgloPSXh6QBufIxb2w==}
 
   eslint-plugin-react-hooks@7.1.0:
     resolution: {integrity: sha512-LDicyhrRFrIaheDYryeM2W8gWyZXnAs4zIr2WVPiOSeTmIu2RjR4x/9N0xLaRWZ+9hssBDGo3AadcohuzAvSvg==}
@@ -4576,6 +4582,8 @@ snapshots:
       object.fromentries: 2.0.8
       safe-regex-test: 1.1.0
       string.prototype.includes: 2.0.1
+
+  eslint-plugin-no-commented-code@1.0.10: {}
 
   eslint-plugin-react-hooks@7.1.0(eslint@9.39.4(jiti@2.6.1)):
     dependencies:
