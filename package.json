@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "clean": "rm -r .next/",
-    "dev": "docker compose up -d && next dev",
+    "dev": "docker compose up -d && prisma migrate dev && next dev",
     "format": "prettier --write --list-different .",
     "format:check": "prettier --check .",
     "postinstall": "(copy-env-cli || true) && (prisma generate || true)",
