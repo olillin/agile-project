@@ -9,6 +9,7 @@ import {
 } from "@/lib/dateFormat";
 import { prisma } from "@/lib/prisma";
 import type { ClimateLabel, Day, DietTag, MealLine } from "@/lib/types";
+import { getEcoScore } from "./sustainabilityService";
 
 const DEFAULT_FEED_LOOKBACK_DAYS = 14;
 const DEFAULT_FEED_DAYS_PAGE_SIZE = 10;
@@ -28,7 +29,6 @@ type LunchDetailsInput = {
   name?: string;
   line?: MealLine;
   description?: string;
-  ecoScore?: number;
 };
 
 const MEAL_LINES: MealLine[] = ["Vegetarian", "Nordic", "Street food"];
@@ -113,14 +113,6 @@ function getLunchIdentifier(nameOrId: number | string): LunchIdentifier {
   return { name: getLunchName(nameOrId) };
 }
 
-function getEcoScore(ecoScore: number): number {
-  if (!Number.isFinite(ecoScore)) {
-    throw new Error("ecoScore must be a finite number");
-  }
-
-  return ecoScore;
-}
-
 function getLunchDetailsData(details: LunchDetailsInput) {
   const data: LunchDetailsInput = {};
 
@@ -134,10 +126,6 @@ function getLunchDetailsData(details: LunchDetailsInput) {
 
   if (details.description !== undefined) {
     data.description = details.description.trim();
-  }
-
-  if (details.ecoScore !== undefined) {
-    data.ecoScore = getEcoScore(details.ecoScore);
   }
 
   return data;
@@ -408,21 +396,20 @@ export async function addLunch(
   {
     line = "Street food",
     description = "",
-    ecoScore = 0,
   }: {
     line?: MealLine;
     description?: string;
-    ecoScore?: number;
   } = {}
 ) {
   const ingredientData = getIngredientData(ingredients);
+  const ecoScore = await getEcoScore(ingredientData);
 
   const lunch = await prisma.lunch.create({
     data: {
       name: getLunchName(name),
       line,
       description: description.trim(),
-      ecoScore: getEcoScore(ecoScore),
+      ecoScore: ecoScore,
       ingredients: {
         create: ingredientData,
       },
