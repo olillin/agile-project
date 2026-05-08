@@ -1,4 +1,4 @@
-// TODO(backend): replace with API calls once Prisma models land.
+// TODO: replace with API calls once Prisma models land.
 import { LINE_COLOR } from "./colors";
 import type { Kpi, MealComment, MealStat, TrendSeries } from "./types";
 
@@ -29,6 +29,13 @@ export const MEALS: MealStat[] = [
     co2: 2.2,
     climate: "low",
     lastServed: "2d ago",
+    ingredients: [
+      { name: "Pasta", amount: 120, unit: "g" },
+      { name: "Beef mince", amount: 90, unit: "g" },
+      { name: "Tomato sauce", amount: 80, unit: "ml" },
+      { name: "Yellow onion", amount: 40, unit: "g" },
+      { name: "Parmesan", amount: 10, unit: "g" },
+    ],
   },
   {
     id: "tacos",
@@ -41,6 +48,7 @@ export const MEALS: MealStat[] = [
     co2: 2.1,
     climate: "low",
     lastServed: "1w ago",
+    ingredients: [],
   },
   {
     id: "meatballs",
@@ -53,6 +61,7 @@ export const MEALS: MealStat[] = [
     co2: 2.4,
     climate: "low",
     lastServed: "3d ago",
+    ingredients: [],
   },
   {
     id: "lasagna",
@@ -65,6 +74,7 @@ export const MEALS: MealStat[] = [
     co2: 0.8,
     climate: "low",
     lastServed: "5d ago",
+    ingredients: [],
   },
   {
     id: "baobuns",
@@ -77,6 +87,7 @@ export const MEALS: MealStat[] = [
     co2: 1.9,
     climate: "low",
     lastServed: "2w ago",
+    ingredients: [],
   },
   {
     id: "curry",
@@ -89,6 +100,13 @@ export const MEALS: MealStat[] = [
     co2: 0.6,
     climate: "low",
     lastServed: "1w ago",
+    ingredients: [
+      { name: "Chickpeas", amount: 150, unit: "g" },
+      { name: "Coconut milk", amount: 100, unit: "ml" },
+      { name: "Basmati rice", amount: 90, unit: "g" },
+      { name: "Curry paste", amount: 20, unit: "g" },
+      { name: "Spinach", amount: 30, unit: "g" },
+    ],
   },
   {
     id: "cod",
@@ -101,6 +119,7 @@ export const MEALS: MealStat[] = [
     co2: 1.4,
     climate: "med",
     lastServed: "3w ago",
+    ingredients: [],
   },
   {
     id: "halloumi",
@@ -113,6 +132,12 @@ export const MEALS: MealStat[] = [
     co2: 1.8,
     climate: "med",
     lastServed: "2w ago",
+    ingredients: [
+      { name: "Halloumi", amount: 80, unit: "g" },
+      { name: "Quinoa", amount: 90, unit: "g" },
+      { name: "Roast vegetables", amount: 120, unit: "g" },
+      { name: "Tahini dressing", amount: 30, unit: "ml" },
+    ],
   },
   {
     id: "curry-chick",
@@ -125,6 +150,7 @@ export const MEALS: MealStat[] = [
     co2: 2.0,
     climate: "low",
     lastServed: "6d ago",
+    ingredients: [],
   },
   {
     id: "soup",
@@ -137,6 +163,7 @@ export const MEALS: MealStat[] = [
     co2: 0.5,
     climate: "low",
     lastServed: "8w ago",
+    ingredients: [],
   },
   {
     id: "stew",
@@ -149,6 +176,7 @@ export const MEALS: MealStat[] = [
     co2: 1.4,
     climate: "med",
     lastServed: "7w ago",
+    ingredients: [],
   },
   {
     id: "quiche",
@@ -161,6 +189,7 @@ export const MEALS: MealStat[] = [
     co2: 1.1,
     climate: "med",
     lastServed: "3w ago",
+    ingredients: [],
   },
   {
     id: "ramen",
@@ -173,6 +202,7 @@ export const MEALS: MealStat[] = [
     co2: 1.2,
     climate: "low",
     lastServed: "5d ago",
+    ingredients: [],
   },
   {
     id: "paella",
@@ -185,6 +215,7 @@ export const MEALS: MealStat[] = [
     co2: 1.8,
     climate: "med",
     lastServed: "12d ago",
+    ingredients: [],
   },
   {
     id: "pancakes",
@@ -197,6 +228,7 @@ export const MEALS: MealStat[] = [
     co2: 0.9,
     climate: "low",
     lastServed: "8d ago",
+    ingredients: [],
   },
   {
     id: "stroga",
@@ -209,6 +241,7 @@ export const MEALS: MealStat[] = [
     co2: 0.7,
     climate: "med",
     lastServed: "3w ago",
+    ingredients: [],
   },
   {
     id: "pho",
@@ -221,6 +254,7 @@ export const MEALS: MealStat[] = [
     co2: 1.6,
     climate: "low",
     lastServed: "2w ago",
+    ingredients: [],
   },
   {
     id: "shak",
@@ -233,6 +267,7 @@ export const MEALS: MealStat[] = [
     co2: 0.9,
     climate: null,
     lastServed: "never",
+    ingredients: [],
   },
   {
     id: "bowl",
@@ -245,6 +280,7 @@ export const MEALS: MealStat[] = [
     co2: 0.5,
     climate: null,
     lastServed: "never",
+    ingredients: [],
   },
   {
     id: "pork",
@@ -257,6 +293,7 @@ export const MEALS: MealStat[] = [
     co2: 2.8,
     climate: "med",
     lastServed: "6w ago",
+    ingredients: [],
   },
   {
     id: "salmon",
@@ -269,6 +306,7 @@ export const MEALS: MealStat[] = [
     co2: 1.5,
     climate: "low",
     lastServed: "1w ago",
+    ingredients: [],
   },
   {
     id: "pea",
@@ -279,8 +317,9 @@ export const MEALS: MealStat[] = [
     votes: 78,
     distribution: [22, 18, 20, 12, 6],
     co2: 0.4,
-    climate: "high",
+    climate: "low",
     lastServed: "9w ago",
+    ingredients: [],
   },
   {
     id: "dahl",
@@ -293,6 +332,7 @@ export const MEALS: MealStat[] = [
     co2: 0.5,
     climate: "low",
     lastServed: "4d ago",
+    ingredients: [],
   },
   {
     id: "risotto",
@@ -305,6 +345,7 @@ export const MEALS: MealStat[] = [
     co2: 0.9,
     climate: "med",
     lastServed: "2w ago",
+    ingredients: [],
   },
 ];
 

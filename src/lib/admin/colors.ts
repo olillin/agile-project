@@ -34,3 +34,19 @@ export function climateTone(c: ClimateBucket): PillTone | null {
   if (c === "high") return "bad";
   return null;
 }
+
+export const CO2_LOW_THRESHOLD_KG = 1.0;
+export const CO2_MED_THRESHOLD_KG = 2.0;
+
+export function kgToBucket(kg: number | null): ClimateBucket {
+  if (kg == null) return null;
+  if (kg <= CO2_LOW_THRESHOLD_KG) return "low";
+  if (kg <= CO2_MED_THRESHOLD_KG) return "med";
+  return "high";
+}
+
+export const BUCKET_COLOR: Record<NonNullable<ClimateBucket>, string> = {
+  low: "var(--color-sage)",
+  med: "var(--color-amber)",
+  high: "var(--color-rose)",
+};

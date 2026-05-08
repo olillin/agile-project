@@ -86,7 +86,7 @@ export function MealsTable({ meals }: Props) {
               {m.votes || "—"}
             </div>
             <div className="text-ink-muted text-right tabular-nums">
-              {m.co2} kg
+              {m.co2 != null ? `${m.co2} kg` : "—"}
             </div>
             <div className="text-ink-soft text-right">›</div>
           </Link>
