@@ -97,3 +97,23 @@ export async function getDays(): Promise<Day[]> {
 
   return days;
 }
+
+export async function removeLunch(nameOrId: number | string) {
+  if (typeof nameOrId === "number") {
+    return await prisma.lunch.delete({
+      where: { id: nameOrId },
+    });
+  }
+  if (typeof nameOrId === "string") {
+    return await prisma.lunch.delete({
+      where: { name: nameOrId },
+    });
+  }
+  return null;
+}
+
+export async function updateLunch(name: string, ingredients: Ingredient[]) {
+  const lunchToUpdate = getLunch(name);
+  removeLunch(name);
+  return addlunch(name, ingredients);
+}
