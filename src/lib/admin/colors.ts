@@ -35,10 +35,13 @@ export function climateTone(c: ClimateBucket): PillTone | null {
   return null;
 }
 
+export const CO2_LOW_THRESHOLD_KG = 1.0;
+export const CO2_MED_THRESHOLD_KG = 2.0;
+
 export function kgToBucket(kg: number | null): ClimateBucket {
   if (kg == null) return null;
-  if (kg <= 1.0) return "low";
-  if (kg <= 2.0) return "med";
+  if (kg <= CO2_LOW_THRESHOLD_KG) return "low";
+  if (kg <= CO2_MED_THRESHOLD_KG) return "med";
   return "high";
 }
 

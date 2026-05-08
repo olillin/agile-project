@@ -13,6 +13,7 @@ import { Button, buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
   DEFAULT_LINE,
+  newIngredientRow,
   parseAmount,
   type ClimateFormState,
   type IngredientRow,
@@ -27,20 +28,15 @@ import { useState } from "react";
 
 const FORM_ID = "new-meal-form";
 
-const emptyRow = (): IngredientRow => ({
-  id: crypto.randomUUID(),
-  name: "",
-  amount: "",
-  unit: "g",
-});
-
 export default function NewMealPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [line, setLine] = useState<MealLine>(DEFAULT_LINE);
   const [tags, setTags] = useState<DietTag[]>([]);
-  const [ingredients, setIngredients] = useState<IngredientRow[]>([emptyRow()]);
-  const [photo, setPhoto] = useState<PhotoRef>({});
+  const [ingredients, setIngredients] = useState<IngredientRow[]>([
+    newIngredientRow(),
+  ]);
+  const [photo, setPhoto] = useState<PhotoRef | null>(null);
   const [climate, setClimate] = useState<ClimateFormState>({
     state: "idle",
     kg: null,
@@ -62,7 +58,7 @@ export default function NewMealPage() {
     line !== DEFAULT_LINE ||
     tags.length > 0 ||
     ingredients.some(r => r.name.trim() !== "" || r.amount.trim() !== "") ||
-    photo.filename != null ||
+    photo !== null ||
     climate.state !== "idle";
 
   const submit = async () => {
@@ -74,11 +70,8 @@ export default function NewMealPage() {
         line,
         tags,
         ingredients,
-        photo: photo.filename ? photo : undefined,
-        co2:
-          climate.state === "done" && climate.kg != null
-            ? climate.kg
-            : undefined,
+        photo,
+        co2: climate.state === "done" ? climate.kg : null,
       });
       router.push(`/admin/meals/${meal.id}`);
     } catch {

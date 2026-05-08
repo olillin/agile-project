@@ -81,7 +81,9 @@ export function MealCard({ meal }: Props) {
             {meal.rating != null ? `${meal.votes} votes` : "—"}
           </span>
           <span className="tabular-nums">Last {meal.lastServed}</span>
-          <span className="tabular-nums">{meal.co2} kg CO₂e</span>
+          <span className="tabular-nums">
+            {meal.co2 != null ? `${meal.co2} kg CO₂e` : "—"}
+          </span>
           {tone && <Pill tone={tone}>{meal.climate}</Pill>}
         </div>
       </div>

@@ -3,10 +3,11 @@
 import { Pill } from "@/components/admin/Pill";
 import { Button } from "@/components/ui/Button";
 import { BUCKET_COLOR, climateTone, kgToBucket } from "@/lib/admin/colors";
-import type {
-  ClimateBucket,
-  ClimateFormState,
-  IngredientRow,
+import {
+  isValidRow,
+  type ClimateBucket,
+  type ClimateFormState,
+  type IngredientRow,
 } from "@/lib/admin/types";
 import { calculateClimate } from "@/services/mealService";
 
@@ -16,8 +17,7 @@ type Props = {
   onChange: (next: ClimateFormState) => void;
 };
 
-const isValidRow = (r: IngredientRow) =>
-  r.name.trim().length > 0 && r.amount.trim().length > 0;
+type VisualState = ClimateFormState["state"] | "stale";
 
 const IMPACT_LABEL: Record<NonNullable<ClimateBucket>, string> = {
   low: "low impact",
@@ -25,19 +25,19 @@ const IMPACT_LABEL: Record<NonNullable<ClimateBucket>, string> = {
   high: "higher impact",
 };
 
-const BUTTON_LABEL = {
+const BUTTON_LABEL: Record<VisualState, string> = {
   idle: "Calculate impact",
   loading: "Calculating…",
   done: "Recalculate",
   stale: "Recalculate",
-} as const;
+};
 
 export function ClimateImpact({ rows, state, onChange }: Props) {
-  const validCount = rows.reduce((c, r) => c + (isValidRow(r) ? 1 : 0), 0);
+  const validCount = rows.filter(isValidRow).length;
   const ready = validCount > 0;
   const isStale =
     state.state === "done" && validCount !== state.calculatedFromCount;
-  const visualState = isStale ? "stale" : state.state;
+  const visualState: VisualState = isStale ? "stale" : state.state;
 
   const calculate = async () => {
     if (!ready || state.state === "loading") return;

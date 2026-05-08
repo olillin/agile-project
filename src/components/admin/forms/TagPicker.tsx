@@ -5,7 +5,10 @@ import { FOCUS_RING } from "@/lib/styles";
 import type { DietTag } from "@/lib/types";
 
 type Props = {
-  value: readonly DietTag[];
+  // Loose `string[]` accepts non-DietTag legacy/orphan tags (e.g. `pasta`,
+  // `mexican`) read from existing meals. The picker still only toggles
+  // DietTag values.
+  value: readonly string[];
   onToggle: (tag: DietTag) => void;
 };
 

@@ -1,6 +1,10 @@
 "use client";
 
-import { INGREDIENT_UNITS, type IngredientRow } from "@/lib/admin/types";
+import {
+  INGREDIENT_UNITS,
+  newIngredientRow,
+  type IngredientRow,
+} from "@/lib/admin/types";
 import { FOCUS_RING } from "@/lib/styles";
 import type { CSSProperties } from "react";
 
@@ -35,11 +39,7 @@ export function IngredientsEditor({ rows, onChange }: Props) {
     onChange(next);
   };
   const remove = (i: number) => onChange(rows.filter((_, idx) => idx !== i));
-  const add = () =>
-    onChange([
-      ...rows,
-      { id: crypto.randomUUID(), name: "", amount: "", unit: "g" },
-    ]);
+  const add = () => onChange([...rows, newIngredientRow()]);
 
   return (
     <div className="flex flex-col" style={{ gap: GRID_GAP }}>

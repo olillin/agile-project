@@ -3,6 +3,8 @@
 import { kgToBucket } from "@/lib/admin/colors";
 import { MEALS } from "@/lib/admin/fixtures";
 import {
+  DIET_TAG_SET,
+  isValidRow,
   NEW_TAG,
   parseAmount,
   type Ingredient,
@@ -10,15 +12,15 @@ import {
   type MealStat,
   type PhotoRef,
 } from "@/lib/admin/types";
-import type { MealLine } from "@/lib/types";
+import type { DietTag, MealLine } from "@/lib/types";
 
 export type MealInput = {
   name: string;
   line: MealLine;
-  tags: string[];
+  tags: DietTag[];
   ingredients: IngredientRow[];
-  photo?: PhotoRef;
-  co2?: number;
+  photo: PhotoRef | null;
+  co2: number | null;
 };
 
 const FAKE_LATENCY_MS = 700;
@@ -49,21 +51,19 @@ function requireIndex(id: string): number {
   return i;
 }
 
-function isValidRow(r: IngredientRow): boolean {
-  return r.name.trim().length > 0 && r.amount.trim().length > 0;
-}
-
 function parseIngredients(rows: IngredientRow[]): Ingredient[] {
-  return rows.filter(isValidRow).map(r => ({
-    name: r.name.trim(),
-    amount: parseAmount(r.amount),
-    unit: r.unit,
-  }));
+  return rows.filter(isValidRow).map(r => {
+    const amount = parseAmount(r.amount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      throw new Error(`Invalid amount for "${r.name}": ${r.amount}`);
+    }
+    return { name: r.name.trim(), amount, unit: r.unit };
+  });
 }
 
 export async function calculateClimate(rows: IngredientRow[]): Promise<number> {
   await wait(FAKE_LATENCY_MS);
-  const validCount = rows.reduce((c, r) => c + (isValidRow(r) ? 1 : 0), 0);
+  const validCount = rows.filter(isValidRow).length;
   const base = 0.25 + validCount * 0.35;
   const jitter = (Math.random() - 0.5) * 0.2;
   return Math.max(0.1, Math.round((base + jitter) * 10) / 10);
@@ -71,7 +71,6 @@ export async function calculateClimate(rows: IngredientRow[]): Promise<number> {
 
 export async function createMeal(input: MealInput): Promise<MealStat> {
   await wait(FAKE_LATENCY_MS / 2);
-  const co2 = input.co2 ?? 0;
   const meal: MealStat = {
     id: uniqueId(slugify(input.name)),
     name: input.name.trim(),
@@ -80,11 +79,11 @@ export async function createMeal(input: MealInput): Promise<MealStat> {
     rating: null,
     votes: 0,
     distribution: [0, 0, 0, 0, 0],
-    co2,
-    climate: input.co2 != null ? kgToBucket(co2) : null,
+    co2: input.co2,
+    climate: kgToBucket(input.co2),
     lastServed: "never",
     ingredients: parseIngredients(input.ingredients),
-    photo: input.photo,
+    photo: input.photo ?? undefined,
   };
   MEALS.push(meal);
   return meal;
@@ -98,15 +97,17 @@ export async function updateMeal(
   const i = requireIndex(id);
   const existing = MEALS[i];
   const co2 = patch.co2 ?? existing.co2;
+  // Form only manages diet tags; preserve cuisine/shape tags and NEW_TAG.
+  const preserved = existing.tags.filter(t => !DIET_TAG_SET.has(t));
   const updated: MealStat = {
     ...existing,
     name: patch.name.trim(),
     line: patch.line,
-    tags: patch.tags,
+    tags: [...patch.tags, ...preserved],
     ingredients: parseIngredients(patch.ingredients),
-    photo: patch.photo,
+    photo: patch.photo ?? undefined,
     co2,
-    climate: patch.co2 != null ? kgToBucket(co2) : existing.climate,
+    climate: kgToBucket(co2),
   };
   MEALS[i] = updated;
   return updated;

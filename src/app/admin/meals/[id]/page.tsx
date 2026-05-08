@@ -6,7 +6,7 @@ import { SectionHead } from "@/components/admin/SectionHead";
 import { CommentList } from "@/components/admin/sections/CommentList";
 import { MealTrendCard } from "@/components/admin/sections/MealTrendCard";
 import { CupRating } from "@/components/brand/CupRating";
-import { Button } from "@/components/ui/Button";
+import { Button, buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
   getCommentsForMeal,
@@ -68,7 +68,12 @@ export default async function MealDetailPage({ params }: PageProps) {
       }
       actions={
         <>
-          <Button>Edit</Button>
+          <Link
+            href={`/admin/meals/${meal.id}/edit`}
+            className={buttonClassName()}
+          >
+            Edit
+          </Link>
           <Button primary>Schedule</Button>
         </>
       }
@@ -114,7 +119,7 @@ export default async function MealDetailPage({ params }: PageProps) {
             className="text-ink text-kpi font-serif"
             style={{ lineHeight: 1, marginTop: 4 }}
           >
-            {meal.co2}
+            {meal.co2 ?? "—"}
             <span
               className="text-ink-muted text-body"
               style={{ marginLeft: 4 }}

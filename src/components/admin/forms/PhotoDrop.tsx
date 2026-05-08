@@ -9,8 +9,8 @@ import { ImageIcon } from "lucide-react";
 import { useRef, useState, type DragEvent } from "react";
 
 type Props = {
-  value: PhotoRef;
-  onChange: (next: PhotoRef) => void;
+  value: PhotoRef | null;
+  onChange: (next: PhotoRef | null) => void;
   square?: boolean;
 };
 
@@ -40,7 +40,7 @@ export function PhotoDrop({ value, onChange, square }: Props) {
     accept(e.dataTransfer.files?.[0]);
   };
 
-  const filename = value.filename;
+  const filename = value?.filename;
 
   return (
     <>
