@@ -4,6 +4,7 @@ import { kgToBucket } from "@/lib/admin/colors";
 import { MEALS } from "@/lib/admin/fixtures";
 import {
   NEW_TAG,
+  parseAmount,
   type Ingredient,
   type IngredientRow,
   type MealStat,
@@ -55,7 +56,7 @@ function isValidRow(r: IngredientRow): boolean {
 function parseIngredients(rows: IngredientRow[]): Ingredient[] {
   return rows.filter(isValidRow).map(r => ({
     name: r.name.trim(),
-    amount: Number(r.amount.replace(",", ".")),
+    amount: parseAmount(r.amount),
     unit: r.unit,
   }));
 }

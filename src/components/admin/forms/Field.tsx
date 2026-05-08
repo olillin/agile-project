@@ -18,10 +18,7 @@ export function Field({
   style,
 }: Props) {
   return (
-    <div
-      className="flex flex-col"
-      style={{ gap: 6, ...style }}
-    >
+    <div className="flex flex-col" style={{ gap: 6, ...style }}>
       <label
         htmlFor={htmlFor}
         className="text-ink-muted font-semibold uppercase"

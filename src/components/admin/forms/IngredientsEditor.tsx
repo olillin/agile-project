@@ -12,6 +12,22 @@ type Props = {
 const GRID_COLS = "1fr 90px 100px 32px";
 const GRID_GAP = 8;
 
+const inputBase = `bg-paper text-ink border-ink/[0.12] rounded-[7px] border ${FOCUS_RING.paper}`;
+
+// Strip leading zeros unless followed by a decimal separator
+const normalizeAmount = (v: string): string => {
+  if (!/^0[0-9]/.test(v)) return v;
+  return v.replace(/^0+/, "") || "0";
+};
+
+const inputStyle: CSSProperties = {
+  fontFamily: "inherit",
+  fontSize: 13,
+  outline: "none",
+  width: "100%",
+  boxSizing: "border-box",
+};
+
 export function IngredientsEditor({ rows, onChange }: Props) {
   const update = (i: number, row: IngredientRow) => {
     const next = rows.slice();
@@ -77,19 +93,10 @@ type RowProps = {
   canRemove: boolean;
 };
 
-const inputBase = `bg-paper text-ink border-ink/[0.12] rounded-[7px] border ${FOCUS_RING.paper}`;
-const inputStyle: CSSProperties = {
-  fontFamily: "inherit",
-  fontSize: 13,
-  outline: "none",
-  width: "100%",
-  boxSizing: "border-box",
-};
-
 function Row({ row, onChange, onRemove, canRemove }: RowProps) {
   const update = <K extends keyof IngredientRow>(
     key: K,
-    val: IngredientRow[K],
+    val: IngredientRow[K]
   ) => onChange({ ...row, [key]: val });
 
   return (
@@ -106,10 +113,15 @@ function Row({ row, onChange, onRemove, canRemove }: RowProps) {
         style={{ ...inputStyle, padding: "9px 12px" }}
       />
       <input
-        type="number"
+        type="text"
         inputMode="decimal"
         value={row.amount}
-        onChange={e => update("amount", e.target.value)}
+        onChange={e => {
+          const v = e.target.value;
+          if (v === "" || /^[0-9]*[.,]?[0-9]*$/.test(v)) {
+            update("amount", normalizeAmount(v));
+          }
+        }}
         placeholder="0"
         className={inputBase}
         style={{

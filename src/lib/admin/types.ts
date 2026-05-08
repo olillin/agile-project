@@ -7,6 +7,10 @@ export type ClimateBucket = "low" | "med" | "high" | null;
 export const INGREDIENT_UNITS = ["g", "kg", "ml", "dl", "l", "st"] as const;
 export type IngredientUnit = (typeof INGREDIENT_UNITS)[number];
 
+export const DEFAULT_LINE: MealLine = "Vegetarian";
+
+export const parseAmount = (s: string): number => Number(s.replace(",", "."));
+
 export type Ingredient = {
   id?: string;
   name: string;

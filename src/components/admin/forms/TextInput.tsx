@@ -3,13 +3,22 @@
 import { FOCUS_RING } from "@/lib/styles";
 import type { InputHTMLAttributes } from "react";
 
-type Props = Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "onChange"> & {
+type Props = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "size" | "onChange"
+> & {
   value: string;
   onChange: (value: string) => void;
   large?: boolean;
 };
 
-export function TextInput({ value, onChange, large, className, ...rest }: Props) {
+export function TextInput({
+  value,
+  onChange,
+  large,
+  className,
+  ...rest
+}: Props) {
   return (
     <input
       {...rest}
