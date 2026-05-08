@@ -22,6 +22,15 @@ type ServingWithLunch = ServingGetPayload<{
   include: { lunch: { include: { ingredients: true } } };
 }>;
 
+type LunchIdentifier = { id: number } | { name: string };
+
+type LunchDetailsInput = {
+  name?: string;
+  line?: MealLine;
+  description?: string;
+  ecoScore?: number;
+};
+
 const MEAL_LINES: MealLine[] = ["Vegetarian", "Nordic", "Street food"];
 
 const LINE_STYLE: Record<MealLine, { color: string; pattern: number }> = {
@@ -81,6 +90,82 @@ function getDefaultDateSpan() {
 
 function isDateKeyInSpan(dateKey: string, startKey: string, endKey: string) {
   return dateKey >= startKey && dateKey <= endKey;
+}
+
+function getLunchName(name: string): string {
+  const trimmedName = name.trim();
+  if (trimmedName.length === 0) {
+    throw new Error("Lunch name cannot be empty");
+  }
+
+  return trimmedName;
+}
+
+function getLunchIdentifier(nameOrId: number | string): LunchIdentifier {
+  if (typeof nameOrId === "number") {
+    if (!Number.isInteger(nameOrId) || nameOrId <= 0) {
+      throw new Error("Lunch id must be a positive integer");
+    }
+
+    return { id: nameOrId };
+  }
+
+  return { name: getLunchName(nameOrId) };
+}
+
+function getEcoScore(ecoScore: number): number {
+  if (!Number.isFinite(ecoScore)) {
+    throw new Error("ecoScore must be a finite number");
+  }
+
+  return ecoScore;
+}
+
+function getLunchDetailsData(details: LunchDetailsInput) {
+  const data: LunchDetailsInput = {};
+
+  if (details.name !== undefined) {
+    data.name = getLunchName(details.name);
+  }
+
+  if (details.line !== undefined) {
+    data.line = details.line;
+  }
+
+  if (details.description !== undefined) {
+    data.description = details.description.trim();
+  }
+
+  if (details.ecoScore !== undefined) {
+    data.ecoScore = getEcoScore(details.ecoScore);
+  }
+
+  return data;
+}
+
+function getIngredientData(ingredients: Ingredient[]) {
+  return ingredients.map(ingredient => {
+    const name = ingredient.name.trim();
+    const unit = ingredient.unit.trim();
+
+    if (name.length === 0) {
+      throw new Error("Ingredient name cannot be empty");
+    }
+
+    if (unit.length === 0) {
+      throw new Error("Ingredient unit cannot be empty");
+    }
+
+    if (!Number.isFinite(ingredient.amount) || ingredient.amount < 0) {
+      throw new Error("Ingredient amount must be a non-negative number");
+    }
+
+    return {
+      name,
+      unit,
+      amount: ingredient.amount,
+    };
+  });
 }
 
 function hasIngredient(ingredients: Ingredient[], names: string[]): boolean {
@@ -317,12 +402,6 @@ export async function getFeedDaysPage({
   };
 }
 
-export async function deleteLunch(id: number) {
-  return await prisma.lunch.delete({
-    where: { id },
-  });
-}
-
 export async function addLunch(
   name: string,
   ingredients: Ingredient[],
@@ -336,18 +415,16 @@ export async function addLunch(
     ecoScore?: number;
   } = {}
 ) {
+  const ingredientData = getIngredientData(ingredients);
+
   const lunch = await prisma.lunch.create({
     data: {
-      name,
+      name: getLunchName(name),
       line,
-      description,
-      ecoScore,
+      description: description.trim(),
+      ecoScore: getEcoScore(ecoScore),
       ingredients: {
-        create: ingredients.map(ingredient => ({
-          name: ingredient.name,
-          unit: ingredient.unit,
-          amount: ingredient.amount,
-        })),
+        create: ingredientData,
       },
     },
   });
@@ -371,21 +448,28 @@ export async function getDays(
 }
 
 export async function removeLunch(nameOrId: number | string) {
-  if (typeof nameOrId === "number") {
-    return await prisma.lunch.delete({
-      where: { id: nameOrId },
-    });
-  }
-  if (typeof nameOrId === "string") {
-    return await prisma.lunch.delete({
-      where: { name: nameOrId },
-    });
-  }
-  return null;
+  return prisma.lunch.delete({
+    where: getLunchIdentifier(nameOrId),
+  });
 }
 
-export async function updateLunch(name: string, ingredients: Ingredient[]) {
-  const lunchToUpdate = getLunch(name);
-  removeLunch(name);
-  return addlunch(name, ingredients);
+export async function updateLunch(
+  nameOrId: number | string,
+  ingredients: Ingredient[],
+  details: LunchDetailsInput = {}
+) {
+  const where = getLunchIdentifier(nameOrId);
+  const lunchData = getLunchDetailsData(details);
+  const ingredientData = getIngredientData(ingredients);
+
+  return prisma.lunch.update({
+    where,
+    data: {
+      ...lunchData,
+      ingredients: {
+        deleteMany: {},
+        create: ingredientData,
+      },
+    },
+  });
 }
