@@ -89,15 +89,7 @@ export function ClimateImpact({ rows, state, onChange }: Props) {
           </div>
           {bucket && pillTone && (
             <div style={{ marginTop: 8 }}>
-              <Pill
-                tone={pillTone}
-                shape="square"
-                style={{
-                  fontSize: 10,
-                  letterSpacing: 0.4,
-                  textTransform: "uppercase",
-                }}
-              >
+              <Pill tone={pillTone} shape="square" size="sm">
                 {IMPACT_LABEL[bucket]}
               </Pill>
             </div>

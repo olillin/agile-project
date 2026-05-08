@@ -27,12 +27,11 @@ export function LineSegmented({ value, onChange }: Props) {
             onClick={() => onChange(line)}
             className={`flex flex-1 cursor-pointer items-center justify-center font-medium transition-colors ${
               active ? "bg-ink text-paper" : "text-ink hover:bg-ink/5"
-            } ${FOCUS_RING.paper}`}
+            } ${isLast ? "" : "border-ink/[0.08] border-r"} ${FOCUS_RING.paper}`}
             style={{
               padding: "9px 12px",
               gap: 8,
               fontSize: 12,
-              borderRight: isLast ? "none" : "1px solid rgb(26 24 21 / 0.08)",
             }}
           >
             <span
