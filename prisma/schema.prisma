@@ -18,29 +18,36 @@ model User {
 }
 
 model Review {
-  id      Int      @id @default(autoincrement())
-  rating  Int
-  comment String?
-  posted  DateTime
-  // We assume that the review is for the latest serving.
-  // Personally I find it confusing and a bit overwhelming
-  // if the UI handles different servings of the same lunch
-  // as different lunches cluttering the UI and making our
-  // users lifes and ours harder. We just assume it's a review
-  // for the latest servings.
-  lunchId Int
-  lunch   Lunch    @relation(fields: [lunchId], references: [id])
-  userId  Int?
-  user    User?    @relation(fields: [userId], references: [id])
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String?
+  tags      String[] @default([])
+  posted    DateTime
+  servingId Int
+  serving   Serving  @relation(fields: [servingId], references: [id], onDelete: Cascade)
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model Lunch {
   id          Int          @id @default(autoincrement())
   name        String       @unique
-  eco_score   Float
+  line        String       @default("Vegetarian")
+  description String       @default("")
+  ecoScore    Float        @map("eco_score")
   ingredients Ingredient[]
-  servings    DateTime[]
-  reviews     Review[]
+  servings    Serving[]
+}
+
+model Serving {
+  id      Int      @id @default(autoincrement())
+  date    DateTime @db.Date
+  lunchId Int
+  lunch   Lunch    @relation(fields: [lunchId], references: [id], onDelete: Cascade)
+  reviews Review[]
+
+  @@unique([lunchId, date])
+  @@index([date])
 }
 
 model Ingredient {
@@ -49,5 +56,5 @@ model Ingredient {
   unit    String
   amount  Float
   lunchId Int
-  lunch   Lunch  @relation(fields: [lunchId], references: [id])
+  lunch   Lunch  @relation(fields: [lunchId], references: [id], onDelete: Cascade)
 }
