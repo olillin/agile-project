@@ -14,7 +14,7 @@ export async function addReview(
     data: {
       rating: rating,
       comment: comment,
-      date: currentDate,
+      posted: currentDate,
       lunchId: lunchId,
       userId: user,
     },

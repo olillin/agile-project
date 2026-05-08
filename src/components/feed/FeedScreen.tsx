@@ -1,6 +1,6 @@
 import { Eyebrow } from "@/components/brand/Eyebrow";
 import type { Day, Option } from "@/lib/types";
-import { getDays, getLunchesByDate } from "@/services/lunchService";
+import { getDays } from "@/services/lunchService";
 import { useEffect, useState } from "react";
 import { DaySection } from "./DaySection";
 import { FeedHeader } from "./FeedHeader";

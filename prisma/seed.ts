@@ -1,14 +1,13 @@
 import "dotenv/config";
-//import { Pool } from "pg";
+import { LunchCreateInput } from "@/generated/prisma/models";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 
 const connectionString = `${process.env.DATABASE_URL}`;
-//const pool = new Pool({ connectionString });
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 async function main() {
-  const meatballsContent = {
+  const meatballsContent: LunchCreateInput = {
     name: "Meatballs",
     eco_score: 1,
     ingredients: {
@@ -23,7 +22,7 @@ async function main() {
         {
           rating: 5,
           comment: "Delicious!",
-          date: new Date(),
+          posted: new Date(),
           userId: null,
         },
       ],
@@ -35,7 +34,7 @@ async function main() {
     update: meatballsContent,
     create: meatballsContent,
   });
-  const tacosContent = {
+  const tacosContent: LunchCreateInput = {
     name: "Tacos",
     eco_score: 1,
     ingredients: {
@@ -50,7 +49,7 @@ async function main() {
         {
           rating: 5,
           comment: "Delicious!",
-          date: new Date(),
+          posted: new Date(),
           userId: null,
         },
       ],

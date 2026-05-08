@@ -3,7 +3,6 @@
 import { FeedScreen } from "@/components/feed/FeedScreen";
 import { MealSheet } from "@/components/sheet/MealSheet";
 import type { Day, Option, RatingPayload } from "@/lib/types";
-import { getAll } from "@/services/lunchService";
 import { addReview } from "@/services/reviewService";
 import { useState } from "react";
 
