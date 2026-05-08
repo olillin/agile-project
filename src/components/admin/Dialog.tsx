@@ -72,9 +72,7 @@ export function Dialog({ open, onClose, title, children, footer }: Props) {
       >
         {children}
       </div>
-      <div className="flex [&>*]:flex-1" style={{ gap: 8 }}>
-        {footer}
-      </div>
+      <div className="flex gap-2 [&>*]:flex-1">{footer}</div>
     </dialog>
   );
 }

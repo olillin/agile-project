@@ -10,14 +10,12 @@ type Props = {
 
 export function BackLink({ href, children, onClick }: Props) {
   return (
-    <div style={{ marginBottom: 4 }}>
-      <Link
-        href={href}
-        onClick={onClick}
-        className={`text-ink-soft hover:text-ink text-back inline-block rounded-sm transition-colors ${FOCUS_RING.cream}`}
-      >
-        {children}
-      </Link>
-    </div>
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`text-ink-soft hover:text-ink text-back mb-1 block w-fit rounded-sm transition-colors ${FOCUS_RING.cream}`}
+    >
+      {children}
+    </Link>
   );
 }

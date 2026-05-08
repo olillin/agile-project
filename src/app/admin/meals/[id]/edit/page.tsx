@@ -1,6 +1,7 @@
 "use client";
 
 import { BackLink } from "@/components/admin/BackLink";
+import { ConfirmDiscardDialog } from "@/components/admin/ConfirmDiscardDialog";
 import { Dialog } from "@/components/admin/Dialog";
 import { ClimateImpact } from "@/components/admin/forms/ClimateImpact";
 import { Field } from "@/components/admin/forms/Field";
@@ -320,28 +321,11 @@ function EditMealForm({ meal }: { meal: MealStat }) {
         reports but the dish won&apos;t be available for future scheduling.
       </Dialog>
 
-      <Dialog
+      <ConfirmDiscardDialog
         open={showCancelConfirm}
         onClose={() => setShowCancelConfirm(false)}
-        title="Discard changes?"
-        footer={
-          <>
-            <Button type="button" onClick={() => setShowCancelConfirm(false)}>
-              Keep editing
-            </Button>
-            <Button
-              primary
-              danger
-              type="button"
-              onClick={() => router.push(cancelHref)}
-            >
-              Discard
-            </Button>
-          </>
-        }
-      >
-        Anything you&apos;ve typed will be lost.
-      </Dialog>
+        onConfirm={() => router.push(cancelHref)}
+      />
     </PageShell>
   );
 }
