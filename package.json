@@ -8,7 +8,7 @@
     "dev": "docker compose up -d && next dev",
     "format": "prettier --write --list-different .",
     "format:check": "prettier --check .",
-    "postinstall": "(copy-env-cli || true) && prisma generate",
+    "postinstall": "(copy-env-cli || true) && (prisma generate || true)",
     "lint": "eslint",
     "start": "node .next/standalone/server.js",
     "test": "vitest --passWithNoTests"

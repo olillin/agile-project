@@ -14,11 +14,18 @@ If using [Nix](https://nixos.org), simply run `nix develop` to install these.
 
 ## Getting Started
 
-First, run the command below to install dependencies. This will also create a
-`.env` file and generate the Prisma Client automatically.
+First, run the command below to install dependencies.
 
 ```bash
 pnpm install
+```
+
+This will also create a `.env` file and generate the Prisma Client
+automatically. However, this is a best-effort and you may need to generate the
+Prisma client manually. To do so run this command:
+
+```bash
+pnpm prisma generate
 ```
 
 Then run the development server:
