@@ -1,6 +1,3 @@
-// TODO: Filename-only mock. The picked File is captured locally but never
-// uploaded; wire to a real storage pipeline and surface a real `url` once
-// available.
 "use client";
 
 import type { PhotoRef } from "@/lib/admin/types";

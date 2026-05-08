@@ -100,7 +100,6 @@ export async function updateMeal(
   await wait(FAKE_LATENCY_MS / 2);
   const i = requireIndex(id);
   const existing = MEALS[i];
-  const co2 = patch.co2 ?? existing.co2;
   // Form only manages diet tags; preserve cuisine/shape tags and NEW_TAG.
   const preserved = existing.tags.filter(t => !DIET_TAG_SET.has(t));
   const updated: MealStat = {
@@ -110,8 +109,8 @@ export async function updateMeal(
     tags: [...patch.tags, ...preserved],
     ingredients: parseIngredients(patch.ingredients),
     photo: patch.photo ?? undefined,
-    co2,
-    climate: kgToBucket(co2),
+    co2: patch.co2,
+    climate: kgToBucket(patch.co2),
   };
   MEALS[i] = updated;
   return structuredClone(updated);

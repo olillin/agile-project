@@ -18,6 +18,8 @@ export type Ingredient = {
   unit: IngredientUnit;
 };
 
+// TODO: storage pipeline. Picked Files are captured locally and only
+// `filename` is set. `url` is populated once a real upload lands.
 export type PhotoRef = {
   filename: string;
   url?: string;
