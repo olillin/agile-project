@@ -1,5 +1,7 @@
 "use client";
 
+import { BackLink } from "@/components/admin/BackLink";
+import { Dialog } from "@/components/admin/Dialog";
 import { ClimateImpact } from "@/components/admin/forms/ClimateImpact";
 import { Field } from "@/components/admin/forms/Field";
 import { IngredientsEditor } from "@/components/admin/forms/IngredientsEditor";
@@ -19,7 +21,6 @@ import {
   type IngredientRow,
   type PhotoRef,
 } from "@/lib/admin/types";
-import { FOCUS_RING } from "@/lib/styles";
 import type { DietTag, MealLine } from "@/lib/types";
 import { createMeal } from "@/services/mealService";
 import Link from "next/link";
@@ -43,6 +44,7 @@ export default function NewMealPage() {
     calculatedFromCount: 0,
   });
   const [submitting, setSubmitting] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   const toggleTag = (tag: DietTag) =>
     setTags(prev =>
@@ -83,15 +85,7 @@ export default function NewMealPage() {
     <PageShell
       title={
         <>
-          <div style={{ marginBottom: 4 }}>
-            <Link
-              href="/admin/meals"
-              className={`text-ink-soft hover:text-ink inline-block rounded-sm transition-colors ${FOCUS_RING.cream}`}
-              style={{ fontSize: 18 }}
-            >
-              ← Meals
-            </Link>
-          </div>
+          <BackLink href="/admin/meals">← Meals</BackLink>
           <span>New meal</span>
         </>
       }
@@ -102,11 +96,9 @@ export default function NewMealPage() {
             href="/admin/meals"
             className={buttonClassName()}
             onClick={e => {
-              if (
-                isDirty &&
-                !confirm("Discard changes? Anything you've typed will be lost.")
-              ) {
+              if (isDirty) {
                 e.preventDefault();
+                setShowCancelConfirm(true);
               }
             }}
           >
@@ -184,6 +176,29 @@ export default function NewMealPage() {
           </div>
         </Card>
       </form>
+
+      <Dialog
+        open={showCancelConfirm}
+        onClose={() => setShowCancelConfirm(false)}
+        title="Discard changes?"
+        footer={
+          <>
+            <Button type="button" onClick={() => setShowCancelConfirm(false)}>
+              Keep editing
+            </Button>
+            <Button
+              primary
+              danger
+              type="button"
+              onClick={() => router.push("/admin/meals")}
+            >
+              Discard
+            </Button>
+          </>
+        }
+      >
+        Anything you&apos;ve typed will be lost.
+      </Dialog>
     </PageShell>
   );
 }

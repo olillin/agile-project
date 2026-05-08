@@ -1,3 +1,4 @@
+import { BackLink } from "@/components/admin/BackLink";
 import { RatingHistogram } from "@/components/admin/charts/RatingHistogram";
 import { TagBars } from "@/components/admin/charts/TagBars";
 import { PageShell } from "@/components/admin/PageShell";
@@ -20,7 +21,6 @@ import {
   ratingTotal,
 } from "@/lib/admin/ratings";
 import { NEW_TAG } from "@/lib/admin/types";
-import { FOCUS_RING } from "@/lib/styles";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -44,15 +44,7 @@ export default async function MealDetailPage({ params }: PageProps) {
     <PageShell
       title={
         <>
-          <div style={{ marginBottom: 4 }}>
-            <Link
-              href="/admin/meals"
-              className={`text-ink-soft hover:text-ink text-back inline-block rounded-sm transition-colors ${FOCUS_RING.cream}`}
-              style={{ cursor: "pointer" }}
-            >
-              ← Meals
-            </Link>
-          </div>
+          <BackLink href="/admin/meals">← Meals</BackLink>
           <span>{meal.name}</span>
         </>
       }

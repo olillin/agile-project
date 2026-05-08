@@ -1,5 +1,7 @@
 "use client";
 
+import { BackLink } from "@/components/admin/BackLink";
+import { Dialog } from "@/components/admin/Dialog";
 import { ClimateImpact } from "@/components/admin/forms/ClimateImpact";
 import { Field } from "@/components/admin/forms/Field";
 import { IngredientsEditor } from "@/components/admin/forms/IngredientsEditor";
@@ -23,12 +25,11 @@ import {
   type MealStat,
   type PhotoRef,
 } from "@/lib/admin/types";
-import { FOCUS_RING } from "@/lib/styles";
 import type { DietTag } from "@/lib/types";
 import { deleteMeal, updateMeal } from "@/services/mealService";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
-import { use, useEffect, useMemo, useState } from "react";
+import { use, useMemo, useState } from "react";
 
 const FORM_ID = "edit-meal-form";
 
@@ -94,15 +95,7 @@ function EditMealForm({ meal }: { meal: MealStat }) {
   const [climate, setClimate] = useState(initial.climate);
   const [submitting, setSubmitting] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
-
-  useEffect(() => {
-    if (!showDelete) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setShowDelete(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [showDelete]);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   const toggleTag = (tag: DietTag) =>
     setTags(prev =>
@@ -113,6 +106,19 @@ function EditMealForm({ meal }: { meal: MealStat }) {
     name.trim().length > 0 &&
     ingredients.some(r => r.name.trim() && parseAmount(r.amount) > 0);
 
+  const initialKey = useMemo(
+    () =>
+      JSON.stringify({
+        name: initial.name,
+        line: initial.line,
+        tags: initial.tags,
+        ingredients: initial.ingredients,
+        photo: initial.photo,
+        kg: initial.climate.kg,
+      }),
+    [initial]
+  );
+
   const isDirty = useMemo(() => {
     const current = JSON.stringify({
       name,
@@ -122,16 +128,8 @@ function EditMealForm({ meal }: { meal: MealStat }) {
       photo,
       kg: climate.kg,
     });
-    const initialKey = JSON.stringify({
-      name: initial.name,
-      line: initial.line,
-      tags: initial.tags,
-      ingredients: initial.ingredients,
-      photo: initial.photo,
-      kg: initial.climate.kg,
-    });
     return current !== initialKey;
-  }, [name, line, tags, ingredients, photo, climate.kg, initial]);
+  }, [name, line, tags, ingredients, photo, climate.kg, initialKey]);
 
   const total = ratingTotal(meal.distribution);
   const avg = ratingAverage(meal.distribution);
@@ -169,11 +167,9 @@ function EditMealForm({ meal }: { meal: MealStat }) {
 
   const cancelHref = `/admin/meals/${meal.id}`;
   const guardCancel = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (
-      isDirty &&
-      !confirm("Discard changes? Anything you've typed will be lost.")
-    ) {
+    if (isDirty) {
       e.preventDefault();
+      setShowCancelConfirm(true);
     }
   };
 
@@ -181,16 +177,9 @@ function EditMealForm({ meal }: { meal: MealStat }) {
     <PageShell
       title={
         <>
-          <div style={{ marginBottom: 4 }}>
-            <Link
-              href={cancelHref}
-              className={`text-ink-soft hover:text-ink inline-block rounded-sm transition-colors ${FOCUS_RING.cream}`}
-              style={{ fontSize: 18 }}
-              onClick={guardCancel}
-            >
-              ← {meal.name}
-            </Link>
-          </div>
+          <BackLink href={cancelHref} onClick={guardCancel}>
+            ← {meal.name}
+          </BackLink>
           <span>Edit meal</span>
         </>
       }
@@ -198,14 +187,10 @@ function EditMealForm({ meal }: { meal: MealStat }) {
       actions={
         <>
           <Button
+            danger
             type="button"
             onClick={() => setShowDelete(true)}
             disabled={submitting}
-            style={{
-              color: "var(--color-rose)",
-              borderColor:
-                "color-mix(in oklab, var(--color-rose) 30%, transparent)",
-            }}
           >
             Delete
           </Button>
@@ -316,13 +301,47 @@ function EditMealForm({ meal }: { meal: MealStat }) {
         </Card>
       </form>
 
-      {showDelete && (
-        <DeleteDialog
-          mealName={meal.name}
-          onCancel={() => setShowDelete(false)}
-          onConfirm={confirmDelete}
-        />
-      )}
+      <Dialog
+        open={showDelete}
+        onClose={() => setShowDelete(false)}
+        title={`Delete ${meal.name}?`}
+        footer={
+          <>
+            <Button type="button" onClick={() => setShowDelete(false)}>
+              Cancel
+            </Button>
+            <Button primary danger type="button" onClick={confirmDelete}>
+              Delete meal
+            </Button>
+          </>
+        }
+      >
+        The meal will be removed from the catalog. Past ratings stay in your
+        reports but the dish won&apos;t be available for future scheduling.
+      </Dialog>
+
+      <Dialog
+        open={showCancelConfirm}
+        onClose={() => setShowCancelConfirm(false)}
+        title="Discard changes?"
+        footer={
+          <>
+            <Button type="button" onClick={() => setShowCancelConfirm(false)}>
+              Keep editing
+            </Button>
+            <Button
+              primary
+              danger
+              type="button"
+              onClick={() => router.push(cancelHref)}
+            >
+              Discard
+            </Button>
+          </>
+        }
+      >
+        Anything you&apos;ve typed will be lost.
+      </Dialog>
     </PageShell>
   );
 }
@@ -362,70 +381,6 @@ function HistoryRows({
           </span>
         </div>
       ))}
-    </div>
-  );
-}
-
-function DeleteDialog({
-  mealName,
-  onCancel,
-  onConfirm,
-}: {
-  mealName: string;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  return (
-    <div
-      className="bg-ink/50 fixed inset-0 flex items-center justify-center"
-      style={{ zIndex: 100 }}
-      onClick={onCancel}
-      role="presentation"
-    >
-      <div
-        className="bg-paper"
-        style={{
-          width: 420,
-          padding: 24,
-          borderRadius: 12,
-          boxShadow: "0 20px 60px rgb(26 24 21 / 0.3)",
-        }}
-        onClick={e => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="delete-meal-title"
-      >
-        <div
-          id="delete-meal-title"
-          className="text-ink font-serif"
-          style={{ fontSize: 22, marginBottom: 8 }}
-        >
-          Delete {mealName}?
-        </div>
-        <div
-          className="text-ink-muted"
-          style={{ fontSize: 13, lineHeight: 1.5, marginBottom: 18 }}
-        >
-          The meal will be removed from the catalog. Past ratings stay in your
-          reports but the dish won&apos;t be available for future scheduling.
-        </div>
-        <div className="flex justify-end" style={{ gap: 8 }}>
-          <Button type="button" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button
-            primary
-            type="button"
-            onClick={onConfirm}
-            style={{
-              background: "var(--color-rose)",
-              borderColor: "var(--color-rose)",
-            }}
-          >
-            Delete meal
-          </Button>
-        </div>
-      </div>
     </div>
   );
 }
