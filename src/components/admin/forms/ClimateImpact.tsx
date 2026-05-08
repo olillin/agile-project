@@ -1,7 +1,8 @@
 "use client";
 
+import { Pill } from "@/components/admin/Pill";
 import { Button } from "@/components/ui/Button";
-import { kgToBucket } from "@/lib/admin/colors";
+import { BUCKET_COLOR, climateTone, kgToBucket } from "@/lib/admin/colors";
 import type {
   ClimateBucket,
   ClimateFormState,
@@ -18,35 +19,10 @@ type Props = {
 const isValidRow = (r: IngredientRow) =>
   r.name.trim().length > 0 && r.amount.trim().length > 0;
 
-type Tone = { color: string; bg: string; label: string };
-
-const IDLE_TONE: Tone = {
-  color: "var(--color-ink-muted)",
-  bg: "transparent",
-  label: "",
-};
-
-const TONES: Record<NonNullable<ClimateBucket>, Tone> = {
-  low: {
-    color: "var(--color-sage)",
-    bg: "rgb(143 166 122 / 0.15)",
-    label: "low impact",
-  },
-  med: {
-    color: "var(--color-amber)",
-    bg: "rgb(196 128 58 / 0.15)",
-    label: "moderate",
-  },
-  high: {
-    color: "var(--color-rose)",
-    bg: "rgb(200 120 101 / 0.15)",
-    label: "higher impact",
-  },
-};
-
-const toneFor = (kg: number | null): Tone => {
-  const bucket = kgToBucket(kg);
-  return bucket ? TONES[bucket] : IDLE_TONE;
+const IMPACT_LABEL: Record<NonNullable<ClimateBucket>, string> = {
+  low: "low impact",
+  med: "moderate",
+  high: "higher impact",
 };
 
 const BUTTON_LABEL = {
@@ -70,8 +46,10 @@ export function ClimateImpact({ rows, state, onChange }: Props) {
     onChange({ state: "done", kg, calculatedFromCount: validCount });
   };
 
-  const tone = toneFor(state.kg);
   const { kg } = state;
+  const bucket = kgToBucket(kg);
+  const numberColor = bucket ? BUCKET_COLOR[bucket] : "var(--color-ink-muted)";
+  const pillTone = bucket ? climateTone(bucket) : null;
 
   return (
     <div
@@ -98,7 +76,7 @@ export function ClimateImpact({ rows, state, onChange }: Props) {
               className="font-serif"
               style={{
                 fontSize: 32,
-                color: tone.color,
+                color: numberColor,
                 letterSpacing: -0.5,
                 lineHeight: 1,
               }}
@@ -109,20 +87,21 @@ export function ClimateImpact({ rows, state, onChange }: Props) {
               kg CO₂e / portion
             </span>
           </div>
-          <div
-            className="inline-block font-semibold uppercase"
-            style={{
-              marginTop: 8,
-              fontSize: 10,
-              letterSpacing: 0.4,
-              padding: "3px 8px",
-              borderRadius: 4,
-              color: tone.color,
-              background: tone.bg,
-            }}
-          >
-            {tone.label}
-          </div>
+          {bucket && pillTone && (
+            <div style={{ marginTop: 8 }}>
+              <Pill
+                tone={pillTone}
+                shape="square"
+                style={{
+                  fontSize: 10,
+                  letterSpacing: 0.4,
+                  textTransform: "uppercase",
+                }}
+              >
+                {IMPACT_LABEL[bucket]}
+              </Pill>
+            </div>
+          )}
         </div>
       )}
 

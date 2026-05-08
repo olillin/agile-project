@@ -41,3 +41,9 @@ export function kgToBucket(kg: number | null): ClimateBucket {
   if (kg <= 2.0) return "med";
   return "high";
 }
+
+export const BUCKET_COLOR: Record<NonNullable<ClimateBucket>, string> = {
+  low: "var(--color-sage)",
+  med: "var(--color-amber)",
+  high: "var(--color-rose)",
+};
