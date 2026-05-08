@@ -32,7 +32,7 @@ model Review {
 model Lunch {
   id          Int          @id @default(autoincrement())
   name        String       @unique
-  line        String       @default("Vegetarian")
+  line        String
   description String       @default("")
   ecoScore    Float
   ingredients Ingredient[]

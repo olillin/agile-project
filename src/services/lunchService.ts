@@ -31,6 +31,11 @@ type LunchDetailsInput = {
   description?: string;
 };
 
+type AddLunchDetailsInput = {
+  line: MealLine;
+  description?: string;
+};
+
 const MEAL_LINES: MealLine[] = ["Vegetarian", "Nordic", "Street food"];
 
 const LINE_STYLE: Record<MealLine, { color: string; pattern: number }> = {
@@ -393,13 +398,7 @@ export async function getFeedDaysPage({
 export async function addLunch(
   name: string,
   ingredients: Ingredient[],
-  {
-    line = "Street food",
-    description = "",
-  }: {
-    line?: MealLine;
-    description?: string;
-  } = {}
+  { line, description = "" }: AddLunchDetailsInput
 ) {
   const ingredientData = getIngredientData(ingredients);
   const ecoScore = await getEcoScore(ingredientData);

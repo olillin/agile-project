@@ -23,7 +23,7 @@ CREATE TABLE "Review" (
 CREATE TABLE "Lunch" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "line" TEXT NOT NULL DEFAULT 'Vegetarian',
+    "line" TEXT NOT NULL,
     "description" TEXT NOT NULL DEFAULT '',
     "ecoScore" DOUBLE PRECISION NOT NULL,
 
