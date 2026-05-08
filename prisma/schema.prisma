@@ -10,3 +10,51 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id      Int      @id @default(autoincrement())
+  name    String
+  reviews Review[]
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String?
+  tags      String[] @default([])
+  posted    DateTime
+  servingId Int
+  serving   Serving  @relation(fields: [servingId], references: [id], onDelete: Cascade)
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Lunch {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  line        String
+  description String       @default("")
+  ecoScore    Float
+  ingredients Ingredient[]
+  servings    Serving[]
+}
+
+model Serving {
+  id      Int      @id @default(autoincrement())
+  date    DateTime @db.Date
+  lunchId Int
+  lunch   Lunch    @relation(fields: [lunchId], references: [id], onDelete: Cascade)
+  reviews Review[]
+
+  @@unique([lunchId, date])
+  @@index([date])
+}
+
+model Ingredient {
+  id      Int    @id @default(autoincrement())
+  name    String
+  unit    String
+  amount  Float
+  lunchId Int
+  lunch   Lunch  @relation(fields: [lunchId], references: [id], onDelete: Cascade)
+}

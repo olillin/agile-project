@@ -3,6 +3,7 @@ import { Eyebrow } from "@/components/brand/Eyebrow";
 import { LinePill } from "@/components/brand/LinePill";
 import { MealPhoto } from "@/components/brand/MealPhoto";
 import { Tag } from "@/components/brand/Tag";
+import { formatFeedDate } from "@/lib/dateFormat";
 import { FOCUS_RING } from "@/lib/styles";
 import type { Day, Option, RatingPayload } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
@@ -177,7 +178,7 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
           </MealPhoto>
 
           <div className="px-5 pt-4.5">
-            <Eyebrow>{day.date}</Eyebrow>
+            <Eyebrow>{formatFeedDate(day.date)}</Eyebrow>
             <h2
               className="text-ink mt-1 font-serif"
               style={{
