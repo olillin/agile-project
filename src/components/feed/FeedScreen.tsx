@@ -1,7 +1,7 @@
 import { Eyebrow } from "@/components/brand/Eyebrow";
 import { FOCUS_RING } from "@/lib/styles";
 import type { Day, Option } from "@/lib/types";
-import { getFeedDaysPage } from "@/services/lunchService";
+import { getFeedDaysPage, updateLunch } from "@/services/lunchService";
 import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DaySection } from "./DaySection";
