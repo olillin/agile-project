@@ -4,7 +4,7 @@ import { SelectFilter } from "@/components/admin/SelectFilter";
 import { Card } from "@/components/ui/Card";
 import { NEW_TAG } from "@/lib/admin/types";
 import { FOCUS_RING } from "@/lib/styles";
-import type { Suggestion } from "@/lib/types";
+import { isNewSuggestion, Suggestion } from "@/services/suggestionService";
 import { useMemo, useState } from "react";
 import { SuggestionsTable } from "./SuggestionsTable";
 
@@ -31,16 +31,6 @@ const SORT_COMPARE: Record<SortKey, (a: Suggestion, b: Suggestion) => number> =
     "title-asc": (a, b) => b.title.localeCompare(a.title),
   };
 
-/**
- * Check if a suggestion was posted after the admin page was viewed last.
- * @param suggestion The suggestion to check.
- * @returns If the suggestion is new.
- */
-function isNewSuggestion(suggestion: Suggestion): boolean {
-  const lastViewedTime = new Date("2026-05-11T17:00");
-  return suggestion.postedDate < lastViewedTime;
-}
-
 export function SuggestionsBrowser({ suggestions }: Props) {
   const [status, setStatus] = useState<StatusKey>("all");
   const [query, setQuery] = useState("");
@@ -52,8 +42,8 @@ export function SuggestionsBrowser({ suggestions }: Props) {
     const queryLower = query.trim().toLowerCase();
     return suggestions
       .filter(suggestion => {
-        if (status === "new" && isNewSuggestion(suggestion)) return false;
-        if (status === "viewed" && !isNewSuggestion(suggestion)) return false;
+        if (status === "new" && !isNewSuggestion(suggestion)) return false;
+        if (status === "viewed" && isNewSuggestion(suggestion)) return false;
         if (queryLower != "") {
           const matches =
             suggestion.title.toLowerCase().includes(queryLower) ||
@@ -63,7 +53,7 @@ export function SuggestionsBrowser({ suggestions }: Props) {
         return true;
       })
       .sort(SORT_COMPARE[sort]);
-  }, [status, query, sort]);
+  }, [suggestions, status, query, sort]);
 
   const statusCounts = useMemo(() => {
     const newCount = suggestions.filter(suggestion =>
@@ -105,11 +95,10 @@ export function SuggestionsBrowser({ suggestions }: Props) {
           </div>
 
           <SelectFilter label="Sort" value={sort} onChange={setSort}>
-            <option value="rating">Highest rated</option>
-            <option value="rating-asc">Lowest rated</option>
-            <option value="votes">Most votes</option>
-            <option value="name">Name (A→Z)</option>
-            <option value="co2">Lowest CO₂e</option>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="title">Title (A→Z)</option>
+            <option value="title-asc">Title (Z→A)</option>
           </SelectFilter>
         </div>
 
@@ -136,7 +125,7 @@ export function SuggestionsBrowser({ suggestions }: Props) {
           {suggestions.length} suggestions
         </div>
         <div className="text-ink-muted">
-          Click any suggestions for full description
+          Click any suggestion for full description
         </div>
       </div>
 

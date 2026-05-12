@@ -31,10 +31,3 @@ export type RatingPayload = {
   tags: string[];
   note: string;
 };
-
-export type Suggestion = {
-  title: string;
-  description: string;
-  postedDate: Date;
-  userDisplayName: string;
-};

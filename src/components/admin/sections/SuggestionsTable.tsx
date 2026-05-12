@@ -1,13 +1,13 @@
 import { Pill } from "@/components/admin/Pill";
 import { Card } from "@/components/ui/Card";
-import { ratingColor } from "@/lib/admin/colors";
+import { formatPostedDate } from "@/lib/dateFormat";
 import { FOCUS_RING } from "@/lib/styles";
-import { Suggestion } from "@/lib/types";
+import { isNewSuggestion, Suggestion } from "@/services/suggestionService";
 import Link from "next/link";
 
 type Props = { suggestions: Suggestion[] };
 
-const COLS = "4fr 1fr";
+const COLS = "3fr 1fr 1fr 32px";
 
 export function SuggestionsTable({ suggestions }: Props) {
   return (
@@ -16,17 +16,37 @@ export function SuggestionsTable({ suggestions }: Props) {
         className="text-ink-soft text-eyebrow border-ink/[0.06] grid border-b uppercase"
         style={{ gridTemplateColumns: COLS, padding: "10px 16px" }}
       >
-        <div />
         <div>Title</div>
+        <div>Posted</div>
         <div>Left by</div>
-        <div />
       </div>
-      {
-        // TODO: Show suggestions properly
-        suggestions.map(suggestion => (
-          <div>{suggestion.title}</div>
-        ))
-      }
+      {suggestions.map((suggestion, i) => (
+        <Link
+          key={suggestion.id}
+          href={`/admin/suggestions/${suggestion.id}`}
+          className={`hover:bg-ink/[0.03] text-body grid items-center transition-colors ${FOCUS_RING.paper}`}
+          style={{
+            gridTemplateColumns: COLS,
+            padding: "10px 16px",
+            borderTop: i === 0 ? "none" : "1px solid rgba(26,24,21,0.04)",
+            cursor: "pointer",
+          }}
+        >
+          <div className="flex min-w-0 items-center gap-1">
+            <div className="text-ink inline-block truncate font-medium">
+              {suggestion.title}
+            </div>
+            <div className="min-w-0">
+              {isNewSuggestion(suggestion) && <Pill tone="warn">New</Pill>}
+            </div>
+          </div>
+          <div className="min-w-0">
+            {formatPostedDate(suggestion.postedDate)}
+          </div>
+          <div className="min-w-0">{suggestion.userDisplayName}</div>
+          <div className="text-ink-soft text-right">›</div>
+        </Link>
+      ))}
     </Card>
   );
 }

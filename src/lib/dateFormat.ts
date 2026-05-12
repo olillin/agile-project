@@ -1,4 +1,6 @@
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const MINUTE_IN_MS = 60 * 1000;
+const HOUR_IN_MS = 60 * 60 * 1000;
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 function parseFeedDate(date: Date | string): Date | null {
@@ -58,4 +60,26 @@ export function formatFeedDayLabel(date: Date | string): string {
 
 export function isFeedDateToday(date: Date | string): boolean {
   return getFeedDateKey(date) === getFeedDateKey(new Date());
+}
+
+export function formatPostedDate(date: Date): string {
+  const time = date.getTime();
+  const now = Date.now();
+
+  const daysAgo = Math.round((now - time) / DAY_IN_MS);
+  if (daysAgo > 0) {
+    return `${daysAgo}d ago`;
+  }
+
+  const hoursAgo = Math.round((now - time) / HOUR_IN_MS);
+  if (hoursAgo > 0) {
+    return `${hoursAgo}h ago`;
+  }
+
+  const minutesAgo = Math.round((now - time) / MINUTE_IN_MS);
+  if (minutesAgo > 0) {
+    return `${minutesAgo}m ago`;
+  }
+
+  return "Just now";
 }
