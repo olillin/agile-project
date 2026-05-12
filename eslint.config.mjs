@@ -10,6 +10,7 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "no-commented-code/no-commented-code": "warn",
+      "no-warning-comments": "warn",
     },
     plugins: { "no-commented-code": noCommentedCodePlugin },
   },
