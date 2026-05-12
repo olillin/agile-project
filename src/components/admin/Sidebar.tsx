@@ -23,8 +23,14 @@ const ITEMS: NavItem[] = [
     href: "/admin/meals",
     matchPrefix: "/admin/meals",
   },
+  {
+    key: "suggestions",
+    label: "Suggestions",
+    href: "/admin/suggestions",
+    matchPrefix: "/admin/suggestions",
+    badge: SUGGESTIONS_BADGE,
+  },
   { key: "calendar", label: "Calendar" },
-  { key: "suggestions", label: "Suggestions", badge: SUGGESTIONS_BADGE },
 ];
 
 function isActive(item: NavItem, pathname: string) {

@@ -1,4 +1,5 @@
 // TODO: replace with API calls once Prisma models land.
+import { Suggestion } from "../types";
 import { LINE_COLOR } from "./colors";
 import type { Kpi, MealComment, MealStat, TrendSeries } from "./types";
 
@@ -598,6 +599,22 @@ export const MEAL_TAG_BARS = [
   { label: "too small", count: 12, color: "var(--color-amber)" },
   { label: "too salty", count: 6, color: "var(--color-amber)" },
   { label: "cold", count: 3, color: "var(--color-rose)" },
+];
+
+export const SUGGESTIONS: Suggestion[] = [
+  {
+    title: "Tacos",
+    description: "I want more tacos because they are yummy!",
+    postedDate: new Date(),
+    userDisplayName: "Frida",
+  },
+  {
+    title: "I'm confused",
+    description:
+      "Why are so many people complaining about the school food, it's delicious",
+    postedDate: new Date("2026-05-11T13:24"),
+    userDisplayName: "Alice",
+  },
 ];
 
 export function getMealById(id: string): MealStat | undefined {
