@@ -1,3 +1,5 @@
+import { SUGGESTIONS } from "@/lib/admin/fixtures";
+
 export type Suggestion = {
   id: number;
   title: string;
@@ -15,4 +17,12 @@ export function isNewSuggestion(suggestion: Suggestion): boolean {
   // TODO: Fetch actual last viewed time
   const lastViewedTime = new Date("2026-05-11T17:00");
   return suggestion.postedDate > lastViewedTime;
+}
+
+export async function getSuggestionById(
+  id: number
+): Promise<Suggestion | null> {
+  return Promise.resolve(
+    SUGGESTIONS.find(suggestion => suggestion.id === id) ?? null
+  );
 }
