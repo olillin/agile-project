@@ -32,13 +32,18 @@ export default async function MealDetailPage({ params }: PageProps) {
       title={
         <>
           <BackLink href="/admin/suggestions">← Suggestions</BackLink>
-          <span>{suggestion.title}</span>
+          <div className="flex flex-row items-center gap-1">
+            {suggestion.title} {isNew && <Pill tone="warn">New</Pill>}
+          </div>
         </>
       }
       subtitle={
-        <div className="flex flex-wrap items-center" style={{ gap: 4 }}>
-          {isNew && <Pill tone="warn">New</Pill>}
-        </div>
+        <span className="text-meta text-ink-muted">
+          Left {formatPostedDate(suggestion.postedDate)}
+          {suggestion.userDisplayName
+            ? " by " + suggestion.userDisplayName
+            : ""}
+        </span>
       }
       actions={
         <>
@@ -67,12 +72,6 @@ export default async function MealDetailPage({ params }: PageProps) {
           </div>
           <p className="text-body mt-1">{suggestion.description}</p>
         </Card>
-        <span className="text-meta text-ink-muted">
-          Left {formatPostedDate(suggestion.postedDate)}
-          {suggestion.userDisplayName
-            ? " by " + suggestion.userDisplayName
-            : ""}
-        </span>
       </div>
     </PageShell>
   );

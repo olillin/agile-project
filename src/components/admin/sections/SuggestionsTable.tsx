@@ -43,7 +43,11 @@ export function SuggestionsTable({ suggestions }: Props) {
           <div className="min-w-0">
             {formatPostedDate(suggestion.postedDate)}
           </div>
-          <div className="min-w-0">{suggestion.userDisplayName}</div>
+          <div className="min-w-0">
+            {suggestion.userDisplayName || (
+              <i className="text-ink-muted">Anonymous</i>
+            )}
+          </div>
           <div className="text-ink-soft text-right">›</div>
         </Link>
       ))}
