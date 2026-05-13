@@ -1,9 +1,16 @@
-import { getKpiStats, getMealStats } from "@/services/statisticsService";
+import {
+  getAdminMealCatalog,
+  getAdminMealDetail,
+  getAdminMealTrend,
+  getAdminOverview,
+  getAdminOverviewTrend,
+} from "@/services/statisticsService";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const prismaMock = vi.hoisted(() => ({
   lunch: {
     findMany: vi.fn(),
+    findUnique: vi.fn(),
   },
   review: {
     findMany: vi.fn(),
@@ -23,100 +30,267 @@ describe("statisticsService", () => {
     vi.useRealTimers();
   });
 
-  it("aggregates meal ratings across servings", async () => {
+  it("returns safe empty admin overview data", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-13T10:30:00.000Z"));
+
+    prismaMock.review.findMany.mockResolvedValue([]);
+    prismaMock.lunch.findMany.mockResolvedValue([]);
+
+    const overview = await getAdminOverview("7d");
+
+    expect(overview.meals).toEqual([]);
+    expect(overview.kpis.map(kpi => kpi.value)).toEqual(["0.0", "0", "0"]);
+    expect(overview.trend.xLabels).toHaveLength(7);
+    expect(overview.trend.series).toHaveLength(3);
+    expect(overview.trend.series.flatMap(series => series.data)).toEqual(
+      Array.from({ length: 21 }, () => 0)
+    );
+  });
+
+  it("aggregates admin meal catalog stats from lunch servings and reviews", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-13T10:30:00.000Z"));
+
     prismaMock.lunch.findMany.mockResolvedValue([
       {
         id: 2,
         name: "Tacos",
+        line: "Street food",
         ecoScore: 1.7,
+        ingredients: [
+          { id: 1, name: "Beef mince", amount: 100, unit: "g", lunchId: 2 },
+        ],
         servings: [
           {
-            date: new Date("2026-05-01T00:00:00.000Z"),
-            reviews: [{ rating: 5 }, { rating: 4 }],
-          },
-          {
-            date: new Date("2026-05-03T00:00:00.000Z"),
-            reviews: [{ rating: 3 }],
+            id: 10,
+            date: new Date("2026-05-12T00:00:00.000Z"),
+            reviews: [
+              {
+                id: 100,
+                rating: 5,
+                comment: "Great",
+                tags: ["fresh"],
+                posted: new Date("2026-05-13T08:00:00.000Z"),
+              },
+              {
+                id: 101,
+                rating: 4,
+                comment: null,
+                tags: [],
+                posted: new Date("2026-05-13T09:00:00.000Z"),
+              },
+            ],
           },
         ],
       },
-      {
-        id: 3,
-        name: "Soup",
-        ecoScore: 0.8,
-        servings: [],
-      },
     ]);
 
-    await expect(getMealStats()).resolves.toEqual([
-      {
+    await expect(getAdminMealCatalog()).resolves.toEqual([
+      expect.objectContaining({
         id: "2",
         name: "Tacos",
-        ecoScore: 1.7,
-        votes: 3,
-        rating: 4,
-        distribution: [0, 0, 1, 1, 1],
-        lastServed: new Date("2026-05-03T00:00:00.000Z"),
-      },
-      {
-        id: "3",
-        name: "Soup",
-        ecoScore: 0.8,
-        votes: 0,
-        rating: null,
-        distribution: [0, 0, 0, 0, 0],
-        lastServed: null,
-      },
+        line: "Street food",
+        tags: ["meat"],
+        rating: 4.5,
+        votes: 2,
+        distribution: [0, 0, 0, 1, 1],
+        co2: 1.7,
+        climate: "med",
+        lastServed: "Yesterday",
+        timesServed: 1,
+      }),
     ]);
-
-    expect(prismaMock.lunch.findMany).toHaveBeenCalledWith({
-      include: {
-        servings: {
-          include: {
-            reviews: true,
-          },
-        },
-      },
-      orderBy: {
-        name: "asc",
-      },
-    });
   });
 
-  it("calculates weekly KPI stats from review posted timestamps", async () => {
+  it("builds admin meal detail comments, tag frequencies, and distribution", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-05-13T10:30:00.000Z"));
 
-    prismaMock.review.findMany.mockResolvedValue([
-      {
-        rating: 4,
-        comment: "Great",
-        posted: new Date("2026-05-11T09:00:00.000Z"),
-      },
-      {
-        rating: 5,
-        comment: " ",
-        posted: new Date("2026-05-13T08:00:00.000Z"),
-      },
-      {
-        rating: 3,
-        comment: null,
-        posted: new Date("2026-05-13T09:00:00.000Z"),
-      },
-    ]);
-
-    await expect(getKpiStats()).resolves.toEqual({
-      avgRatingThisWeek: 4,
-      ratingsToday: 2,
-      commentsThisWeek: 1,
+    prismaMock.lunch.findUnique.mockResolvedValue({
+      id: 2,
+      name: "Tacos",
+      line: "Street food",
+      ecoScore: 1.7,
+      ingredients: [
+        { id: 1, name: "Beef mince", amount: 100, unit: "g", lunchId: 2 },
+      ],
+      servings: [
+        {
+          id: 10,
+          date: new Date("2026-05-12T00:00:00.000Z"),
+          reviews: [
+            {
+              id: 100,
+              rating: 5,
+              comment: "Great",
+              tags: ["fresh", "more please"],
+              posted: new Date("2026-05-13T08:00:00.000Z"),
+            },
+            {
+              id: 101,
+              rating: 2,
+              comment: "Too cold",
+              tags: ["cold", "fresh"],
+              posted: new Date("2026-05-13T09:00:00.000Z"),
+            },
+          ],
+        },
+      ],
     });
 
-    expect(prismaMock.review.findMany).toHaveBeenCalledWith({
-      where: {
-        posted: {
-          gte: new Date(2026, 4, 11),
+    const detail = await getAdminMealDetail(2);
+
+    expect(detail).toEqual(
+      expect.objectContaining({
+        id: "2",
+        distribution: [0, 1, 0, 0, 1],
+        comments: [
+          expect.objectContaining({ id: 101, text: "Too cold" }),
+          expect.objectContaining({ id: 100, text: "Great" }),
+        ],
+        tagBars: [
+          expect.objectContaining({ label: "fresh", count: 2 }),
+          expect.objectContaining({ label: "cold", count: 1 }),
+          expect.objectContaining({ label: "more please", count: 1 }),
+        ],
+      })
+    );
+  });
+
+  it("groups overview trend daily averages by meal line", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-13T10:30:00.000Z"));
+
+    prismaMock.review.findMany
+      .mockResolvedValueOnce([
+        {
+          rating: 1,
+          serving: {
+            date: new Date("2026-05-12T00:00:00.000Z"),
+            lunch: { line: "Nordic" },
+          },
         },
-      },
+        {
+          rating: 5,
+          serving: {
+            date: new Date("2026-05-13T00:00:00.000Z"),
+            lunch: { line: "Nordic" },
+          },
+        },
+        {
+          rating: 3,
+          serving: {
+            date: new Date("2026-05-13T00:00:00.000Z"),
+            lunch: { line: "Vegetarian" },
+          },
+        },
+      ])
+      .mockResolvedValueOnce([{ rating: 2 }]);
+
+    const trend = await getAdminOverviewTrend("7d");
+    const nordic = trend.series.find(series => series.name === "Nordic");
+    const vegetarian = trend.series.find(
+      series => series.name === "Vegetarian"
+    );
+
+    expect(trend.xLabels).toEqual([
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+    ]);
+    expect(nordic?.data).toEqual([0, 0, 0, 0, 0, 1, 5]);
+    expect(vegetarian?.data).toEqual([0, 0, 0, 0, 0, 0, 3]);
+    expect(trend.footnotes).toEqual([
+      expect.objectContaining({
+        label: "Best day",
+        sub: "4.0 avg · 2 ratings",
+      }),
+      expect.objectContaining({
+        label: "Worst day",
+        sub: "1.0 avg · 1 ratings",
+      }),
+      expect.objectContaining({ label: "Range delta", value: "↑ 1" }),
+    ]);
+  });
+
+  it("groups overview trend weekly averages for the 1y range", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-13T10:30:00.000Z"));
+
+    prismaMock.review.findMany
+      .mockResolvedValueOnce([
+        {
+          rating: 5,
+          serving: {
+            date: new Date("2025-07-15T00:00:00.000Z"),
+            lunch: { line: "Nordic" },
+          },
+        },
+        {
+          rating: 1,
+          serving: {
+            date: new Date("2025-11-10T00:00:00.000Z"),
+            lunch: { line: "Nordic" },
+          },
+        },
+      ])
+      .mockResolvedValueOnce([{ rating: 3 }]);
+
+    const trend = await getAdminOverviewTrend("1y");
+    const nordic = trend.series.find(series => series.name === "Nordic");
+
+    // 53 Mondays span the 365-day window from 2025-05-12.
+    expect(trend.xLabels).toHaveLength(53);
+    expect(nordic?.data).toHaveLength(53);
+    // One month label per calendar month → 12 labels visible.
+    expect(trend.xLabels.filter(label => label !== "")).toHaveLength(12);
+    expect(trend.xLabels).toContain("Jul");
+    expect(trend.xLabels).toContain("Nov");
+    expect(nordic?.data.filter(value => value > 0)).toEqual([5, 1]);
+    expect(trend.footnotes).toEqual([
+      expect.objectContaining({
+        label: "Best week",
+        sub: "5.0 avg · 1 ratings",
+      }),
+      expect.objectContaining({
+        label: "Worst week",
+        sub: "1.0 avg · 1 ratings",
+      }),
+      expect.objectContaining({ label: "Range delta" }),
+    ]);
+  });
+
+  it("orders meal trend ratings chronologically", async () => {
+    prismaMock.lunch.findUnique.mockResolvedValue({
+      id: 2,
+      servings: [
+        {
+          id: 11,
+          date: new Date("2026-05-13T00:00:00.000Z"),
+          reviews: [{ rating: 5 }],
+        },
+        {
+          id: 10,
+          date: new Date("2026-05-10T00:00:00.000Z"),
+          reviews: [{ rating: 1 }, { rating: 3 }],
+        },
+      ],
+    });
+
+    await expect(getAdminMealTrend(2, 30)).resolves.toEqual({
+      xLabels: ["10 May", "13 May"],
+      series: [
+        {
+          name: "avg",
+          color: "var(--color-tea)",
+          data: [2, 5],
+        },
+      ],
     });
   });
 });

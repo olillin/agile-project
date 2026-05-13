@@ -4,7 +4,8 @@ import { RankedMeals } from "@/components/admin/sections/RankedMeals";
 import { TrendCard } from "@/components/admin/sections/TrendCard";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { KPIS, MANAGER, MEALS } from "@/lib/admin/fixtures";
+import { verifySession } from "@/lib/session";
+import { getAdminOverview } from "@/services/statisticsService";
 
 function formatToday() {
   return new Date().toLocaleDateString("en-GB", {
@@ -14,23 +15,26 @@ function formatToday() {
   });
 }
 
-export default function AdminOverviewPage() {
+export default async function AdminOverviewPage() {
+  const session = await verifySession();
+  const overview = await getAdminOverview();
+
   return (
     <PageShell
       title={
         <>
           Good morning,{" "}
-          <span className="text-amber italic">{MANAGER.firstName}</span>
+          <span className="text-amber italic">{session.given_name}</span>
         </>
       }
       subtitle={formatToday()}
       actions={<Button primary>+ New meal</Button>}
     >
-      <KpiStrip kpis={KPIS} />
+      <KpiStrip kpis={overview.kpis} />
       <Card style={{ marginBottom: 16 }}>
-        <RankedMeals meals={MEALS} />
+        <RankedMeals meals={overview.meals} />
       </Card>
-      <TrendCard />
+      <TrendCard initialTrend={overview.trend} />
     </PageShell>
   );
 }

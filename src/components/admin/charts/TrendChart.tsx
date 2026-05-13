@@ -17,9 +17,14 @@ type Props = {
   xLabels?: string[];
   width?: number;
   height?: number;
+  showXTicks?: boolean;
 };
 
+// `i` is the unique x value: recharts groups data points by the XAxis
+// dataKey, so reusing a category (e.g. a blank label) collapses points
+// onto each other and the hover cursor snaps to the first match.
 type TrendDatum = {
+  i: number;
   label: string;
 } & Record<string, number | string | null>;
 
@@ -32,6 +37,7 @@ function toChartData(series: TrendSeries[], xLabels?: string[]): TrendDatum[] {
 
   return Array.from({ length: pointCount }, (_, index) => {
     const row: TrendDatum = {
+      i: index,
       label: xLabels?.[index] ?? String(index + 1),
     };
 
@@ -55,8 +61,10 @@ export function TrendChart({
   xLabels,
   width = 1000,
   height = 240,
+  showXTicks = true,
 }: Props) {
   const data = toChartData(series, xLabels);
+  const labelByIndex = (i: number) => data[i]?.label ?? "";
 
   return (
     <div
@@ -80,10 +88,14 @@ export function TrendChart({
             strokeDasharray="2 3"
           />
           <XAxis
-            dataKey="label"
+            dataKey="i"
+            type="category"
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "var(--color-ink-soft)", fontSize: 11 }}
+            tick={
+              showXTicks ? { fill: "var(--color-ink-soft)", fontSize: 11 } : false
+            }
+            tickFormatter={(value: number) => labelByIndex(value)}
             interval={0}
             minTickGap={6}
           />
@@ -110,6 +122,9 @@ export function TrendChart({
               fontSize: 11,
               marginBottom: 4,
             }}
+            labelFormatter={(value: unknown) =>
+              typeof value === "number" ? labelByIndex(value) : ""
+            }
             formatter={formatTooltipValue}
           />
           {series.map(s => (
@@ -119,12 +134,7 @@ export function TrendChart({
               dataKey={s.name}
               stroke={s.color}
               strokeWidth={2}
-              dot={{
-                r: 3,
-                fill: "var(--color-paper)",
-                stroke: s.color,
-                strokeWidth: 1.5,
-              }}
+              dot={false}
               activeDot={{ r: 4, strokeWidth: 0, fill: s.color }}
               connectNulls
               isAnimationActive={false}
