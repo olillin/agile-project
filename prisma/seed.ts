@@ -20,7 +20,11 @@ type LunchSeed = {
   ratingBias: number;
 };
 
-const LINES = ["Nordic", "Vegetarian", "Street food"] as const satisfies readonly MealLine[];
+const LINES = [
+  "Nordic",
+  "Vegetarian",
+  "Street food",
+] as const satisfies readonly MealLine[];
 
 const LUNCHES: LunchSeed[] = [
   // ── Nordic ────────────────────────────────────────────────────────────

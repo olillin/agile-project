@@ -93,7 +93,9 @@ export function TrendChart({
             tickLine={false}
             axisLine={false}
             tick={
-              showXTicks ? { fill: "var(--color-ink-soft)", fontSize: 11 } : false
+              showXTicks
+                ? { fill: "var(--color-ink-soft)", fontSize: 11 }
+                : false
             }
             tickFormatter={(value: number) => labelByIndex(value)}
             interval={0}
