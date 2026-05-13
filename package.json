@@ -6,7 +6,8 @@
   "scripts": {
     "build": "next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "clean": "rm -r .next/",
-    "dev": "docker compose up -d && next dev",
+    "db:migrate": "pnpm prisma migrate deploy",
+    "dev": "docker compose up -d --wait && pnpm db:migrate && next dev",
     "format": "prettier --write --list-different .",
     "format:check": "prettier --check .",
     "lint": "eslint",

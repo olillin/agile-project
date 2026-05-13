@@ -32,10 +32,18 @@ Then run the development server:
 pnpm dev
 ```
 
-This will also run a development database in the background using Docker Compose, to stop it run:
+This will also run a development database in the background using Docker Compose
+and apply any pending Prisma migrations before Next.js starts. To stop the
+database, run:
 
 ```bash
 docker compose down
+```
+
+If you want starter data in a fresh local database, run:
+
+```bash
+pnpm prisma db seed
 ```
 
 Open <http://localhost:3000> with your browser to see the current website.
