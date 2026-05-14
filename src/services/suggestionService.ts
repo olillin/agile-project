@@ -26,3 +26,15 @@ export async function getSuggestionById(
     SUGGESTIONS.find(suggestion => suggestion.id === id) ?? null
   );
 }
+
+export async function getAllSuggestions(): Promise<Suggestion> {
+  throw new Error("Not implemented")
+}
+
+export async function createSuggestion(title: string, description: string) {
+
+}
+
+export async function updateLastVisited() {
+
+}
