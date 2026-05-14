@@ -4,11 +4,10 @@ import { Pill } from "@/components/admin/Pill";
 import { buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SUGGESTIONS } from "@/lib/admin/fixtures";
+import { isNewSuggestion } from "@/lib/admin/suggestsions";
 import { formatPostedDate } from "@/lib/dateFormat";
-import {
-  getSuggestionById,
-  isNewSuggestion,
-} from "@/services/suggestionService";
+import { getSuggestionById } from "@/services/suggestionService";
+import { getCurrentUser, getUser } from "@/services/userService";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -22,10 +21,15 @@ export default async function MealDetailPage({ params }: PageProps) {
   const { id } = await params;
   const parsedId = parseInt(id);
   if (isNaN(parsedId)) notFound();
+
   const suggestion = await getSuggestionById(parsedId);
   if (!suggestion) notFound();
+  const suggestionUser = suggestion.userId
+    ? await getUser(suggestion.userId)
+    : null;
 
-  const isNew = isNewSuggestion(suggestion);
+  const user = await getCurrentUser();
+  const isNew = isNewSuggestion(suggestion, user?.lastTimeReviewsViewed);
 
   return (
     <PageShell
@@ -40,9 +44,7 @@ export default async function MealDetailPage({ params }: PageProps) {
       subtitle={
         <span className="text-meta text-ink-muted">
           Left {formatPostedDate(suggestion.postedDate)}
-          {suggestion.userDisplayName
-            ? " by " + suggestion.userDisplayName
-            : ""}
+          {suggestionUser ? " by " + suggestionUser.name : ""}
         </span>
       }
       actions={

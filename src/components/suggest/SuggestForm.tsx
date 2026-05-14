@@ -1,6 +1,5 @@
-"use client";
-
 import { FOCUS_RING } from "@/lib/styles";
+import { submitSuggestion } from "@/services/suggestionService";
 import { useState } from "react";
 import { Card } from "../ui/Card";
 
@@ -15,7 +14,7 @@ export function SuggestForm() {
 
   return (
     <Card className="m-4">
-      <form method="POST" action="/api/suggest">
+      <form action={submitSuggestion}>
         <div className="flex flex-col">
           <label htmlFor="title" className="text-l font-serif">
             Title

@@ -1,14 +1,15 @@
 "use client";
 
+import { SuggestionAndUser } from "@/app/admin/suggestions/page";
 import { SelectFilter } from "@/components/admin/SelectFilter";
 import { Card } from "@/components/ui/Card";
+import { isNewSuggestion } from "@/lib/admin/suggestsions";
 import { NEW_TAG } from "@/lib/admin/types";
 import { FOCUS_RING } from "@/lib/styles";
-import { isNewSuggestion, Suggestion } from "@/services/suggestionService";
 import { useMemo, useState } from "react";
 import { SuggestionsTable } from "./SuggestionsTable";
 
-type Props = { suggestions: Suggestion[] };
+type Props = { suggestions: SuggestionAndUser[]; lastViewed: Date };
 
 type StatusKey = "all" | "viewed" | "new";
 type SortKey = "newest" | "oldest" | "title" | "title-asc";
@@ -20,18 +21,19 @@ const STATUS_LABELS = {
   new: "New",
 } satisfies Record<StatusKey, string>;
 
-const SORT_COMPARE: Record<SortKey, (a: Suggestion, b: Suggestion) => number> =
-  {
-    newest: (a, b) =>
-      (b.postedDate.getTime() ?? -1) - (a.postedDate.getTime() ?? -1),
-    oldest: (a, b) =>
-      (a.postedDate.getTime() ?? Infinity) -
-      (b.postedDate.getTime() ?? Infinity),
-    title: (a, b) => a.title.localeCompare(b.title),
-    "title-asc": (a, b) => b.title.localeCompare(a.title),
-  };
+const SORT_COMPARE: Record<
+  SortKey,
+  (a: SuggestionAndUser, b: SuggestionAndUser) => number
+> = {
+  newest: (a, b) =>
+    (b.postedDate.getTime() ?? -1) - (a.postedDate.getTime() ?? -1),
+  oldest: (a, b) =>
+    (a.postedDate.getTime() ?? Infinity) - (b.postedDate.getTime() ?? Infinity),
+  title: (a, b) => a.title.localeCompare(b.title),
+  "title-asc": (a, b) => b.title.localeCompare(a.title),
+};
 
-export function SuggestionsBrowser({ suggestions }: Props) {
+export function SuggestionsBrowser({ suggestions, lastViewed }: Props) {
   const [status, setStatus] = useState<StatusKey>("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("newest");
@@ -42,8 +44,10 @@ export function SuggestionsBrowser({ suggestions }: Props) {
     const queryLower = query.trim().toLowerCase();
     return suggestions
       .filter(suggestion => {
-        if (status === "new" && !isNewSuggestion(suggestion)) return false;
-        if (status === "viewed" && isNewSuggestion(suggestion)) return false;
+        if (status === "new" && !isNewSuggestion(suggestion, lastViewed))
+          return false;
+        if (status === "viewed" && isNewSuggestion(suggestion, lastViewed))
+          return false;
         if (queryLower != "") {
           const matches =
             suggestion.title.toLowerCase().includes(queryLower) ||
@@ -53,18 +57,18 @@ export function SuggestionsBrowser({ suggestions }: Props) {
         return true;
       })
       .sort(SORT_COMPARE[sort]);
-  }, [suggestions, status, query, sort]);
+  }, [suggestions, status, query, sort, lastViewed]);
 
   const statusCounts = useMemo(() => {
     const newCount = suggestions.filter(suggestion =>
-      isNewSuggestion(suggestion)
+      isNewSuggestion(suggestion, lastViewed)
     ).length;
     return {
       all: suggestions.length,
       viewed: suggestions.length - newCount,
       new: newCount,
     } satisfies Record<StatusKey, number>;
-  }, [suggestions]);
+  }, [suggestions, lastViewed]);
 
   return (
     <>
@@ -139,7 +143,7 @@ export function SuggestionsBrowser({ suggestions }: Props) {
           </div>
         </Card>
       ) : (
-        <SuggestionsTable suggestions={filtered} />
+        <SuggestionsTable suggestions={filtered} lastViewed={lastViewed} />
       )}
     </>
   );

@@ -1,15 +1,16 @@
+import { SuggestionAndUser } from "@/app/admin/suggestions/page";
 import { Pill } from "@/components/admin/Pill";
 import { Card } from "@/components/ui/Card";
+import { isNewSuggestion } from "@/lib/admin/suggestsions";
 import { formatPostedDate } from "@/lib/dateFormat";
 import { FOCUS_RING } from "@/lib/styles";
-import { isNewSuggestion, Suggestion } from "@/services/suggestionService";
 import Link from "next/link";
 
-type Props = { suggestions: Suggestion[] };
+type Props = { suggestions: SuggestionAndUser[]; lastViewed: Date };
 
 const COLS = "3fr 1fr 1fr 32px";
 
-export function SuggestionsTable({ suggestions }: Props) {
+export function SuggestionsTable({ suggestions, lastViewed }: Props) {
   return (
     <Card padding={0}>
       <div
@@ -37,14 +38,16 @@ export function SuggestionsTable({ suggestions }: Props) {
               {suggestion.title}
             </div>
             <div className="min-w-0">
-              {isNewSuggestion(suggestion) && <Pill tone="warn">New</Pill>}
+              {isNewSuggestion(suggestion, lastViewed) && (
+                <Pill tone="warn">New</Pill>
+              )}
             </div>
           </div>
           <div className="min-w-0">
             {formatPostedDate(suggestion.postedDate)}
           </div>
           <div className="min-w-0">
-            {suggestion.userDisplayName || (
+            {suggestion.displayName || (
               <i className="text-ink-muted">Anonymous</i>
             )}
           </div>

@@ -4,28 +4,6 @@ import type { Suggestion } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { verifySession } from "@/lib/session";
 
-export class SuggestionUserNotFoundError extends Error {}
-
-/**
- * Check if a suggestion was posted after the admin page was viewed last.
- * @param suggestion The suggestion to check.
- * @returns If the suggestion is new.
- */
-export async function isNewSuggestion(
-  suggestion: Suggestion
-): Promise<boolean> {
-  // TODO: Fetch actual last viewed time
-  const session = await verifySession();
-  const user = await prisma.user.findUnique({
-    where: { id: session.sub },
-  });
-
-  if (user == null) return true;
-  const lastViewedTime = user.LastTimeReviewsViewed;
-  if (lastViewedTime == null) return true;
-  return suggestion.postedDate > lastViewedTime;
-}
-
 export async function getSuggestionById(
   id: number
 ): Promise<Suggestion | null> {
@@ -82,4 +60,24 @@ export async function updateLastVisited() {
       lastTimeReviewsViewed: new Date(),
     },
   });
+}
+
+export async function submitSuggestion(formData: FormData) {
+  const rawFormData = {
+    title: formData.get("title"),
+    description: formData.get("description"),
+  };
+
+  if (typeof rawFormData.title != "string") {
+    throw new Error("Title must be string");
+  }
+  if (typeof rawFormData.description != "string") {
+    throw new Error("Description must be string");
+  }
+
+  const review = await createSuggestion(
+    rawFormData.title,
+    rawFormData.description
+  );
+  return review;
 }
