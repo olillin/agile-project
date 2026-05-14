@@ -95,17 +95,19 @@ export default function EditMealPage({
       }
       const lunch: LunchWithAll = lunch_;
       console.log(lunch.servings);
+      const votes = lunch.reviews.length;
+      const rating = lunch.reviews.map(review => review.rating).reduce((acc, x) => x + acc) / votes;
       setMeal({
         id: lunch.name,
         name: lunch.name,
         line: "Nordic",
         tags: [],
-        rating: 1_000_000,
-        votes: 1_000_000,
+        rating,
+        votes,
         distribution: [0, 1, 2, 3, 4],
         co2: lunch.ecoScore,
         climate: null,
-        lastServed: "din moder",
+        lastServed: lunch.servings[lunch.servings.length - 1].date.toString(),
         ingredients: lunch.ingredients.map(dbIngredient => {
             return {
             id: dbIngredient.id,

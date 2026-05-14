@@ -12,7 +12,7 @@ import type { ClimateLabel, Day, DietTag, MealLine } from "@/lib/types";
 import { getEcoScore } from "./sustainabilityService";
 
 export type LunchWithAll = Prisma.LunchGetPayload<{
-  include: { ratings: true, servings: true; ingredients: true };
+  include: { reviews: true, servings: true; ingredients: true };
 }>;
 
 const DEFAULT_FEED_LOOKBACK_DAYS = 14;
@@ -285,14 +285,14 @@ export async function getAll() {
 export async function getLunchById(id: number): Promise<LunchWithAll | null> {
   return prisma.lunch.findUnique({
     where: { id },
-    include: { ratings: true, servings: true, ingredients: true },
+    include: { reviews: true, servings: true, ingredients: true },
   });
 }
 
 export async function getLunchByName(name: string): Promise<LunchWithAll | null> {
   return prisma.lunch.findUnique({
     where: { name },
-    include: { ratings: true, servings: true, ingredients: true },
+    include: { reviews: true, servings: true, ingredients: true },
   });
 }
 
