@@ -15,12 +15,13 @@ export default function Home() {
   useEffect(() => {
     let ignore = false;
 
-    getReviewedServingIds().then((reviewedServingIds) => {
-      if (!ignore) setRatedIds(new Set(reviewedServingIds));
-
-    }).catch((error) => {
-      console.log('Failed to fetch reviewed IDs: ', error);
-    })
+    getReviewedServingIds()
+      .then(reviewedServingIds => {
+        if (!ignore) setRatedIds(new Set(reviewedServingIds));
+      })
+      .catch(error => {
+        console.log("Failed to fetch reviewed IDs: ", error);
+      });
 
     return () => {
       ignore = true;

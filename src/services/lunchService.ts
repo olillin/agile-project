@@ -19,7 +19,7 @@ export type FeedDaysPage = {
   nextCursor: string | null;
 };
 
-interface NewIngredient extends Omit<Ingredient, 'id' | 'lunchId'> { }
+export type NewIngredient = Omit<Ingredient, "id" | "lunchId">;
 
 type ServingWithLunch = ServingGetPayload<{
   include: { lunch: { include: { ingredients: true } } };
@@ -458,7 +458,7 @@ export async function updateLunch(
         deleteMany: {},
         create: ingredientData,
       },
-      ecoScore: await getEcoScore(ingredientData)
+      ecoScore: await getEcoScore(ingredientData),
     },
   });
 }
