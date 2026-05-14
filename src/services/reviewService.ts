@@ -111,7 +111,8 @@ export async function getMyReviewSummaries(): Promise<
   });
 
   const seen = new Map<number, number>();
-  for (const r of reviews) if (!seen.has(r.servingId)) seen.set(r.servingId, r.rating);
+  for (const r of reviews)
+    if (!seen.has(r.servingId)) seen.set(r.servingId, r.rating);
 
   return [...seen].map(([servingId, rating]) => ({
     servingId: servingId.toString(),
