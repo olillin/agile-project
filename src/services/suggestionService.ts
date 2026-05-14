@@ -47,7 +47,7 @@ export async function createSuggestion(
 export async function updateLastVisited() {
   const session = await verifySession();
 
-  prisma.user.upsert({
+  await prisma.user.upsert({
     where: {
       id: session.sub,
     },
@@ -58,6 +58,31 @@ export async function updateLastVisited() {
       id: session.sub,
       name: session.given_name,
       lastTimeReviewsViewed: new Date(),
+    },
+  });
+}
+
+export async function countNewSuggestions() {
+  const session = await verifySession();
+
+  const user = await prisma.user.findFirst({
+    where: {
+      id: session.sub,
+    },
+    select: {
+      lastTimeReviewsViewed: true,
+    },
+  });
+
+  if (user?.lastTimeReviewsViewed == null) {
+    return prisma.suggestion.count();
+  }
+
+  return prisma.suggestion.count({
+    where: {
+      postedDate: {
+        gte: user.lastTimeReviewsViewed,
+      },
     },
   });
 }

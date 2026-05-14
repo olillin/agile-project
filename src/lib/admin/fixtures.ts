@@ -15,8 +15,6 @@ export const WEEK_STAT = {
   ratingsThisWeek: 312,
 };
 
-export const SUGGESTIONS_BADGE = 12;
-
 export const MEALS: MealStat[] = [
   {
     id: "bolognese",

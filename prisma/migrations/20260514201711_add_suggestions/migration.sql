@@ -23,7 +23,7 @@ CREATE TABLE "Suggestion" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL DEFAULT '',
-    "postedDate" DATE NOT NULL,
+    "postedDate" TIMESTAMP(3) NOT NULL,
     "userId" TEXT,
 
     CONSTRAINT "Suggestion_pkey" PRIMARY KEY ("id")

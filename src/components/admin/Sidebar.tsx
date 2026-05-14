@@ -2,10 +2,12 @@
 
 import { Wordmark } from "@/components/brand/Wordmark";
 import { LogoutButton } from "@/components/LogoutButton";
-import { MANAGER, SUGGESTIONS_BADGE, WEEK_STAT } from "@/lib/admin/fixtures";
+import { MANAGER, WEEK_STAT } from "@/lib/admin/fixtures";
 import { FOCUS_RING } from "@/lib/styles";
+import { countNewSuggestions } from "@/services/suggestionService";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type NavItem = {
   key: string;
@@ -15,24 +17,6 @@ type NavItem = {
   matchPrefix?: string;
 };
 
-const ITEMS: NavItem[] = [
-  { key: "home", label: "Overview", href: "/admin", matchPrefix: "/admin" },
-  {
-    key: "meals",
-    label: "Meals",
-    href: "/admin/meals",
-    matchPrefix: "/admin/meals",
-  },
-  {
-    key: "suggestions",
-    label: "Suggestions",
-    href: "/admin/suggestions",
-    matchPrefix: "/admin/suggestions",
-    badge: SUGGESTIONS_BADGE,
-  },
-  { key: "calendar", label: "Calendar" },
-];
-
 function isActive(item: NavItem, pathname: string) {
   if (!item.matchPrefix) return false;
   return (
@@ -40,16 +24,44 @@ function isActive(item: NavItem, pathname: string) {
   );
 }
 
-function activeNavKey(pathname: string): string | null {
-  const activeItem = ITEMS.filter(it => isActive(it, pathname)).sort(
-    (a, b) => (b.matchPrefix?.length ?? 0) - (a.matchPrefix?.length ?? 0)
-  )[0];
-  return activeItem?.key ?? null;
-}
-
 export function Sidebar() {
+  const [newSuggestionsCount, setNewSuggestionsCount] = useState(0);
+  const suggestionsBadge = newSuggestionsCount
+    ? {
+        badge: newSuggestionsCount,
+      }
+    : {};
+
+  useEffect(() => {
+    countNewSuggestions().then(count => setNewSuggestionsCount(count));
+  }, []);
+
+  const navItems: NavItem[] = [
+    { key: "home", label: "Overview", href: "/admin", matchPrefix: "/admin" },
+    {
+      key: "meals",
+      label: "Meals",
+      href: "/admin/meals",
+      matchPrefix: "/admin/meals",
+    },
+    {
+      key: "suggestions",
+      label: "Suggestions",
+      href: "/admin/suggestions",
+      matchPrefix: "/admin/suggestions",
+      ...suggestionsBadge,
+    },
+    { key: "calendar", label: "Calendar" },
+  ];
+
   const pathname = usePathname() ?? "";
-  const activeKey = activeNavKey(pathname);
+  const activeItem = navItems
+    .filter(it => isActive(it, pathname))
+    .sort(
+      (a, b) => (b.matchPrefix?.length ?? 0) - (a.matchPrefix?.length ?? 0)
+    )[0];
+  const activeKey = activeItem?.key;
+
   return (
     <aside
       className="bg-paper border-ink/[0.06] flex h-full flex-col border-r font-sans"
@@ -67,7 +79,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex flex-col" style={{ gap: 2 }}>
-        {ITEMS.map(it => {
+        {navItems.map(it => {
           const active = activeKey === it.key;
           const stateClass = active
             ? "bg-tea text-paper font-medium"
