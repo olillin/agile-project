@@ -1,4 +1,5 @@
 import { SUGGESTIONS } from "@/lib/admin/fixtures";
+import { prisma } from "@/lib/prisma";
 
 export type Suggestion = {
   id: number;
@@ -28,13 +29,9 @@ export async function getSuggestionById(
 }
 
 export async function getAllSuggestions(): Promise<Suggestion> {
-  throw new Error("Not implemented")
-}
-
-export async function createSuggestion(title: string, description: string) {
 
 }
 
-export async function updateLastVisited() {
+export async function createSuggestion(title: string, description: string) { }
 
-}
+export async function updateLastVisited() { }

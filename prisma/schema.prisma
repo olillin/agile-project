@@ -12,9 +12,10 @@ datasource db {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  name    String
-  reviews Review[]
+  id         Int          @id @default(autoincrement())
+  name       String
+  reviews    Review[]
+  Suggestion Suggestion[]
 }
 
 model Review {
@@ -57,4 +58,13 @@ model Ingredient {
   amount  Float
   lunchId Int
   lunch   Lunch  @relation(fields: [lunchId], references: [id], onDelete: Cascade)
+}
+
+model Suggestion {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @default("")
+  postedDate  DateTime @db.Date
+  userId      Int?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
