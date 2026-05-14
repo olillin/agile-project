@@ -1,13 +1,10 @@
+"use server";
+
 import { SUGGESTIONS } from "@/lib/admin/fixtures";
 import { prisma } from "@/lib/prisma";
+import type { Suggestion } from "@/generated/prisma/client";
 
-export type Suggestion = {
-  id: number;
-  title: string;
-  description: string;
-  postedDate: Date;
-  userDisplayName: string;
-};
+
 
 /**
  * Check if a suggestion was posted after the admin page was viewed last.
@@ -28,8 +25,8 @@ export async function getSuggestionById(
   );
 }
 
-export async function getAllSuggestions(): Promise<Suggestion> {
-
+export async function getAllSuggestions(): Promise<Suggestion[]> {
+  return await prisma.suggestion.findMany();
 }
 
 export async function createSuggestion(title: string, description: string) { }
