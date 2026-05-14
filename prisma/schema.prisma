@@ -18,15 +18,15 @@ model User {
 }
 
 model Review {
-  id        Int      @id @default(autoincrement())
-  rating    Int
-  comment   String?
-  tags      String[] @default([])
-  posted    DateTime
-  servingId Int
-  serving   Serving  @relation(fields: [servingId], references: [id], onDelete: Cascade)
-  userId    Int?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  id      Int      @id @default(autoincrement())
+  rating  Int
+  comment String?
+  tags    String[] @default([])
+  posted  DateTime
+  lunchId Int
+  lunch   Lunch    @relation(fields: [lunchId], references: [id], onDelete: Cascade)
+  userId  Int?
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model Lunch {
@@ -37,6 +37,7 @@ model Lunch {
   ecoScore    Float
   ingredients Ingredient[]
   servings    Serving[]
+  reviews     Review[]
 }
 
 model Serving {
@@ -44,7 +45,6 @@ model Serving {
   date    DateTime @db.Date
   lunchId Int
   lunch   Lunch    @relation(fields: [lunchId], references: [id], onDelete: Cascade)
-  reviews Review[]
 
   @@unique([lunchId, date])
   @@index([date])

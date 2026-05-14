@@ -29,19 +29,19 @@ async function main() {
         create: [
           {
             date: new Date("2024-01-01"),
-            reviews: {
-              create: [
-                {
-                  rating: 5,
-                  comment: "Delicious!",
-                  tags: ["filling", "balanced"],
-                  posted: new Date(),
-                  userId: null,
-                },
-              ],
-            },
           },
           { date: new Date("2024-01-02") },
+        ],
+      },
+      reviews: {
+        create: [
+          {
+            rating: 5,
+            comment: "Delicious!",
+            tags: ["filling", "balanced"],
+            posted: new Date(),
+            userId: null,
+          },
         ],
       },
     },
@@ -64,19 +64,19 @@ async function main() {
         create: [
           {
             date: new Date("2024-01-01"),
-            reviews: {
-              create: [
-                {
-                  rating: 5,
-                  comment: "Delicious!",
-                  tags: ["fresh"],
-                  posted: new Date(),
-                  userId: null,
-                },
-              ],
-            },
           },
           { date: new Date("2024-01-02") },
+        ],
+      },
+      reviews: {
+        create: [
+          {
+            rating: 5,
+            comment: "Delicious!",
+            tags: ["fresh"],
+            posted: new Date(),
+            userId: null,
+          },
         ],
       },
     },
