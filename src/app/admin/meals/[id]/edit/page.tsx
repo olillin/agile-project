@@ -23,6 +23,7 @@ import {
   parseAmount,
   type ClimateFormState,
   type IngredientRow,
+  type IngredientUnit,
   type MealStat,
   type PhotoRef,
 } from "@/lib/admin/types";
@@ -31,6 +32,7 @@ import {
   getLunchByName,
   removeLunch,
   updateLunch,
+  type LunchWithAll,
 } from "@/services/lunchService";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
@@ -48,14 +50,13 @@ type Initial = {
 };
 
 function seedForm(meal: MealStat): Initial {
-  console.log(meal);
   const ingredients: IngredientRow[] =
     meal.ingredients.length > 0
-      ? meal.ingredients.map(ing => ({
-          id: crypto.randomUUID(),
-          name: ing.name,
-          amount: Number(ing.amount),
-          unit: ing.unit,
+      ? meal.ingredients.map(ingredient => ({
+          id: ingredient.id,
+          name: ingredient.name,
+          amount: ingredient.amount,
+          unit: ingredient.unit,
         }))
       : [newIngredientRow()];
   // Form only manages diet tags
@@ -84,15 +85,16 @@ export default function EditMealPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  let [meal, setMeal] = useState<MealStat | null>(null);
-  let [done, setDone] = useState(false);
+  const [meal, setMeal] = useState<MealStat | null>(null);
+  const [done, setDone] = useState(false);
+
   useEffect(() => {
     getLunchByName(id).then(lunch_ => {
       if (lunch_ == null) {
         return <p>din moder</p>;
       }
-      const lunch: Lunch = lunch_;
-      console.log(lunch);
+      const lunch: LunchWithAll = lunch_;
+      console.log(lunch.servings);
       setMeal({
         id: lunch.name,
         name: lunch.name,
@@ -104,16 +106,24 @@ export default function EditMealPage({
         co2: lunch.ecoScore,
         climate: null,
         lastServed: "din moder",
-        ingredients: lunch.ingredients,
-        photo: null,
+        ingredients: lunch.ingredients.map(dbIngredient => {
+            return {
+            id: dbIngredient.id,
+            unit: dbIngredient.unit as IngredientUnit,
+            name: dbIngredient.name,
+            amount: dbIngredient.amount,
+        };
+        }),
+        photo: undefined,
       });
       setDone(true);
     });
   }, [id]);
-  if (!done) {
+  if (!meal) {
     return <p>loading</p>;
   }
-  return <EditMealForm meal={meal} />;
+  let meal_: MealStat = meal;
+  return <EditMealForm meal={meal_} />;
 }
 
 function EditMealForm({ meal }: { meal: MealStat }) {
@@ -177,16 +187,11 @@ function EditMealForm({ meal }: { meal: MealStat }) {
       const updated = await updateLunch(
         meal.id,
         ingredients,
-        name,
         {
           name,
           line,
           description: "",
         }
-        // line,
-        // tags,
-        // photo,
-        // co2: climate.state === "done" ? climate.kg : null,
       );
       router.push(`/admin/meals/${updated.name}/edit`);
     } catch {

@@ -1,6 +1,6 @@
 "use server";
 
-import type { Ingredient, Lunch } from "@/generated/prisma/client";
+import type { Ingredient, Lunch, Prisma } from "@/generated/prisma/client";
 import type { ServingGetPayload } from "@/generated/prisma/models";
 import {
   formatFeedDayLabel,
@@ -10,6 +10,10 @@ import {
 import { prisma } from "@/lib/prisma";
 import type { ClimateLabel, Day, DietTag, MealLine } from "@/lib/types";
 import { getEcoScore } from "./sustainabilityService";
+
+export type LunchWithAll = Prisma.LunchGetPayload<{
+  include: { ratings: true, servings: true; ingredients: true };
+}>;
 
 const DEFAULT_FEED_LOOKBACK_DAYS = 14;
 const DEFAULT_FEED_DAYS_PAGE_SIZE = 10;
@@ -278,17 +282,17 @@ export async function getAll() {
   return await prisma.lunch.findMany();
 }
 
-export async function getLunchById(id: number): Promise<Lunch | null> {
+export async function getLunchById(id: number): Promise<LunchWithAll | null> {
   return prisma.lunch.findUnique({
     where: { id },
-    include: { servings: true, ingredients: true },
+    include: { ratings: true, servings: true, ingredients: true },
   });
 }
 
-export async function getLunchByName(name: string): Promise<Lunch | null> {
+export async function getLunchByName(name: string): Promise<LunchWithAll | null> {
   return prisma.lunch.findUnique({
     where: { name },
-    include: { servings: true, ingredients: true },
+    include: { ratings: true, servings: true, ingredients: true },
   });
 }
 

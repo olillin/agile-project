@@ -7,12 +7,12 @@ import {
   isValidRow,
   type ClimateBucket,
   type ClimateFormState,
-  type Ingredient,
+  type IngredientRow,
 } from "@/lib/admin/types";
 import { getEcoScore } from "@/services/sustainabilityService";
 
 type Props = {
-  rows: Ingredient[];
+  rows: IngredientRow[];
   state: ClimateFormState;
   onChange: (next: ClimateFormState) => void;
 };

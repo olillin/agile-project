@@ -3,7 +3,7 @@
 import {
   INGREDIENT_UNITS,
   newIngredientRow,
-  type Ingredient,
+  type IngredientRow,
 } from "@/lib/admin/types";
 import { FOCUS_RING } from "@/lib/styles";
 import type { CSSProperties } from "react";
@@ -119,7 +119,7 @@ function Row({ row, onChange, onRemove, canRemove }: RowProps) {
         onChange={e => {
           const v = e.target.value;
           if (v === "" || /^[0-9]*[.,]?[0-9]*$/.test(v)) {
-            update("amount", normalizeAmount(v));
+            update("amount", Number(normalizeAmount(v)));
           }
         }}
         placeholder="0"

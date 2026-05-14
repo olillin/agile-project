@@ -59,7 +59,7 @@ export default function NewMealPage() {
     name.trim() !== "" ||
     line !== DEFAULT_LINE ||
     tags.length > 0 ||
-    ingredients.some(r => r.name.trim() !== "" || r.amount.trim() !== "") ||
+    ingredients.some(r => r.name.trim() !== "") ||
     photo !== null ||
     climate.state !== "idle";
 

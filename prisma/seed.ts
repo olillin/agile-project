@@ -20,9 +20,9 @@ async function main() {
       ecoScore: 2.4,
       ingredients: {
         create: [
-          { name: "Meat", amount: 100, unit: "g" },
-          { name: "Potatoes", amount: 200, unit: "g" },
-          { name: "Gravy", amount: 150, unit: "ml" },
+          { id: 0, name: "Meat", amount: 100, unit: "g" },
+          { id: 1, name: "Potatoes", amount: 200, unit: "g" },
+          { id: 2, name: "Gravy", amount: 150, unit: "ml" },
         ],
       },
       servings: {
@@ -55,9 +55,9 @@ async function main() {
       ecoScore: 1.7,
       ingredients: {
         create: [
-          { name: "Meat", amount: 100, unit: "g" },
-          { name: "Corn", amount: 200, unit: "g" },
-          { name: "Salsa", amount: 150, unit: "ml" },
+          { id: 3, name: "Meat", amount: 100, unit: "g" },
+          { id: 4, name: "Corn", amount: 200, unit: "g" },
+          { id: 5, name: "Salsa", amount: 150, unit: "ml" },
         ],
       },
       servings: {

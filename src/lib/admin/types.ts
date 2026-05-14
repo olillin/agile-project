@@ -12,12 +12,7 @@ export const DEFAULT_LINE: MealLine = "Vegetarian";
 export const parseAmount = (s: string | number): number =>
   Number(s.toString().replace(",", "."));
 
-export type Ingredient = {
-  id?: string;
-  name: string;
-  amount: number;
-  unit: IngredientUnit;
-};
+export type Ingredient = IngredientRow;
 
 // TODO: storage pipeline. Picked Files are captured locally and only
 // `filename` is set. `url` is populated once a real upload lands.
@@ -42,7 +37,7 @@ export type MealStat = {
 };
 
 export type IngredientRow = {
-  id: string;
+  id: number,
   name: string;
   amount: number;
   unit: IngredientUnit;
@@ -51,12 +46,12 @@ export type IngredientRow = {
 // A row counts as filled when both fields have content. Climate calculation
 // and persistence skip rows where either is blank.
 export const isValidRow = (r: IngredientRow): boolean =>
-  r.name.trim().length > 0 && r.amount.toString().trim().length > 0;
+  r.name.trim().length > 0 && r.amount > 0;
 
 // Fresh row for editor / page initial state. The id is only used as a
 // React key, never persisted, so server/client divergence is harmless.
 export const newIngredientRow = (): IngredientRow => ({
-  id: crypto.randomUUID(),
+  id: 0,
   name: "",
   amount: 0,
   unit: "g",
