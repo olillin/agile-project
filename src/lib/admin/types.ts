@@ -9,7 +9,8 @@ export type IngredientUnit = (typeof INGREDIENT_UNITS)[number];
 
 export const DEFAULT_LINE: MealLine = "Vegetarian";
 
-export const parseAmount = (s: string): number => Number(s.replace(",", "."));
+export const parseAmount = (s: string | number): number =>
+  Number(s.toString().replace(",", "."));
 
 export type Ingredient = {
   id?: string;
@@ -43,21 +44,21 @@ export type MealStat = {
 export type IngredientRow = {
   id: string;
   name: string;
-  amount: string;
+  amount: number;
   unit: IngredientUnit;
 };
 
 // A row counts as filled when both fields have content. Climate calculation
 // and persistence skip rows where either is blank.
 export const isValidRow = (r: IngredientRow): boolean =>
-  r.name.trim().length > 0 && r.amount.trim().length > 0;
+  r.name.trim().length > 0 && r.amount.toString().trim().length > 0;
 
 // Fresh row for editor / page initial state. The id is only used as a
 // React key, never persisted, so server/client divergence is harmless.
 export const newIngredientRow = (): IngredientRow => ({
   id: crypto.randomUUID(),
   name: "",
-  amount: "",
+  amount: 0,
   unit: "g",
 });
 

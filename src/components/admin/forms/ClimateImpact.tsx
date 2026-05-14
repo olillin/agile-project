@@ -7,12 +7,12 @@ import {
   isValidRow,
   type ClimateBucket,
   type ClimateFormState,
-  type IngredientRow,
+  type Ingredient,
 } from "@/lib/admin/types";
-import { calculateClimate } from "@/services/mealService";
+import { getEcoScore } from "@/services/sustainabilityService";
 
 type Props = {
-  rows: IngredientRow[];
+  rows: Ingredient[];
   state: ClimateFormState;
   onChange: (next: ClimateFormState) => void;
 };
@@ -42,7 +42,7 @@ export function ClimateImpact({ rows, state, onChange }: Props) {
   const calculate = async () => {
     if (!ready || state.state === "loading") return;
     onChange({ ...state, state: "loading" });
-    const kg = await calculateClimate(rows);
+    const kg = await getEcoScore(rows);
     onChange({ state: "done", kg, calculatedFromCount: validCount });
   };
 

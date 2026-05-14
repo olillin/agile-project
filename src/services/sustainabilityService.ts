@@ -1,12 +1,8 @@
 "use server";
 
-const apiUrl = process.env.GREEN_BITE_API_URL || "http://localhost:80/";
+import { Ingredient } from "@/lib/types";
 
-export interface Ingredient {
-  name: string;
-  amount: number;
-  unit: string;
-}
+const apiUrl = process.env.GREEN_BITE_API_URL || "http://localhost:80/";
 
 export async function getEcoScore(ingredients: Ingredient[]): Promise<number> {
   let call = apiUrl + "/score?";

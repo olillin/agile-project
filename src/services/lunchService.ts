@@ -19,7 +19,11 @@ export type FeedDaysPage = {
   nextCursor: string | null;
 };
 
-export type NewIngredient = Omit<Ingredient, "id" | "lunchId">;
+export type NewIngredient = {
+  name: string;
+  unit: string;
+  amount: number;
+};
 
 type ServingWithLunch = ServingGetPayload<{
   include: { lunch: { include: { ingredients: true } } };
@@ -277,12 +281,14 @@ export async function getAll() {
 export async function getLunchById(id: number): Promise<Lunch | null> {
   return prisma.lunch.findUnique({
     where: { id },
+    include: { servings: true, ingredients: true },
   });
 }
 
 export async function getLunchByName(name: string): Promise<Lunch | null> {
   return prisma.lunch.findUnique({
     where: { name },
+    include: { servings: true, ingredients: true },
   });
 }
 

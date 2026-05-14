@@ -14,8 +14,8 @@ import { PageShell } from "@/components/admin/PageShell";
 import { SectionHead } from "@/components/admin/SectionHead";
 import { Button, buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Lunch } from "@/generated/prisma/client";
 import { ratingColor } from "@/lib/admin/colors";
-import { getMealById } from "@/lib/admin/fixtures";
 import { ratingAverage, ratingTotal } from "@/lib/admin/ratings";
 import {
   DIET_TAG_SET,
@@ -27,10 +27,14 @@ import {
   type PhotoRef,
 } from "@/lib/admin/types";
 import type { DietTag } from "@/lib/types";
-import { deleteMeal, updateMeal } from "@/services/mealService";
+import {
+  getLunchByName,
+  removeLunch,
+  updateLunch,
+} from "@/services/lunchService";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
-import { use, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 
 const FORM_ID = "edit-meal-form";
 
@@ -44,12 +48,13 @@ type Initial = {
 };
 
 function seedForm(meal: MealStat): Initial {
+  console.log(meal);
   const ingredients: IngredientRow[] =
     meal.ingredients.length > 0
       ? meal.ingredients.map(ing => ({
           id: crypto.randomUUID(),
           name: ing.name,
-          amount: String(ing.amount),
+          amount: Number(ing.amount),
           unit: ing.unit,
         }))
       : [newIngredientRow()];
@@ -79,8 +84,35 @@ export default function EditMealPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const meal = getMealById(id);
-  if (!meal) notFound();
+  let [meal, setMeal] = useState<MealStat | null>(null);
+  let [done, setDone] = useState(false);
+  useEffect(() => {
+    getLunchByName(id).then(lunch_ => {
+      if (lunch_ == null) {
+        return <p>din moder</p>;
+      }
+      const lunch: Lunch = lunch_;
+      console.log(lunch);
+      setMeal({
+        id: lunch.name,
+        name: lunch.name,
+        line: "Nordic",
+        tags: [],
+        rating: 1_000_000,
+        votes: 1_000_000,
+        distribution: [0, 1, 2, 3, 4],
+        co2: lunch.ecoScore,
+        climate: null,
+        lastServed: "din moder",
+        ingredients: lunch.ingredients,
+        photo: null,
+      });
+      setDone(true);
+    });
+  }, [id]);
+  if (!done) {
+    return <p>loading</p>;
+  }
   return <EditMealForm meal={meal} />;
 }
 
@@ -141,15 +173,22 @@ function EditMealForm({ meal }: { meal: MealStat }) {
     if (!isValid || submitting) return;
     setSubmitting(true);
     try {
-      const updated = await updateMeal(meal.id, {
-        name,
-        line,
-        tags,
+      console.log(ingredients);
+      const updated = await updateLunch(
+        meal.id,
         ingredients,
-        photo,
-        co2: climate.state === "done" ? climate.kg : null,
-      });
-      router.push(`/admin/meals/${updated.id}`);
+        name,
+        {
+          name,
+          line,
+          description: "",
+        }
+        // line,
+        // tags,
+        // photo,
+        // co2: climate.state === "done" ? climate.kg : null,
+      );
+      router.push(`/admin/meals/${updated.name}/edit`);
     } catch {
       setSubmitting(false);
     }
@@ -159,7 +198,7 @@ function EditMealForm({ meal }: { meal: MealStat }) {
     setShowDelete(false);
     setSubmitting(true);
     try {
-      await deleteMeal(meal.id);
+      await removeLunch(meal.id);
       router.push("/admin/meals");
     } catch {
       setSubmitting(false);

@@ -3,7 +3,7 @@
 import {
   INGREDIENT_UNITS,
   newIngredientRow,
-  type IngredientRow,
+  type Ingredient,
 } from "@/lib/admin/types";
 import { FOCUS_RING } from "@/lib/styles";
 import type { CSSProperties } from "react";
