@@ -1,9 +1,9 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import type { Suggestion } from "@/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
 
-export class SuggestionUserNotFoundError extends Error { }
+export class SuggestionUserNotFoundError extends Error {}
 
 /**
  * Check if a suggestion was posted after the admin page was viewed last.
@@ -21,16 +21,20 @@ export async function getSuggestionById(
 ): Promise<Suggestion | null> {
   return prisma.suggestion.findUnique({
     where: {
-      id
-    }
-  })
+      id,
+    },
+  });
 }
 
 export async function getAllSuggestions(): Promise<Suggestion[]> {
   return await prisma.suggestion.findMany();
 }
 
-export async function createSuggestion(title: string, description: string, userId: number | null = null) {
+export async function createSuggestion(
+  title: string,
+  description: string,
+  userId: number | null = null
+) {
   if (userId !== null) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -46,10 +50,9 @@ export async function createSuggestion(title: string, description: string, userI
     data: {
       title,
       description,
-      postedDate: new Date()
-    }
-  })
-
+      postedDate: new Date(),
+    },
+  });
 }
 
-export async function updateLastVisited() { }
+export async function updateLastVisited() {}
