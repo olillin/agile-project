@@ -54,7 +54,7 @@ const SORT_COMPARE: Record<SortKey, (a: MealStat, b: MealStat) => number> = {
   "rating-asc": (a, b) => (a.rating ?? Infinity) - (b.rating ?? Infinity),
   votes: (a, b) => b.votes - a.votes,
   name: (a, b) => a.name.localeCompare(b.name),
-  co2: (a, b) => a.co2 - b.co2,
+  co2: (a, b) => (a.co2 ?? Infinity) - (b.co2 ?? Infinity),
 };
 
 export function MealsBrowser({ meals }: Props) {

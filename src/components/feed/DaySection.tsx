@@ -1,4 +1,5 @@
 import { Eyebrow } from "@/components/brand/Eyebrow";
+import { formatFeedDate } from "@/lib/dateFormat";
 import type { Day, Option } from "@/lib/types";
 import { OptionCard } from "./OptionCard";
 
@@ -21,7 +22,7 @@ export function DaySection({ day, onOpen, ratedIds }: Props) {
         >
           {day.label}
         </h2>
-        <Eyebrow size="sm">{day.date}</Eyebrow>
+        <Eyebrow size="sm">{formatFeedDate(day.date)}</Eyebrow>
       </header>
       <div className="mb-2.5">
         <OptionCard option={hero} onOpen={open} rated={ratedIds.has(hero.id)} />

@@ -1,15 +1,15 @@
 "use server";
 
-const api_url = process.env.GREEN_BITE_API_URL || "http://localhost:80/";
+const apiUrl = process.env.GREEN_BITE_API_URL || "http://localhost:80/";
 
-type Ingredient = {
+export interface Ingredient {
   name: string;
   amount: number;
   unit: string;
-};
+}
 
-export async function eco_score(ingredients: Ingredient[]) {
-  let call = api_url + "/score?";
+export async function getEcoScore(ingredients: Ingredient[]): Promise<number> {
+  let call = apiUrl + "/score?";
 
   call += ingredients
     .map(
@@ -18,8 +18,22 @@ export async function eco_score(ingredients: Ingredient[]) {
     )
     .join("&");
 
-  const data = await fetch(call, {
+  const response = await fetch(call, {
     method: "POST",
   });
-  return data.json();
+
+  if (response.status !== 200) {
+    throw new Error("Failed to get eco score from Green Bite API");
+  }
+
+  const text = await response.text();
+  const score = parseFloat(text);
+
+  if (isNaN(score)) {
+    throw new Error(
+      "Received invalid response from Green Bite API, score is not a number"
+    );
+  }
+
+  return score;
 }
