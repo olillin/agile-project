@@ -12,10 +12,11 @@ datasource db {
 }
 
 model User {
-  id         Int          @id @default(autoincrement())
-  name       String
-  reviews    Review[]
-  Suggestion Suggestion[]
+  id                    String       @unique
+  name                  String
+  reviews               Review[]
+  suggestions           Suggestion[]
+  lastTimeReviewsViewed DateTime?
 }
 
 model Review {
@@ -26,7 +27,7 @@ model Review {
   posted    DateTime
   servingId Int
   serving   Serving  @relation(fields: [servingId], references: [id], onDelete: Cascade)
-  userId    Int?
+  userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
@@ -65,6 +66,6 @@ model Suggestion {
   title       String
   description String   @default("")
   postedDate  DateTime @db.Date
-  userId      Int?
+  userId      String?
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
