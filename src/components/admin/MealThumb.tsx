@@ -17,7 +17,7 @@ export function MealThumb({ meal, showNewBadge = true }: Props) {
     <div className="relative h-full w-full overflow-hidden">
       <Image
         src={meal.photo.url}
-        alt=""
+        alt={meal.name}
         fill
         sizes="(max-width: 768px) 50vw, 240px"
         className="object-cover"

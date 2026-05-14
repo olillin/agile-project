@@ -16,27 +16,30 @@ type Props = {
 
 type SortKey = "recent" | "highest" | "lowest";
 
-function commentTime(comment: MealComment): number {
+function commentTime(comment: MealComment, nowMs: number): number {
   if (comment.postedAt) {
     const parsed = new Date(comment.postedAt);
     if (!Number.isNaN(parsed.getTime())) return parsed.getTime();
   }
 
   const days = relativeDays(comment.when);
-  return days == null ? 0 : Date.now() - days * 24 * 60 * 60 * 1000;
+  return days == null ? 0 : nowMs - days * 24 * 60 * 60 * 1000;
 }
 
 export function CommentList({ comments, pageSize = 5 }: Props) {
   const [sort, setSort] = useState<SortKey>("recent");
   const [page, setPage] = useState(1);
+  const [nowMs] = useState(() => Date.now());
 
   const sorted = useMemo(() => {
     const next = [...comments];
-    if (sort === "recent") next.sort((a, b) => commentTime(b) - commentTime(a));
+    if (sort === "recent") {
+      next.sort((a, b) => commentTime(b, nowMs) - commentTime(a, nowMs));
+    }
     if (sort === "highest") next.sort((a, b) => b.rating - a.rating);
     if (sort === "lowest") next.sort((a, b) => a.rating - b.rating);
     return next;
-  }, [comments, sort]);
+  }, [comments, sort, nowMs]);
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const safePage = Math.min(page, totalPages);

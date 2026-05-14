@@ -95,7 +95,7 @@ export function FeedScreen({ onOpen, ratedIds }: Props) {
             Loading meals...
           </p>
         )}
-        {!isInitialLoading && !loadError && !hasLunches && (
+        {!isInitialLoading && !loadError && !hasLunches && !nextCursor && (
           <p className="text-ink-muted px-1 py-6 text-center text-sm">
             No lunches available
           </p>

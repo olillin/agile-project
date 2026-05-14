@@ -52,8 +52,7 @@ function toChartData(series: TrendSeries[], xLabels?: string[]): TrendDatum[] {
 function formatTooltipValue(value: TooltipValueType | undefined): string {
   if (value == null) return "";
   if (typeof value === "number") return value.toFixed(1);
-  if (typeof value === "string") return value;
-  return value.join(" - ");
+  return String(value);
 }
 
 export function TrendChart({

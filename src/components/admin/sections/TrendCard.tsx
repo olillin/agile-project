@@ -30,7 +30,6 @@ export function TrendCard({ initialTrend }: Props) {
   const selectRange = async (nextRange: RangeKey) => {
     if (nextRange === range || isLoading) return;
 
-    setRange(nextRange);
     setIsLoading(true);
     setLoadError(null);
 
@@ -43,6 +42,7 @@ export function TrendCard({ initialTrend }: Props) {
       if (!response.ok) throw new Error("Failed to load trend");
 
       setTrend((await response.json()) as AdminOverviewTrend);
+      setRange(nextRange);
     } catch (error) {
       console.error("Failed to load overview trend", error);
       setLoadError("Could not load this range.");

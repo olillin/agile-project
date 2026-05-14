@@ -2,7 +2,7 @@ import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 
-const connectionString = `${process.env.DATABASE_URL}`;
+const connectionString = process.env.DATABASE_URL!;
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
@@ -524,10 +524,9 @@ function shuffle<T>(items: readonly T[], rng: () => number): T[] {
 }
 
 function postedTimeOn(rng: () => number, servingDate: Date): Date {
-  // Reviews trickle in over lunch hours (11:30 – 14:30 local).
   const posted = new Date(servingDate);
   const minutes = pickInt(rng, 11 * 60 + 30, 14 * 60 + 30);
-  posted.setHours(0, minutes, pickInt(rng, 0, 59), 0);
+  posted.setUTCHours(0, minutes, pickInt(rng, 0, 59), 0);
   return posted;
 }
 
