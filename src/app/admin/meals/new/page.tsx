@@ -22,7 +22,7 @@ import {
   type PhotoRef,
 } from "@/lib/admin/types";
 import type { DietTag, MealLine } from "@/lib/types";
-import { createMeal } from "@/services/mealService";
+import { addLunch } from "@/services/lunchService";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -67,15 +67,12 @@ export default function NewMealPage() {
     if (!isValid || submitting) return;
     setSubmitting(true);
     try {
-      const meal = await createMeal({
+      const lunch = await addLunch(
         name,
-        line,
-        tags,
         ingredients,
-        photo,
-        co2: climate.state === "done" ? climate.kg : null,
-      });
-      router.push(`/admin/meals/${meal.id}`);
+        { line: line, },
+      );
+      router.push(`/admin/meals/${lunch.name}`);
     } catch {
       setSubmitting(false);
     }
