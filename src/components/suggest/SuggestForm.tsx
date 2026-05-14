@@ -12,9 +12,13 @@ export function SuggestForm() {
     ? "Submit suggestion"
     : "Complete form to submit";
 
+  const handleSubmit = async (formData: FormData): Promise<void> => {
+    await submitSuggestion(formData);
+  };
+
   return (
     <Card className="m-4">
-      <form action={submitSuggestion}>
+      <form action={handleSubmit}>
         <div className="flex flex-col">
           <label htmlFor="title" className="text-l font-serif">
             Title

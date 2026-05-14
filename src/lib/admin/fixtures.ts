@@ -1,7 +1,14 @@
 // TODO: replace with API calls once Prisma models land.
-import { Suggestion } from "@/services/suggestionService";
 import { LINE_COLOR } from "./colors";
 import type { Kpi, MealComment, MealStat, TrendSeries } from "./types";
+
+type Suggestion = {
+  id: number;
+  title: string;
+  description: string;
+  postedDate: Date;
+  userDisplayName: string;
+};
 
 export const MANAGER = {
   name: "Eva Magnusson",
