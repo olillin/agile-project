@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 import { cookies } from "next/headers";
 import type { NextRequest, NextResponse } from "next/server";
 
-export const CLIENT_ID_COOKIE = "agile_client_id";
+export const CLIENT_ID_COOKIE = "client_id";
 
 const CLIENT_ID_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
 
