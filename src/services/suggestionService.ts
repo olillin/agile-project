@@ -1,26 +1,28 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import type { Suggestion } from "@/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
 import { verifySession } from "@/lib/session";
 
-export class SuggestionUserNotFoundError extends Error { }
+export class SuggestionUserNotFoundError extends Error {}
 
 /**
  * Check if a suggestion was posted after the admin page was viewed last.
  * @param suggestion The suggestion to check.
  * @returns If the suggestion is new.
  */
-export async function isNewSuggestion(suggestion: Suggestion): Promise<boolean> {
+export async function isNewSuggestion(
+  suggestion: Suggestion
+): Promise<boolean> {
   // TODO: Fetch actual last viewed time
   const session = await verifySession();
   const user = await prisma.user.findUnique({
-    where: { id: session.sub }
-  })
+    where: { id: session.sub },
+  });
 
-  if (user == null) return true
+  if (user == null) return true;
   const lastViewedTime = user.LastTimeReviewsViewed;
-  if (lastViewedTime == null) return true
+  if (lastViewedTime == null) return true;
   return suggestion.postedDate > lastViewedTime;
 }
 
@@ -29,16 +31,20 @@ export async function getSuggestionById(
 ): Promise<Suggestion | null> {
   return prisma.suggestion.findUnique({
     where: {
-      id
-    }
-  })
+      id,
+    },
+  });
 }
 
 export async function getAllSuggestions(): Promise<Suggestion[]> {
   return await prisma.suggestion.findMany();
 }
 
-export async function createSuggestion(title: string, description: string, userId: string | null = null) {
+export async function createSuggestion(
+  title: string,
+  description: string,
+  userId: string | null = null
+) {
   if (userId !== null) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -53,25 +59,27 @@ export async function createSuggestion(title: string, description: string, userI
     data: {
       title,
       description,
-      postedDate: new Date()
-    }
-  })
+      postedDate: new Date(),
+    },
+  });
+
+  return suggestion;
 }
 
 export async function updateLastVisited() {
-  const session = await verifySession()
+  const session = await verifySession();
 
   prisma.user.upsert({
     where: {
-      id: session.sub
+      id: session.sub,
     },
     update: {
-      lastTimeReviewsViewed: new Date()
+      lastTimeReviewsViewed: new Date(),
     },
     create: {
       id: session.sub,
       name: session.given_name,
-      lastTimeReviewsViewed: new Date()
-    }
-  })
+      lastTimeReviewsViewed: new Date(),
+    },
+  });
 }
