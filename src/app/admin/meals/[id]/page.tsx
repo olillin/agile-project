@@ -13,7 +13,6 @@ import {
   getCommentsForMeal,
   getMealById,
   MEAL_TAG_BARS,
-  MEALS,
 } from "@/lib/admin/fixtures";
 import {
   interpretRatingDistribution,
@@ -23,10 +22,6 @@ import {
 import { NEW_TAG } from "@/lib/admin/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
-export function generateStaticParams() {
-  return MEALS.map(m => ({ id: m.id }));
-}
 
 type PageProps = { params: Promise<{ id: string }> };
 

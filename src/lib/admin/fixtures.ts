@@ -2,14 +2,6 @@
 import { LINE_COLOR } from "./colors";
 import type { Kpi, MealComment, MealStat, TrendSeries } from "./types";
 
-type Suggestion = {
-  id: number;
-  title: string;
-  description: string;
-  postedDate: Date;
-  userDisplayName: string;
-};
-
 export const MANAGER = {
   name: "Eva Magnusson",
   initials: "EM",
@@ -606,32 +598,6 @@ export const MEAL_TAG_BARS = [
   { label: "too small", count: 12, color: "var(--color-amber)" },
   { label: "too salty", count: 6, color: "var(--color-amber)" },
   { label: "cold", count: 3, color: "var(--color-rose)" },
-];
-
-export const SUGGESTIONS: Suggestion[] = [
-  {
-    id: 1,
-    title: "Tacos",
-    description: "I want more tacos because they are yummy!",
-    postedDate: new Date("2026-05-11T13:27"),
-    userDisplayName: "Frida",
-  },
-  {
-    id: 2,
-    title: "I'm confused",
-    description:
-      "Why are so many people complaining about the school food, it's delicious",
-    postedDate: new Date("2026-05-11T13:24"),
-    userDisplayName: "Alice",
-  },
-  {
-    id: 3,
-    title: "I want more sweet foods",
-    description:
-      "I loveeee sugary sweets and pancakes. We should have more of that",
-    postedDate: new Date(),
-    userDisplayName: "",
-  },
 ];
 
 export function getMealById(id: string): MealStat | undefined {

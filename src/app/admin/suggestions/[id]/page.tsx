@@ -3,17 +3,12 @@ import { PageShell } from "@/components/admin/PageShell";
 import { Pill } from "@/components/admin/Pill";
 import { buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { SUGGESTIONS } from "@/lib/admin/fixtures";
 import { isNewSuggestion } from "@/lib/admin/suggestsions";
 import { formatPostedDate } from "@/lib/dateFormat";
 import { getSuggestionById } from "@/services/suggestionService";
 import { getCurrentUser, getUser } from "@/services/userService";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
-export function generateStaticParams() {
-  return SUGGESTIONS.map(suggestion => ({ id: suggestion.id.toString() }));
-}
 
 type PageProps = { params: Promise<{ id: string }> };
 
