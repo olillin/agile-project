@@ -14,7 +14,6 @@ import { PageShell } from "@/components/admin/PageShell";
 import { SectionHead } from "@/components/admin/SectionHead";
 import { Button, buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Lunch } from "@/generated/prisma/client";
 import { ratingColor } from "@/lib/admin/colors";
 import { ratingAverage, ratingTotal } from "@/lib/admin/ratings";
 import {
@@ -35,7 +34,7 @@ import {
   type LunchWithAll,
 } from "@/services/lunchService";
 import Link from "next/link";
-import { notFound, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { use, useEffect, useMemo, useState } from "react";
 
 const FORM_ID = "edit-meal-form";
@@ -86,7 +85,6 @@ export default function EditMealPage({
 }) {
   const { id } = use(params);
   const [meal, setMeal] = useState<MealStat | null>(null);
-  const [done, setDone] = useState(false);
 
   useEffect(() => {
     getLunchByName(id).then(lunch_ => {
@@ -96,7 +94,9 @@ export default function EditMealPage({
       const lunch: LunchWithAll = lunch_;
       console.log(lunch.servings);
       const votes = lunch.reviews.length;
-      const rating = lunch.reviews.map(review => review.rating).reduce((acc, x) => x + acc) / votes;
+      const rating =
+        lunch.reviews.map(review => review.rating).reduce((acc, x) => x + acc) /
+        votes;
       setMeal({
         id: lunch.name,
         name: lunch.name,
@@ -109,22 +109,21 @@ export default function EditMealPage({
         climate: null,
         lastServed: lunch.servings[lunch.servings.length - 1].date.toString(),
         ingredients: lunch.ingredients.map(dbIngredient => {
-            return {
+          return {
             id: dbIngredient.id,
             unit: dbIngredient.unit as IngredientUnit,
             name: dbIngredient.name,
             amount: dbIngredient.amount,
-        };
+          };
         }),
         photo: undefined,
       });
-      setDone(true);
     });
   }, [id]);
   if (!meal) {
     return <p>loading</p>;
   }
-  let meal_: MealStat = meal;
+  const meal_: MealStat = meal;
   return <EditMealForm meal={meal_} />;
 }
 
@@ -186,15 +185,11 @@ function EditMealForm({ meal }: { meal: MealStat }) {
     setSubmitting(true);
     try {
       console.log(ingredients);
-      const updated = await updateLunch(
-        meal.id,
-        ingredients,
-        {
-          name,
-          line,
-          description: "",
-        }
-      );
+      const updated = await updateLunch(meal.id, ingredients, {
+        name,
+        line,
+        description: "",
+      });
       router.push(`/admin/meals/${updated.name}/edit`);
     } catch {
       setSubmitting(false);

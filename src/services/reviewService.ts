@@ -1,5 +1,6 @@
 "use server";
 
+import { Review } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   ReviewLunchNotFoundError,
@@ -9,7 +10,7 @@ import {
 
 type AddReviewInput = {
   rating: number;
-  servingId: number;
+  lunchId: number;
   comment?: string;
   tags?: string[];
   userId?: number | null;
@@ -79,7 +80,7 @@ export async function getReviewedServingIds(): Promise<string[]> {
     select: { lunchId: true },
   });
 
-  return [...new Set(reviews.map(review => review.servingId.toString()))];
+  return [...new Set(reviews.map(review => review.lunchId.toString()))];
 }
 
 export async function getReview(id: number) {

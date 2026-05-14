@@ -37,7 +37,7 @@ export type MealStat = {
 };
 
 export type IngredientRow = {
-  id: number,
+  id: number;
   name: string;
   amount: number;
   unit: IngredientUnit;

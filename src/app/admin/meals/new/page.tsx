@@ -67,11 +67,7 @@ export default function NewMealPage() {
     if (!isValid || submitting) return;
     setSubmitting(true);
     try {
-      const lunch = await addLunch(
-        name,
-        ingredients,
-        { line: line, },
-      );
+      const lunch = await addLunch(name, ingredients, { line: line });
       router.push(`/admin/meals/${lunch.name}`);
     } catch {
       setSubmitting(false);

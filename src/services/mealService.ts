@@ -61,7 +61,7 @@ function parseIngredients(rows: IngredientRow[]): Ingredient[] {
     if (!Number.isFinite(amount) || amount <= 0) {
       throw new Error(`Invalid amount for "${r.name}": ${r.amount}`);
     }
-    return { name: r.name.trim(), amount, unit: r.unit };
+    return { id: r.id, name: r.name.trim(), amount, unit: r.unit };
   });
 }
 

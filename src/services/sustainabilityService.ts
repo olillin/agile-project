@@ -1,6 +1,6 @@
 "use server";
 
-import { Ingredient } from "@/lib/types";
+import { Ingredient } from "@/lib/admin/types";
 
 const apiUrl = process.env.GREEN_BITE_API_URL || "http://localhost:80/";
 

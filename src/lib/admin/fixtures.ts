@@ -30,11 +30,11 @@ export const MEALS: MealStat[] = [
     climate: "low",
     lastServed: "2d ago",
     ingredients: [
-      { name: "Pasta", amount: 120, unit: "g" },
-      { name: "Beef mince", amount: 90, unit: "g" },
-      { name: "Tomato sauce", amount: 80, unit: "ml" },
-      { name: "Yellow onion", amount: 40, unit: "g" },
-      { name: "Parmesan", amount: 10, unit: "g" },
+      { id: 0, name: "Pasta", amount: 120, unit: "g" },
+      { id: 0, name: "Beef mince", amount: 90, unit: "g" },
+      { id: 0, name: "Tomato sauce", amount: 80, unit: "ml" },
+      { id: 0, name: "Yellow onion", amount: 40, unit: "g" },
+      { id: 0, name: "Parmesan", amount: 10, unit: "g" },
     ],
   },
   {
@@ -101,11 +101,11 @@ export const MEALS: MealStat[] = [
     climate: "low",
     lastServed: "1w ago",
     ingredients: [
-      { name: "Chickpeas", amount: 150, unit: "g" },
-      { name: "Coconut milk", amount: 100, unit: "ml" },
-      { name: "Basmati rice", amount: 90, unit: "g" },
-      { name: "Curry paste", amount: 20, unit: "g" },
-      { name: "Spinach", amount: 30, unit: "g" },
+      { id: 0, name: "Chickpeas", amount: 150, unit: "g" },
+      { id: 0, name: "Coconut milk", amount: 100, unit: "ml" },
+      { id: 0, name: "Basmati rice", amount: 90, unit: "g" },
+      { id: 0, name: "Curry paste", amount: 20, unit: "g" },
+      { id: 0, name: "Spinach", amount: 30, unit: "g" },
     ],
   },
   {
@@ -133,10 +133,10 @@ export const MEALS: MealStat[] = [
     climate: "med",
     lastServed: "2w ago",
     ingredients: [
-      { name: "Halloumi", amount: 80, unit: "g" },
-      { name: "Quinoa", amount: 90, unit: "g" },
-      { name: "Roast vegetables", amount: 120, unit: "g" },
-      { name: "Tahini dressing", amount: 30, unit: "ml" },
+      { id: 0, name: "Halloumi", amount: 80, unit: "g" },
+      { id: 0, name: "Quinoa", amount: 90, unit: "g" },
+      { id: 0, name: "Roast vegetables", amount: 120, unit: "g" },
+      { id: 0, name: "Tahini dressing", amount: 30, unit: "ml" },
     ],
   },
   {

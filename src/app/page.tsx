@@ -32,7 +32,7 @@ export default function Home() {
     try {
       await addReview({
         rating: payload.rating,
-        servingId: Number(payload.optionId),
+        lunchId: Number(payload.optionId),
         comment: payload.note,
         tags: payload.tags,
         userId: null,
