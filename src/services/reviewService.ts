@@ -15,7 +15,7 @@ type AddReviewInput = {
   servingId: number;
   comment?: string;
   tags?: string[];
-  userId?: string | null;
+  userId?: number | null;
 };
 
 function cleanTags(tags: string[] = []): string[] {
