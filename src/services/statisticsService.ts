@@ -287,7 +287,7 @@ function toAdminIngredient(ingredient: PrismaIngredient): Ingredient {
     : "g";
 
   return {
-    id: String(ingredient.id),
+    id: ingredient.id,
     name: ingredient.name,
     amount: ingredient.amount,
     unit,
@@ -322,7 +322,7 @@ function toMealStat(lunch: LunchSnapshot): MealStat {
   if (!lastServedAt) tags.push(NEW_TAG);
 
   return {
-    id: String(lunch.id),
+    id: lunch.id,
     name: lunch.name,
     line: getMealLine(lunch.line),
     tags,
@@ -372,7 +372,7 @@ function getComments(lunch: LunchSnapshot): MealComment[] {
     .sort((a, b) => b.posted.getTime() - a.posted.getTime())
     .map(review => ({
       id: review.id,
-      mealId: String(lunch.id),
+      mealId: lunch.id,
       mealName: lunch.name,
       rating: review.rating,
       text: review.comment?.trim() ?? "",

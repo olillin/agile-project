@@ -9,7 +9,7 @@ import { z } from "zod";
 
 const ReviewSchema = z.object({
   rating: z.int().min(1).max(5),
-  lunchId: z.int(),
+  servingId: z.int(),
   comment: z.string().optional(),
   tags: z.array(z.string()).default([]),
 });
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   try {
     const review = await addReview({
       rating: parsed.data.rating,
-      lunchId: parsed.data.lunchId,
+      servingId: parsed.data.servingId,
       comment: parsed.data.comment,
       tags: parsed.data.tags,
       userId: null,

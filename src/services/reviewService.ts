@@ -1,6 +1,6 @@
 "use server";
 
-import { Prisma } from "@/generated/prisma/client";
+import { Prisma, Review } from "@/generated/prisma/client";
 import { readClientId } from "@/lib/clientId";
 import { prisma } from "@/lib/prisma";
 import {
@@ -12,7 +12,7 @@ import {
 
 type AddReviewInput = {
   rating: number;
-  serviceId: number;
+  servingId: number;
   comment?: string;
   tags?: string[];
   userId?: number | null;
@@ -98,9 +98,11 @@ export async function getAll() {
   return await prisma.review.findMany();
 }
 
-export async function getReviewsByLunchId(lunchId: number): Promise<Review[]> {
+export async function getReviewsByServingId(
+  servingId: number
+): Promise<Review[]> {
   const reviews = await prisma.review.findMany({
-    where: { lunchId },
+    where: { servingId },
   });
 
   return reviews;

@@ -14,11 +14,13 @@ import { getEcoScore } from "./sustainabilityService";
 
 export type LunchWithAll = Prisma.LunchGetPayload<{
   include: {
-      servings: {
-          reviews: true,
-      },
-      ingredients: true
-  }
+    servings: {
+      include: {
+        reviews: true;
+      };
+    };
+    ingredients: true;
+  };
 }>;
 
 const DEFAULT_FEED_LOOKBACK_DAYS = 14;
@@ -281,7 +283,7 @@ function buildDays(
         isToday: isFeedDateToday(date),
         options: options.map(toDayOption),
       },
-    ];include
+    ];
   });
 }
 
@@ -293,10 +295,12 @@ export async function getLunchById(id: number): Promise<LunchWithAll | null> {
   return prisma.lunch.findUnique({
     where: { id },
     include: {
-        servings: {
-            reviews: true,
+      servings: {
+        include: {
+          reviews: true,
         },
-        ingredients: true
+      },
+      ingredients: true,
     },
   });
 }
@@ -307,10 +311,12 @@ export async function getLunchByName(
   return prisma.lunch.findUnique({
     where: { name },
     include: {
-        servings: {
-            reviews: true,
+      servings: {
+        include: {
+          reviews: true,
         },
-        ingredients: true
+      },
+      ingredients: true,
     },
   });
 }

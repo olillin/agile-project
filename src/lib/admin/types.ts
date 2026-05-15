@@ -22,7 +22,7 @@ export type PhotoRef = {
 };
 
 export type MealStat = {
-  id: string;
+  id: number;
   name: string;
   line: MealLine;
   tags: string[];
@@ -89,7 +89,7 @@ export const DIET_TAG_SET: ReadonlySet<string> = new Set(TAG_OPTIONS);
 // Comments are intentionally anonymous
 export type MealComment = {
   id: number;
-  mealId: string;
+  mealId: number;
   mealName: string;
   rating: number;
   text: string;

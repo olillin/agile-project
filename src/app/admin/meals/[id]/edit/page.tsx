@@ -93,14 +93,22 @@ export default function EditMealPage({
       }
       const lunch: LunchWithAll = lunch_;
 
-      const reviews = lunch.servings.map(serving => serving.reviews).concat();
+      const reviews = lunch.servings.map(serving => serving.reviews).flat(1);
       const votes = reviews.length;
       const rating =
         reviews.map(review => review.rating).reduce((acc, x) => x + acc) /
         votes;
-      const distribution = [1, 2, 3, 4, 5].map(rating => reviews.filter(reviews => review.rating == rating).length);
+      const count_reviews = (rating: number) =>
+        reviews.filter(review => review.rating == rating).length;
+      const distribution: [number, number, number, number, number] = [
+        count_reviews(1),
+        count_reviews(2),
+        count_reviews(3),
+        count_reviews(4),
+        count_reviews(5),
+      ];
       setMeal({
-        id: lunch.name,
+        id: lunch.id,
         name: lunch.name,
         line: "Nordic",
         tags: [],
