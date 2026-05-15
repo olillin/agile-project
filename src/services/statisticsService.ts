@@ -7,7 +7,7 @@ import { kgToBucket, LINE_COLOR, MEAL_LINES } from "@/lib/admin/colors";
 import {
   INGREDIENT_UNITS,
   NEW_TAG,
-  type Ingredient,
+  type IngredientRow,
   type IngredientUnit,
   type Kpi,
   type MealComment,
@@ -281,7 +281,7 @@ function getDietTags(ingredients: PrismaIngredient[]): DietTag[] {
   return tags;
 }
 
-function toAdminIngredient(ingredient: PrismaIngredient): Ingredient {
+function toAdminIngredient(ingredient: PrismaIngredient): IngredientRow {
   const unit = INGREDIENT_UNITS.includes(ingredient.unit as IngredientUnit)
     ? (ingredient.unit as IngredientUnit)
     : "g";

@@ -52,21 +52,21 @@ function seedForm(meal: MealStat): Initial {
   const ingredients: IngredientRow[] =
     meal.ingredients.length > 0
       ? meal.ingredients.map(ingredient => ({
-        id: ingredient.id,
-        name: ingredient.name,
-        amount: ingredient.amount,
-        unit: ingredient.unit,
-      }))
+          id: ingredient.id,
+          name: ingredient.name,
+          amount: ingredient.amount,
+          unit: ingredient.unit,
+        }))
       : [newIngredientRow()];
   // Form only manages diet tags
   const tags = meal.tags.filter((t): t is DietTag => DIET_TAG_SET.has(t));
   const climate: ClimateFormState =
     meal.co2 != null && meal.co2 > 0
       ? {
-        state: "done",
-        kg: meal.co2,
-        calculatedFromCount: meal.ingredients.length,
-      }
+          state: "done",
+          kg: meal.co2,
+          calculatedFromCount: meal.ingredients.length,
+        }
       : { state: "idle", kg: null, calculatedFromCount: 0 };
   return {
     name: meal.name,
@@ -88,55 +88,63 @@ export default function EditMealPage({
   const [meal, setMeal] = useState<MealStat | null>(null);
 
   useEffect(() => {
-    getLunchById(Number(id)).catch((reason) => {
-      console.warn(reason);
-      return null
-    }).then(lunch => {
-      setIsLoading(false);
-      if (lunch == null) {
-        return;
-      }
+    getLunchById(Number(id))
+      .catch(reason => {
+        console.warn(reason);
+        return null;
+      })
+      .then(lunch => {
+        setIsLoading(false);
+        if (lunch == null) {
+          return;
+        }
 
-      const MealLine = z.enum(["Vegetarian", "Nordic", "Street food"] as const);
-      const line = MealLine.parse(lunch.line);
+        const MealLine = z.enum([
+          "Vegetarian",
+          "Nordic",
+          "Street food",
+        ] as const);
+        const line = MealLine.parse(lunch.line);
 
-      const reviews = lunch.servings.map(serving => serving.reviews).flat(1);
-      const votes = reviews.length;
-      const rating = reviews.length === 0 ? null :
-        reviews.map(review => review.rating).reduce((acc, x) => x + acc) /
-        votes;
-      const countReviews = (rating: number) =>
-        reviews.filter(review => review.rating == rating).length;
-      const distribution: [number, number, number, number, number] = [
-        countReviews(1),
-        countReviews(2),
-        countReviews(3),
-        countReviews(4),
-        countReviews(5),
-      ];
+        const reviews = lunch.servings.map(serving => serving.reviews).flat(1);
+        const votes = reviews.length;
+        const rating =
+          reviews.length === 0
+            ? null
+            : reviews.map(review => review.rating).reduce((acc, x) => x + acc) /
+              votes;
+        const countReviews = (rating: number) =>
+          reviews.filter(review => review.rating == rating).length;
+        const distribution: [number, number, number, number, number] = [
+          countReviews(1),
+          countReviews(2),
+          countReviews(3),
+          countReviews(4),
+          countReviews(5),
+        ];
 
-      setMeal({
-        id: lunch.id,
-        name: lunch.name,
-        line,
-        tags: [],
-        rating,
-        votes,
-        distribution,
-        co2: lunch.ecoScore,
-        climate: null,
-        lastServed: lunch.servings[lunch.servings.length - 1].date.toString(),
-        ingredients: lunch.ingredients.map(dbIngredient => {
-          return {
-            id: dbIngredient.id,
-            unit: dbIngredient.unit as IngredientUnit,
-            name: dbIngredient.name,
-            amount: dbIngredient.amount,
-          };
-        }),
-        photo: undefined,
+        setMeal({
+          id: lunch.id,
+          name: lunch.name,
+          line,
+          tags: [],
+          rating,
+          votes,
+          distribution,
+          co2: lunch.ecoScore,
+          climate: null,
+          lastServed: lunch.servings[lunch.servings.length - 1].date.toString(),
+          ingredients: lunch.ingredients.map(dbIngredient => {
+            return {
+              id: dbIngredient.id,
+              unit: dbIngredient.unit as IngredientUnit,
+              name: dbIngredient.name,
+              amount: dbIngredient.amount,
+            };
+          }),
+          photo: undefined,
+        });
       });
-    });
   }, [id]);
 
   if (isLoading) {
