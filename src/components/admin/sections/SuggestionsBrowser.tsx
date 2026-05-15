@@ -3,7 +3,7 @@
 import { SuggestionAndUser } from "@/app/admin/suggestions/page";
 import { SelectFilter } from "@/components/admin/SelectFilter";
 import { Card } from "@/components/ui/Card";
-import { isNewSuggestion } from "@/lib/admin/suggestsions";
+import { isNewSuggestion } from "@/lib/admin/suggestions";
 import { NEW_TAG } from "@/lib/admin/types";
 import { FOCUS_RING } from "@/lib/styles";
 import { useMemo, useState } from "react";

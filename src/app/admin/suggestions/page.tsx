@@ -22,22 +22,15 @@ export default function AdminMealsPage() {
       if (user?.lastTimeReviewsViewed != null)
         setLastViewed(user.lastTimeReviewsViewed);
     });
-    getAllSuggestions().then(result => {
-      const suggestionsList: SuggestionAndUser[] = [];
-      result.forEach(suggestion => {
-        let displayName = null;
-        if (suggestion.userId) {
-          getUser(suggestion.userId).then(user => {
-            displayName = user ? user.name : null;
-          });
-        }
-
-        const object: SuggestionAndUser = {
-          ...suggestion,
-          displayName,
-        };
-        suggestionsList.push(object);
-      });
+    getAllSuggestions().then(async result => {
+      const suggestionsList: SuggestionAndUser[] = await Promise.all(
+        result.map(async suggestion => {
+          const displayName = suggestion.userId
+            ? ((await getUser(suggestion.userId))?.name ?? null)
+            : null;
+          return { ...suggestion, displayName };
+        })
+      );
       setSuggestions(suggestionsList);
       updateLastVisited();
     });

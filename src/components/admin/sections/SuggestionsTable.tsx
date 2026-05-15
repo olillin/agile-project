@@ -1,7 +1,7 @@
 import { SuggestionAndUser } from "@/app/admin/suggestions/page";
 import { Pill } from "@/components/admin/Pill";
 import { Card } from "@/components/ui/Card";
-import { isNewSuggestion } from "@/lib/admin/suggestsions";
+import { isNewSuggestion } from "@/lib/admin/suggestions";
 import { formatPostedDate } from "@/lib/dateFormat";
 import { FOCUS_RING } from "@/lib/styles";
 import Link from "next/link";
