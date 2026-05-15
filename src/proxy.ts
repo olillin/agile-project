@@ -1,3 +1,4 @@
+import { ensureClientIdOnResponse } from "@/lib/clientId";
 import { verifySession } from "@/lib/session";
 import { NextRequest, NextResponse, ProxyConfig } from "next/server";
 
@@ -34,8 +35,11 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
     }
   }
 
-  // Allow the request to continue as normal
-  return NextResponse.next();
+  // Allow the request to continue as normal, ensuring an anonymous client id
+  // cookie is present (and renew its expiry on every visit).
+  const res = NextResponse.next();
+  ensureClientIdOnResponse(req, res);
+  return res;
 }
 
 // Configure the proxy
