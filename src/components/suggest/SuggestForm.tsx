@@ -1,24 +1,65 @@
 import { FOCUS_RING } from "@/lib/styles";
 import { submitSuggestion } from "@/services/suggestionService";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ThankYouView } from "../sheet/ThankYouView";
 import { Card } from "../ui/Card";
+
+const SUBMIT_CLOSE_DELAY = 1600;
 
 export function SuggestForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const isComplete = title && description;
   const buttonLabel = isComplete
     ? "Submit suggestion"
     : "Complete form to submit";
 
+  const submitTimerRef = useRef<number | null>(null);
+  useEffect(
+    () => () => {
+      if (submitTimerRef.current !== null) {
+        window.clearTimeout(submitTimerRef.current);
+      }
+    },
+    []
+  );
+
   const handleSubmit = async (formData: FormData): Promise<void> => {
-    await submitSuggestion(formData);
+    if (submitted) return;
+    setError(null);
+    await submitSuggestion(formData)
+      .then(() => {
+        setSubmitted(true);
+        if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+          navigator.vibrate(10);
+        }
+
+        setTitle("");
+        setDescription("");
+
+        submitTimerRef.current = window.setTimeout(() => {
+          submitTimerRef.current = null;
+          setSubmitted(false);
+        }, SUBMIT_CLOSE_DELAY);
+      })
+      .catch(reason => {
+        if (reason instanceof Error) {
+          setError(`Failed to submit: ${reason.message}`);
+        } else {
+          setError("Something went wrong, try again later");
+        }
+      });
   };
 
   return (
-    <Card className="m-4">
-      <form action={handleSubmit}>
+    <Card className="relative m-4 min-h-64">
+      <form
+        action={handleSubmit}
+        className={`transition-opacity duration-200 ease-out ${submitted ? "pointer-events-none opacity-0" : "opacity-100"}`}
+      >
         <div className="flex flex-col">
           <label htmlFor="title" className="text-l font-serif">
             Title
@@ -42,19 +83,29 @@ export function SuggestForm() {
             className="border-ink/10 bg-cream text-ink mt-1 w-full resize-none rounded-[12px] border px-3 py-2.5 outline-none"
           />
 
-          <button
-            type="submit"
-            disabled={!isComplete}
-            className={`text-body mt-6 w-full rounded-[14px] p-2 font-semibold transition-colors ${FOCUS_RING.cream} ${
-              isComplete
-                ? "bg-ink text-paper cursor-pointer"
-                : "bg-ink/10 text-ink-muted cursor-not-allowed"
-            }`}
-          >
-            {buttonLabel}
-          </button>
+          <div className="mt-6">
+            {error && (
+              <p className="text-meta text-rose-deep mb-2 text-center">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={!isComplete}
+              className={`text-body w-full rounded-[14px] p-2 font-semibold transition-colors ${FOCUS_RING.cream} ${
+                isComplete
+                  ? "bg-ink text-paper cursor-pointer"
+                  : "bg-ink/10 text-ink-muted cursor-not-allowed"
+              }`}
+            >
+              {buttonLabel}
+            </button>
+          </div>
         </div>
       </form>
+
+      {submitted && <ThankYouView rating={5} label="You left a review" />}
     </Card>
   );
 }

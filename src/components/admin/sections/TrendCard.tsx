@@ -3,12 +3,8 @@
 import { TrendChart } from "@/components/admin/charts/TrendChart";
 import { SectionHead } from "@/components/admin/SectionHead";
 import { Card } from "@/components/ui/Card";
-import {
-  TREND_FOOTNOTES,
-  TREND_SERIES,
-  TREND_X_LABELS,
-} from "@/lib/admin/fixtures";
 import { FOCUS_RING } from "@/lib/styles";
+import type { AdminOverviewTrend } from "@/services/statisticsService";
 import { useState } from "react";
 
 type RangeKey = "7d" | "30d" | "1y";
@@ -21,13 +17,44 @@ const RANGE_SUBTITLE: Record<RangeKey, string> = {
   "1y": "Last year",
 };
 
-export function TrendCard() {
+type Props = {
+  initialTrend: AdminOverviewTrend;
+};
+
+export function TrendCard({ initialTrend }: Props) {
   const [range, setRange] = useState<RangeKey>("30d");
+  const [trend, setTrend] = useState(initialTrend);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const selectRange = async (nextRange: RangeKey) => {
+    if (nextRange === range || isLoading) return;
+
+    setIsLoading(true);
+    setLoadError(null);
+
+    try {
+      const response = await fetch(
+        `/api/admin/analytics/overview?range=${nextRange}`,
+        { cache: "no-store" }
+      );
+
+      if (!response.ok) throw new Error("Failed to load trend");
+
+      setTrend((await response.json()) as AdminOverviewTrend);
+      setRange(nextRange);
+    } catch (error) {
+      console.error("Failed to load overview trend", error);
+      setLoadError("Could not load this range.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Card style={{ minWidth: 0, overflow: "hidden" }}>
       <SectionHead
-        title="Daily average"
+        title={range === "1y" ? "Weekly average" : "Daily average"}
         sub={`${RANGE_SUBTITLE[range]} · by line`}
         right={
           <div
@@ -44,7 +71,7 @@ export function TrendCard() {
                   key={t}
                   label={t}
                   active={range === t}
-                  onClick={() => setRange(t)}
+                  onClick={() => selectRange(t)}
                   isFirst={i === 0}
                 />
               ))}
@@ -52,17 +79,39 @@ export function TrendCard() {
           </div>
         }
       />
-      <TrendChart
-        series={TREND_SERIES}
-        xLabels={TREND_X_LABELS}
-        width={1000}
-        height={240}
-      />
+      <div className="relative">
+        <div
+          style={{
+            opacity: isLoading ? 0.5 : 1,
+            transition: "opacity 120ms ease-out",
+          }}
+        >
+          <TrendChart
+            series={trend.series}
+            xLabels={trend.xLabels}
+            width={1000}
+            height={240}
+          />
+        </div>
+        {isLoading && (
+          <div
+            className="text-ink-soft text-meta absolute inset-0 flex items-center justify-center"
+            aria-live="polite"
+          >
+            Loading…
+          </div>
+        )}
+      </div>
+      {loadError && (
+        <div className="text-rose text-meta" style={{ marginTop: 8 }}>
+          {loadError}
+        </div>
+      )}
       <div
         className="text-ink-muted text-meta flex flex-wrap items-center"
         style={{ gap: 14, marginTop: 8 }}
       >
-        {TREND_SERIES.map(s => (
+        {trend.series.map(s => (
           <div key={s.name} className="flex items-center" style={{ gap: 5 }}>
             <span
               style={{
@@ -86,7 +135,7 @@ export function TrendCard() {
           paddingTop: 18,
         }}
       >
-        {TREND_FOOTNOTES.map(s => (
+        {trend.footnotes.map(s => (
           <div key={s.label}>
             <div className="text-ink-soft text-eyebrow uppercase">
               {s.label}

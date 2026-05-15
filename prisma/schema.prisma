@@ -65,7 +65,7 @@ model Suggestion {
   id          Int      @id @default(autoincrement())
   title       String
   description String   @default("")
-  postedDate  DateTime @db.Date
+  postedDate  DateTime
   userId      String?
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }

@@ -47,7 +47,7 @@ export async function createSuggestion(
 export async function updateLastVisited() {
   const session = await verifySession();
 
-  prisma.user.upsert({
+  await prisma.user.upsert({
     where: {
       id: session.sub,
     },
@@ -62,17 +62,59 @@ export async function updateLastVisited() {
   });
 }
 
+export async function countNewSuggestions() {
+  const session = await verifySession();
+
+  const user = await prisma.user.findFirst({
+    where: {
+      id: session.sub,
+    },
+    select: {
+      lastTimeReviewsViewed: true,
+    },
+  });
+
+  if (user?.lastTimeReviewsViewed == null) {
+    return prisma.suggestion.count();
+  }
+
+  return prisma.suggestion.count({
+    where: {
+      postedDate: {
+        gte: user.lastTimeReviewsViewed,
+      },
+    },
+  });
+}
+
 export async function submitSuggestion(formData: FormData) {
   const rawFormData = {
     title: formData.get("title"),
     description: formData.get("description"),
   };
 
+  // Check null
+  if (!rawFormData.title) {
+    throw new Error("Suggestion must have a title");
+  }
+  if (!rawFormData.description) {
+    throw new Error("Suggestion must have a description");
+  }
+
+  // Check entry type
   if (typeof rawFormData.title != "string") {
     throw new Error("Title must be string");
   }
   if (typeof rawFormData.description != "string") {
     throw new Error("Description must be string");
+  }
+
+  // Check blank string
+  if (rawFormData.title.trim() === "") {
+    throw new Error("Suggestion must have a title");
+  }
+  if (rawFormData.description.trim() === "") {
+    throw new Error("Suggestion must have a description");
   }
 
   const review = await createSuggestion(

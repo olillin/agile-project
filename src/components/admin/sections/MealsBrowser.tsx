@@ -237,10 +237,14 @@ export function MealsBrowser({ meals }: Props) {
       {filtered.length === 0 ? (
         <Card style={{ textAlign: "center", padding: 40 }}>
           <div className="text-ink text-feature font-serif">
-            No meals match those filters.
+            {meals.length === 0
+              ? "No meals available."
+              : "No meals match those filters."}
           </div>
           <div className="text-ink-muted text-meta" style={{ marginTop: 6 }}>
-            Try clearing the filters or widening your search.
+            {meals.length === 0
+              ? "Meals will appear here after lunches are added to the database."
+              : "Try clearing the filters or widening your search."}
           </div>
         </Card>
       ) : view === "grid" ? (
