@@ -22,7 +22,7 @@ import {
   type PhotoRef,
 } from "@/lib/admin/types";
 import type { DietTag, MealLine } from "@/lib/types";
-import { createMeal } from "@/services/mealService";
+import { addLunch } from "@/services/lunchService";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -59,7 +59,8 @@ export default function NewMealPage() {
     name.trim() !== "" ||
     line !== DEFAULT_LINE ||
     tags.length > 0 ||
-    ingredients.some(r => r.name.trim() !== "" || r.amount.trim() !== "") ||
+    ingredients.some(r => r.name.trim() !== "") ||
+    ingredients.some(r => r.amount !== 0) ||
     photo !== null ||
     climate.state !== "idle";
 
@@ -67,15 +68,8 @@ export default function NewMealPage() {
     if (!isValid || submitting) return;
     setSubmitting(true);
     try {
-      const meal = await createMeal({
-        name,
-        line,
-        tags,
-        ingredients,
-        photo,
-        co2: climate.state === "done" ? climate.kg : null,
-      });
-      router.push(`/admin/meals/${meal.id}`);
+      const lunch = await addLunch(name, ingredients, { line: line });
+      router.push(`/admin/meals/${lunch.id}`);
     } catch {
       setSubmitting(false);
     }

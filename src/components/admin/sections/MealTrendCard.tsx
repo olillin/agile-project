@@ -12,7 +12,7 @@ type RangeKey = "10" | "30" | "100";
 const RANGE_KEYS: RangeKey[] = ["10", "30", "100"];
 
 type Props = {
-  mealId: string;
+  mealId: number;
   initialTrend: AdminMealTrend;
 };
 

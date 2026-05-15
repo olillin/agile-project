@@ -7,7 +7,7 @@ import { kgToBucket, LINE_COLOR, MEAL_LINES } from "@/lib/admin/colors";
 import {
   INGREDIENT_UNITS,
   NEW_TAG,
-  type Ingredient,
+  type IngredientRow,
   type IngredientUnit,
   type Kpi,
   type MealComment,
@@ -281,13 +281,13 @@ function getDietTags(ingredients: PrismaIngredient[]): DietTag[] {
   return tags;
 }
 
-function toAdminIngredient(ingredient: PrismaIngredient): Ingredient {
+function toAdminIngredient(ingredient: PrismaIngredient): IngredientRow {
   const unit = INGREDIENT_UNITS.includes(ingredient.unit as IngredientUnit)
     ? (ingredient.unit as IngredientUnit)
     : "g";
 
   return {
-    id: String(ingredient.id),
+    id: ingredient.id,
     name: ingredient.name,
     amount: ingredient.amount,
     unit,
@@ -322,7 +322,7 @@ function toMealStat(lunch: LunchSnapshot): MealStat {
   if (!lastServedAt) tags.push(NEW_TAG);
 
   return {
-    id: String(lunch.id),
+    id: lunch.id,
     name: lunch.name,
     line: getMealLine(lunch.line),
     tags,
@@ -372,7 +372,7 @@ function getComments(lunch: LunchSnapshot): MealComment[] {
     .sort((a, b) => b.posted.getTime() - a.posted.getTime())
     .map(review => ({
       id: review.id,
-      mealId: String(lunch.id),
+      mealId: lunch.id,
       mealName: lunch.name,
       rating: review.rating,
       text: review.comment?.trim() ?? "",

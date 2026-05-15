@@ -9,15 +9,8 @@ export type IngredientUnit = (typeof INGREDIENT_UNITS)[number];
 
 export const DEFAULT_LINE: MealLine = "Vegetarian";
 
-export const parseAmount = (s: string): number => Number(s.replace(",", "."));
-
-export type Ingredient = {
-  id?: string;
-  name: string;
-  amount: number;
-  unit: IngredientUnit;
-};
-
+export const parseAmount = (s: string | number): number =>
+  Number(s.toString().replace(",", "."));
 // TODO: storage pipeline. Picked Files are captured locally and only
 // `filename` is set. `url` is populated once a real upload lands.
 export type PhotoRef = {
@@ -26,7 +19,7 @@ export type PhotoRef = {
 };
 
 export type MealStat = {
-  id: string;
+  id: number;
   name: string;
   line: MealLine;
   tags: string[];
@@ -40,28 +33,29 @@ export type MealStat = {
   firstServedAt?: string | null;
   lastServedAt?: string | null;
   timesServed?: number;
-  ingredients: Ingredient[];
+  ingredients: IngredientRow[];
   photo?: PhotoRef;
 };
 
 export type IngredientRow = {
-  id: string;
+  id: number;
   name: string;
-  amount: string;
+  amount: number;
   unit: IngredientUnit;
 };
 
 // A row counts as filled when both fields have content. Climate calculation
 // and persistence skip rows where either is blank.
 export const isValidRow = (r: IngredientRow): boolean =>
-  r.name.trim().length > 0 && r.amount.trim().length > 0;
+  r.name.trim().length > 0 && r.amount > 0;
 
 // Fresh row for editor / page initial state. The id is only used as a
 // React key, never persisted, so server/client divergence is harmless.
+let rowKeyCounter = 0;
 export const newIngredientRow = (): IngredientRow => ({
-  id: crypto.randomUUID(),
+  id: rowKeyCounter++,
   name: "",
-  amount: "",
+  amount: 0,
   unit: "g",
 });
 
@@ -93,7 +87,7 @@ export const DIET_TAG_SET: ReadonlySet<string> = new Set(TAG_OPTIONS);
 // Comments are intentionally anonymous
 export type MealComment = {
   id: number;
-  mealId: string;
+  mealId: number;
   mealName: string;
   rating: number;
   text: string;

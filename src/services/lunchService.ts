@@ -1,7 +1,8 @@
 "use server";
 
-import type { Ingredient, Lunch } from "@/generated/prisma/client";
+import type { Ingredient, Lunch, Prisma } from "@/generated/prisma/client";
 import type { ServingGetPayload } from "@/generated/prisma/models";
+import { IngredientRow, IngredientUnit } from "@/lib/admin/types";
 import {
   formatFeedDayLabel,
   getFeedDateKey,
@@ -11,6 +12,17 @@ import { prisma } from "@/lib/prisma";
 import type { ClimateLabel, Day, DietTag, MealLine } from "@/lib/types";
 import { getEcoScore } from "./sustainabilityService";
 
+export type LunchWithAll = Prisma.LunchGetPayload<{
+  include: {
+    servings: {
+      include: {
+        reviews: true;
+      };
+    };
+    ingredients: true;
+  };
+}>;
+
 const DEFAULT_FEED_LOOKBACK_DAYS = 14;
 const DEFAULT_FEED_DAYS_PAGE_SIZE = 10;
 
@@ -19,7 +31,7 @@ export type FeedDaysPage = {
   nextCursor: string | null;
 };
 
-export type NewIngredient = Omit<Ingredient, "id" | "lunchId">;
+export type NewIngredient = Omit<IngredientRow, "id">;
 
 type ServingWithLunch = ServingGetPayload<{
   include: { lunch: { include: { ingredients: true } } };
@@ -138,6 +150,13 @@ function getLunchDetailsData(details: LunchDetailsInput) {
   return data;
 }
 
+function isUnit(maybeUnit: unknown): maybeUnit is IngredientUnit {
+  if (typeof maybeUnit !== "string") {
+    return false;
+  }
+  return ["g", "kg", "ml", "dl", "l", "st"].includes(maybeUnit);
+}
+
 function getIngredientData(ingredients: NewIngredient[]) {
   return ingredients.map(ingredient => {
     const name = ingredient.name.trim();
@@ -155,9 +174,13 @@ function getIngredientData(ingredients: NewIngredient[]) {
       throw new Error("Ingredient amount must be a non-negative number");
     }
 
+    if (!isUnit(unit)) {
+      throw new Error("Unit must be one of the followng: g, kg, ml, dl, l, st");
+    }
+
     return {
       name,
-      unit,
+      unit: unit as IngredientUnit,
       amount: ingredient.amount,
     };
   });
@@ -274,15 +297,33 @@ export async function getAll() {
   return await prisma.lunch.findMany();
 }
 
-export async function getLunchById(id: number): Promise<Lunch | null> {
+export async function getLunchById(id: number): Promise<LunchWithAll | null> {
   return prisma.lunch.findUnique({
     where: { id },
+    include: {
+      servings: {
+        include: {
+          reviews: true,
+        },
+      },
+      ingredients: true,
+    },
   });
 }
 
-export async function getLunchByName(name: string): Promise<Lunch | null> {
+export async function getLunchByName(
+  name: string
+): Promise<LunchWithAll | null> {
   return prisma.lunch.findUnique({
     where: { name },
+    include: {
+      servings: {
+        include: {
+          reviews: true,
+        },
+      },
+      ingredients: true,
+    },
   });
 }
 

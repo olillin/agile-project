@@ -119,7 +119,7 @@ function Row({ row, onChange, onRemove, canRemove }: RowProps) {
         onChange={e => {
           const v = e.target.value;
           if (v === "" || /^[0-9]*[.,]?[0-9]*$/.test(v)) {
-            update("amount", normalizeAmount(v));
+            update("amount", Number(normalizeAmount(v)));
           }
         }}
         placeholder="0"

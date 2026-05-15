@@ -15,7 +15,6 @@ import { SectionHead } from "@/components/admin/SectionHead";
 import { Button, buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ratingColor } from "@/lib/admin/colors";
-import { getMealById } from "@/lib/admin/fixtures";
 import { ratingAverage, ratingTotal } from "@/lib/admin/ratings";
 import {
   DIET_TAG_SET,
@@ -23,14 +22,20 @@ import {
   parseAmount,
   type ClimateFormState,
   type IngredientRow,
+  type IngredientUnit,
   type MealStat,
   type PhotoRef,
 } from "@/lib/admin/types";
 import type { DietTag } from "@/lib/types";
-import { deleteMeal, updateMeal } from "@/services/mealService";
+import {
+  getLunchById,
+  removeLunch,
+  updateLunch,
+} from "@/services/lunchService";
 import Link from "next/link";
-import { notFound, useRouter } from "next/navigation";
-import { use, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { use, useEffect, useMemo, useState } from "react";
+import z from "zod";
 
 const FORM_ID = "edit-meal-form";
 
@@ -46,11 +51,11 @@ type Initial = {
 function seedForm(meal: MealStat): Initial {
   const ingredients: IngredientRow[] =
     meal.ingredients.length > 0
-      ? meal.ingredients.map(ing => ({
-          id: crypto.randomUUID(),
-          name: ing.name,
-          amount: String(ing.amount),
-          unit: ing.unit,
+      ? meal.ingredients.map(ingredient => ({
+          id: ingredient.id,
+          name: ingredient.name,
+          amount: ingredient.amount,
+          unit: ingredient.unit,
         }))
       : [newIngredientRow()];
   // Form only manages diet tags
@@ -79,8 +84,77 @@ export default function EditMealPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const meal = getMealById(id);
-  if (!meal) notFound();
+  const [isLoading, setIsLoading] = useState(true);
+  const [meal, setMeal] = useState<MealStat | null>(null);
+
+  useEffect(() => {
+    getLunchById(Number(id))
+      .catch(reason => {
+        console.warn(reason);
+        return null;
+      })
+      .then(lunch => {
+        setIsLoading(false);
+        if (lunch == null) {
+          return;
+        }
+
+        const MealLine = z.enum([
+          "Vegetarian",
+          "Nordic",
+          "Street food",
+        ] as const);
+        const line = MealLine.parse(lunch.line);
+
+        const reviews = lunch.servings.map(serving => serving.reviews).flat(1);
+        const votes = reviews.length;
+        const rating =
+          reviews.length === 0
+            ? null
+            : reviews.map(review => review.rating).reduce((acc, x) => x + acc) /
+              votes;
+        const countReviews = (rating: number) =>
+          reviews.filter(review => review.rating == rating).length;
+        const distribution: [number, number, number, number, number] = [
+          countReviews(1),
+          countReviews(2),
+          countReviews(3),
+          countReviews(4),
+          countReviews(5),
+        ];
+
+        setMeal({
+          id: lunch.id,
+          name: lunch.name,
+          line,
+          tags: [],
+          rating,
+          votes,
+          distribution,
+          co2: lunch.ecoScore,
+          climate: null,
+          lastServed: lunch.servings[lunch.servings.length - 1].date.toString(),
+          ingredients: lunch.ingredients.map(dbIngredient => {
+            return {
+              id: dbIngredient.id,
+              unit: dbIngredient.unit as IngredientUnit,
+              name: dbIngredient.name,
+              amount: dbIngredient.amount,
+            };
+          }),
+          photo: undefined,
+        });
+      });
+  }, [id]);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!meal) {
+    return <p>Could not find meal</p>;
+  }
+
   return <EditMealForm meal={meal} />;
 }
 
@@ -141,15 +215,12 @@ function EditMealForm({ meal }: { meal: MealStat }) {
     if (!isValid || submitting) return;
     setSubmitting(true);
     try {
-      const updated = await updateMeal(meal.id, {
+      const updated = await updateLunch(meal.id, ingredients, {
         name,
         line,
-        tags,
-        ingredients,
-        photo,
-        co2: climate.state === "done" ? climate.kg : null,
+        description: "",
       });
-      router.push(`/admin/meals/${updated.id}`);
+      router.push(`/admin/meals/${updated.id}/edit`);
     } catch {
       setSubmitting(false);
     }
@@ -159,7 +230,7 @@ function EditMealForm({ meal }: { meal: MealStat }) {
     setShowDelete(false);
     setSubmitting(true);
     try {
-      await deleteMeal(meal.id);
+      await removeLunch(meal.id);
       router.push("/admin/meals");
     } catch {
       setSubmitting(false);

@@ -9,7 +9,7 @@ import {
   type ClimateFormState,
   type IngredientRow,
 } from "@/lib/admin/types";
-import { calculateClimate } from "@/services/mealService";
+import { getEcoScore } from "@/services/sustainabilityService";
 
 type Props = {
   rows: IngredientRow[];
@@ -40,10 +40,15 @@ export function ClimateImpact({ rows, state, onChange }: Props) {
   const visualState: VisualState = isStale ? "stale" : state.state;
 
   const calculate = async () => {
-    if (!ready || state.state === "loading") return;
+    const validRows = rows.filter(isValidRow);
+    if (validRows.length === 0 || state.state === "loading") return;
     onChange({ ...state, state: "loading" });
-    const kg = await calculateClimate(rows);
-    onChange({ state: "done", kg, calculatedFromCount: validCount });
+    try {
+      const kg = await getEcoScore(validRows);
+      onChange({ state: "done", kg, calculatedFromCount: validRows.length });
+    } catch {
+      onChange({ ...state, state: "idle" });
+    }
   };
 
   const { kg } = state;
