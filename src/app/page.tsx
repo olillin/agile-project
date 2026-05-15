@@ -3,30 +3,34 @@
 import { FeedScreen } from "@/components/feed/FeedScreen";
 import { MealSheet } from "@/components/sheet/MealSheet";
 import type { Day, Option, RatingPayload } from "@/lib/types";
-import { addReview, getReviewedServingIds } from "@/services/reviewService";
-import { useEffect, useState } from "react";
+import { addReview, getMyReviewSummaries } from "@/services/reviewService";
+import { useEffect, useMemo, useState } from "react";
 
 type Opened = { option: Option; day: Day };
 
 export default function Home() {
   const [opened, setOpened] = useState<Opened | null>(null);
-  const [ratedIds, setRatedIds] = useState<Set<string>>(new Set());
+  const [myRatings, setMyRatings] = useState<Map<string, number>>(new Map());
 
   useEffect(() => {
     let ignore = false;
 
-    getReviewedServingIds()
-      .then(reviewedServingIds => {
-        if (!ignore) setRatedIds(new Set(reviewedServingIds));
+    getMyReviewSummaries()
+      .then(rows => {
+        if (!ignore) {
+          setMyRatings(new Map(rows.map(r => [r.servingId, r.rating])));
+        }
       })
       .catch(error => {
-        console.log("Failed to fetch reviewed IDs: ", error);
+        console.log("Failed to fetch my reviews: ", error);
       });
 
     return () => {
       ignore = true;
     };
   }, []);
+
+  const ratedIds = useMemo(() => new Set(myRatings.keys()), [myRatings]);
 
   const handleSubmit = async (payload: RatingPayload) => {
     try {
@@ -38,9 +42,9 @@ export default function Home() {
         userId: null,
       });
 
-      setRatedIds(prev => {
-        const next = new Set(prev);
-        next.add(payload.optionId);
+      setMyRatings(prev => {
+        const next = new Map(prev);
+        next.set(payload.optionId, payload.rating);
         return next;
       });
       setOpened(null);
@@ -48,6 +52,10 @@ export default function Home() {
       console.error("Failed to submit rating", error);
     }
   };
+
+  const existingRating = opened
+    ? (myRatings.get(opened.option.id) ?? null)
+    : null;
 
   return (
     <main className="relative">
@@ -58,6 +66,7 @@ export default function Home() {
       <MealSheet
         option={opened?.option ?? null}
         day={opened?.day ?? null}
+        existingRating={existingRating}
         onClose={() => setOpened(null)}
         onSubmit={handleSubmit}
       />
