@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import type { DietTag, MealLine } from "@/lib/types";
 
 export const NEW_TAG = "new";
@@ -52,7 +53,7 @@ export const isValidRow = (r: IngredientRow): boolean =>
 // Fresh row for editor / page initial state. The id is only used as a
 // React key, never persisted, so server/client divergence is harmless.
 export const newIngredientRow = (): IngredientRow => ({
-  id: 0,
+  id: crypto.randomInt(2 ** 32 - 1),
   name: "",
   amount: 0,
   unit: "g",

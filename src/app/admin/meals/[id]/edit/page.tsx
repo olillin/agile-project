@@ -154,8 +154,8 @@ export default function EditMealPage({
   if (!meal) {
     return <p>Could not find meal</p>;
   }
-  const meal_: MealStat = meal;
-  return <EditMealForm meal={meal_} />;
+
+  return <EditMealForm meal={meal} />;
 }
 
 function EditMealForm({ meal }: { meal: MealStat }) {
