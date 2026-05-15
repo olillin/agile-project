@@ -28,7 +28,7 @@ import {
 } from "@/lib/admin/types";
 import type { DietTag } from "@/lib/types";
 import {
-  getLunchByName,
+  getLunchById,
   removeLunch,
   updateLunch,
   type LunchWithAll,
@@ -87,7 +87,7 @@ export default function EditMealPage({
   const [meal, setMeal] = useState<MealStat | null>(null);
 
   useEffect(() => {
-    getLunchByName(id).then(lunch_ => {
+    getLunchById(Number(id)).then(lunch_ => {
       if (lunch_ == null) {
         return <p>din moder</p>;
       }
