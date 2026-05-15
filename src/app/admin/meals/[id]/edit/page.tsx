@@ -84,6 +84,7 @@ export default function EditMealPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const [isLoading, setIsLoading] = useState(true);
   const [meal, setMeal] = useState<MealStat | null>(null);
 
   useEffect(() => {
@@ -91,8 +92,9 @@ export default function EditMealPage({
       console.warn(reason);
       return null
     }).then(lunch => {
+      setIsLoading(false);
       if (lunch == null) {
-        return <p>Lunch not found</p>;
+        return;
       }
 
       const MealLine = z.enum(["Vegetarian", "Nordic", "Street food"] as const);
@@ -136,10 +138,16 @@ export default function EditMealPage({
       });
     });
   }, [id]);
-  if (!meal) {
-    return <p>loading</p>;
+
+  if (isLoading) {
+    return <p>Loading...</p>;
   }
-  return <EditMealForm meal={meal} />;
+
+  if (!meal) {
+    return <p>Could not find meal</p>;
+  }
+  const meal_: MealStat = meal;
+  return <EditMealForm meal={meal_} />;
 }
 
 function EditMealForm({ meal }: { meal: MealStat }) {
