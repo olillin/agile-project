@@ -1,3 +1,14 @@
+"use client";
+
+import {
+  Area,
+  AreaChart,
+  ReferenceDot,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
+
 type Props = {
   data: number[];
   color?: string;
@@ -14,33 +25,52 @@ export function Sparkline({
   fill,
 }: Props) {
   if (data.length === 0) return null;
-  const max = Math.max(...data);
+
   const min = Math.min(...data);
-  const range = max - min || 1;
-  const step = data.length === 1 ? 0 : width / (data.length - 1);
-  const pts = data.map<[number, number]>((d, i) => [
-    i * step,
-    height - ((d - min) / range) * (height - 4) - 2,
-  ]);
-  const path = pts
-    .map(
-      (p, i) => `${i === 0 ? "M" : "L"}${p[0].toFixed(1)},${p[1].toFixed(1)}`
-    )
-    .join(" ");
-  const area = fill ? `${path} L${width},${height} L0,${height} Z` : null;
-  const last = pts[pts.length - 1];
+  const max = Math.max(...data);
+  const domain: [number, number] =
+    min === max ? [min - 1, max + 1] : [min, max];
+  const points = data.map((value, index) => ({ index, value }));
+  const last = points[points.length - 1];
+
   return (
-    <svg width={width} height={height} style={{ display: "block" }} aria-hidden>
-      {area && <path d={area} fill={fill} opacity={0.3} />}
-      <path
-        d={path}
-        stroke={color}
-        strokeWidth={1.5}
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx={last[0]} cy={last[1]} r={2.5} fill={color} />
-    </svg>
+    <div style={{ width, height }}>
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        initialDimension={{ width, height }}
+      >
+        <AreaChart
+          data={points}
+          margin={{ top: 2, right: 3, bottom: 2, left: 3 }}
+        >
+          <XAxis
+            hide
+            dataKey="index"
+            type="number"
+            domain={[0, Math.max(data.length - 1, 1)]}
+          />
+          <YAxis hide domain={domain} />
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke={color}
+            strokeWidth={1.5}
+            fill={fill ?? color}
+            fillOpacity={fill ? 0.3 : 0}
+            dot={false}
+            activeDot={false}
+            isAnimationActive={false}
+          />
+          <ReferenceDot
+            x={last.index}
+            y={last.value}
+            r={2.5}
+            fill={color}
+            stroke="none"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   );
 }

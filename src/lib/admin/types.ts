@@ -32,6 +32,10 @@ export type MealStat = {
   co2: number | null;
   climate: ClimateBucket;
   lastServed: string;
+  firstServed?: string;
+  firstServedAt?: string | null;
+  lastServedAt?: string | null;
+  timesServed?: number;
   ingredients: Ingredient[];
   photo?: PhotoRef;
 };
@@ -90,6 +94,7 @@ export type MealComment = {
   rating: number;
   text: string;
   when: string;
+  postedAt?: string;
   tags: string[];
 };
 
@@ -97,6 +102,19 @@ export type TrendSeries = {
   name: string;
   color: string;
   data: number[];
+};
+
+export type TrendFootnote = {
+  label: string;
+  value: string;
+  sub: string;
+  tone: string;
+};
+
+export type TagBarItem = {
+  label: string;
+  count: number;
+  color?: string;
 };
 
 export type Kpi = {

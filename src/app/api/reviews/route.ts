@@ -1,5 +1,6 @@
 import {
-  ReviewLunchNotFoundError,
+  ReviewAlreadyExistsError,
+  ReviewServingNotFoundError,
   ReviewUserNotFoundError,
   ReviewValidationError,
 } from "@/services/reviewErrors";
@@ -39,8 +40,12 @@ export async function POST(request: Request) {
 
     return Response.json(review, { status: 201 });
   } catch (error) {
-    if (error instanceof ReviewLunchNotFoundError) {
+    if (error instanceof ReviewServingNotFoundError) {
       return Response.json({ error: error.message }, { status: 404 });
+    }
+
+    if (error instanceof ReviewAlreadyExistsError) {
+      return Response.json({ error: error.message }, { status: 409 });
     }
 
     if (

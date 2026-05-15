@@ -6,7 +6,8 @@
   "scripts": {
     "build": "next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "clean": "rm -r .next/",
-    "dev": "docker compose up -d && next dev",
+    "db:migrate": "pnpm prisma migrate deploy",
+    "dev": "docker compose up -d --wait && next dev",
     "format": "prettier --write --list-different .",
     "format:check": "prettier --check .",
     "lint": "eslint",
@@ -24,6 +25,8 @@
     "prisma": "^7.7.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-is": "19.2.4",
+    "recharts": "^3.8.1",
     "vaul": "^1.1.2",
     "zod": "^4.4.3"
   },

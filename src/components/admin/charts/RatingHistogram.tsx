@@ -1,6 +1,16 @@
-import { TeaCup } from "@/components/brand/TeaCup";
+"use client";
+
 import { DIST_COLORS } from "@/lib/admin/colors";
 import { ratingTotal } from "@/lib/admin/ratings";
+import {
+  Bar,
+  BarChart,
+  Cell,
+  LabelList,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 type Props = {
   dist: readonly number[];
@@ -8,40 +18,63 @@ type Props = {
 
 export function RatingHistogram({ dist }: Props) {
   const total = ratingTotal(dist);
+  const data = [5, 4, 3, 2, 1].map(rating => {
+    const index = rating - 1;
+    const count = dist[index] ?? 0;
+    const sharePct = total === 0 ? 0 : (count / total) * 100;
+
+    return {
+      rating,
+      count,
+      sharePct,
+      color: DIST_COLORS[index],
+      summary: `${count} · ${sharePct.toFixed(0)}%`,
+    };
+  });
 
   return (
-    <div className="flex w-full flex-col" style={{ gap: 6 }}>
-      {[5, 4, 3, 2, 1].map(star => {
-        const i = star - 1;
-        const n = dist[i] ?? 0;
-        const sharePct = total === 0 ? 0 : (n / total) * 100;
-        return (
-          <div key={star} className="flex items-center" style={{ gap: 10 }}>
-            <div
-              className="text-ink-muted text-meta flex items-center tabular-nums"
-              style={{ width: 50, gap: 4 }}
-            >
-              {star}
-              <TeaCup size={11} fill={1} />
-            </div>
-            <div
-              className="bg-ink/[0.04] flex-1 overflow-hidden rounded-[3px]"
-              style={{ height: 14 }}
-            >
-              <div
-                className="h-full rounded-[3px]"
-                style={{ width: `${sharePct}%`, background: DIST_COLORS[i] }}
-              />
-            </div>
-            <div
-              className="text-ink-soft text-meta text-right tabular-nums"
-              style={{ width: 72 }}
-            >
-              {n} · {sharePct.toFixed(0)}%
-            </div>
-          </div>
-        );
-      })}
+    <div style={{ width: "100%", height: 126 }}>
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        initialDimension={{ width: 320, height: 126 }}
+      >
+        <BarChart
+          data={data}
+          layout="vertical"
+          margin={{ top: 0, right: 76, bottom: 0, left: 0 }}
+          barCategoryGap={6}
+        >
+          <XAxis hide type="number" domain={[0, 100]} />
+          <YAxis
+            type="category"
+            dataKey="rating"
+            axisLine={false}
+            tickLine={false}
+            width={46}
+            tick={{
+              fill: "var(--color-ink-muted)",
+              fontSize: 11,
+            }}
+          />
+          <Bar
+            dataKey="sharePct"
+            radius={[0, 3, 3, 0]}
+            background={{ fill: "rgba(26,24,21,0.04)", radius: 3 }}
+            isAnimationActive={false}
+          >
+            {data.map(row => (
+              <Cell key={row.rating} fill={row.color} />
+            ))}
+            <LabelList
+              dataKey="summary"
+              position="right"
+              fill="var(--color-ink-soft)"
+              fontSize={11}
+            />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }

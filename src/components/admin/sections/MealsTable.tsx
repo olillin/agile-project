@@ -1,4 +1,3 @@
-import { MealThumb } from "@/components/admin/MealThumb";
 import { Pill } from "@/components/admin/Pill";
 import { Card } from "@/components/ui/Card";
 import { ratingColor } from "@/lib/admin/colors";
@@ -9,7 +8,7 @@ import Link from "next/link";
 
 type Props = { meals: MealStat[] };
 
-const COLS = "52px 2.6fr 2fr 0.8fr 0.8fr 0.9fr 32px";
+const COLS = "2.6fr 2fr 0.8fr 0.8fr 0.9fr 32px";
 
 export function MealsTable({ meals }: Props) {
   return (
@@ -18,7 +17,6 @@ export function MealsTable({ meals }: Props) {
         className="text-ink-soft text-eyebrow border-ink/[0.06] grid border-b uppercase"
         style={{ gridTemplateColumns: COLS, padding: "10px 16px" }}
       >
-        <div />
         <div>Meal</div>
         <div>Tags</div>
         <div style={{ textAlign: "right" }}>Rating</div>
@@ -40,12 +38,6 @@ export function MealsTable({ meals }: Props) {
               cursor: "pointer",
             }}
           >
-            <div
-              className="overflow-hidden"
-              style={{ width: 42, height: 32, borderRadius: 5 }}
-            >
-              <MealThumb meal={m} showNewBadge={false} />
-            </div>
             <div className="min-w-0">
               <div
                 className="text-ink truncate font-medium"

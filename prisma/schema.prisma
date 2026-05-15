@@ -27,6 +27,9 @@ model Review {
   serving   Serving  @relation(fields: [servingId], references: [id])
   userId    Int?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  clientId  String?
+
+  @@unique([clientId, servingId])
 }
 
 model Lunch {

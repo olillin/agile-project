@@ -20,9 +20,14 @@ export function MealCard({ meal }: Props) {
       className={`bg-paper border-ink/[0.06] flex flex-col overflow-hidden border transition-shadow hover:shadow-[0_4px_18px_rgba(26,24,21,0.10)] ${FOCUS_RING.cream}`}
       style={{ borderRadius: 12 }}
     >
-      <div className="w-full overflow-hidden" style={{ aspectRatio: "4 / 3" }}>
-        <MealThumb meal={meal} />
-      </div>
+      {meal.photo?.url && (
+        <div
+          className="w-full overflow-hidden"
+          style={{ aspectRatio: "4 / 3" }}
+        >
+          <MealThumb meal={meal} />
+        </div>
+      )}
       <div className="flex flex-1 flex-col" style={{ padding: 12, gap: 8 }}>
         <div>
           <div

@@ -22,11 +22,18 @@ function getButtonLabel(rating: number, hasExtras: boolean): string {
 type Props = {
   option: Option | null;
   day: Day | null;
+  existingRating: number | null;
   onClose: () => void;
   onSubmit: (payload: RatingPayload) => void;
 };
 
-export function MealSheet({ option, day, onClose, onSubmit }: Props) {
+export function MealSheet({
+  option,
+  day,
+  existingRating,
+  onClose,
+  onSubmit,
+}: Props) {
   const open = option !== null;
   const [display, setDisplay] = useState<{ option: Option; day: Day } | null>(
     null
@@ -63,27 +70,36 @@ export function MealSheet({ option, day, onClose, onSubmit }: Props) {
             <Drawer.Handle className="!bg-ink/15 !h-1 !w-[38px] !rounded-[2px]" />
           </div>
 
-          {display && (
-            <MealSheetContent
-              key={display.option.id}
-              option={display.option}
-              day={display.day}
-              onSubmit={onSubmit}
-            />
-          )}
+          {display &&
+            (existingRating !== null ? (
+              <ReadOnlyView
+                key={display.option.id}
+                option={display.option}
+                day={display.day}
+                rating={existingRating}
+                onClose={onClose}
+              />
+            ) : (
+              <EditableContent
+                key={display.option.id}
+                option={display.option}
+                day={display.day}
+                onSubmit={onSubmit}
+              />
+            ))}
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
   );
 }
 
-type ContentProps = {
+type EditableContentProps = {
   option: Option;
   day: Day;
   onSubmit: (payload: RatingPayload) => void;
 };
 
-function MealSheetContent({ option, day, onSubmit }: ContentProps) {
+function EditableContent({ option, day, onSubmit }: EditableContentProps) {
   const [rating, setRating] = useState(0);
   const [tags, setTags] = useState<Set<string>>(new Set());
   const [note, setNote] = useState("");
@@ -239,6 +255,85 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
       </div>
 
       {submitted && <ThankYouView rating={rating} />}
+    </div>
+  );
+}
+
+type ReadOnlyViewProps = {
+  option: Option;
+  day: Day;
+  rating: number;
+  onClose: () => void;
+};
+
+function ReadOnlyView({ option, day, rating, onClose }: ReadOnlyViewProps) {
+  return (
+    <div className="relative flex min-h-0 flex-1 flex-col">
+      <div className="relative flex-1 overflow-y-auto">
+        <MealPhoto
+          color={option.color}
+          pattern={option.pattern}
+          height={200}
+          className="mx-4 mt-1 rounded-[20px]"
+        >
+          <LinePill className="absolute top-3 left-3" size="md">
+            {option.line}
+          </LinePill>
+        </MealPhoto>
+
+        <div className="px-5 pt-4.5">
+          <Eyebrow>{formatFeedDate(day.date)}</Eyebrow>
+          <h2
+            className="text-ink mt-1 font-serif"
+            style={{ fontSize: 30, letterSpacing: -0.5, lineHeight: 1.08 }}
+          >
+            {option.name}
+          </h2>
+
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+            {option.tags.map(t => (
+              <Tag key={t}>{t}</Tag>
+            ))}
+            <ClimateTag
+              climate={option.climate}
+              climateLabel={option.climateLabel}
+            />
+          </div>
+
+          <p
+            className="text-ink-muted mt-3.5"
+            style={{ fontSize: 14, lineHeight: 1.5 }}
+          >
+            {option.desc}
+          </p>
+
+          <div className="border-ink/6 bg-paper mt-3.5 rounded-[16px] border p-[18px]">
+            <Eyebrow size="sm" className="block text-center">
+              Your rating
+            </Eyebrow>
+            <div
+              className="mt-3 flex justify-center"
+              aria-label={`You rated ${rating} out of 5`}
+            >
+              <CupRating value={rating} size={46} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="border-ink/6 bg-cream border-t px-5 pt-3.5"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 22px)" }}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className={`bg-ink/10 text-ink w-full cursor-pointer rounded-[14px] font-semibold transition-colors ${FOCUS_RING.cream}`}
+          style={{ fontSize: 14, padding: "15px" }}
+        >
+          Close
+        </button>
+      </div>
     </div>
   );
 }

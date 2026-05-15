@@ -1,10 +1,12 @@
 import { PageShell } from "@/components/admin/PageShell";
 import { MealsBrowser } from "@/components/admin/sections/MealsBrowser";
 import { buttonClassName } from "@/components/ui/Button";
-import { MEALS } from "@/lib/admin/fixtures";
+import { getAdminMealCatalog } from "@/services/statisticsService";
 import Link from "next/link";
 
-export default function AdminMealsPage() {
+export default async function AdminMealsPage() {
+  const meals = await getAdminMealCatalog();
+
   return (
     <PageShell
       title="Meals"
@@ -15,7 +17,7 @@ export default function AdminMealsPage() {
         </Link>
       }
     >
-      <MealsBrowser meals={MEALS} />
+      <MealsBrowser meals={meals} />
     </PageShell>
   );
 }

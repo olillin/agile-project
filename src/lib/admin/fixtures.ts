@@ -1,21 +1,6 @@
-// TODO: replace with API calls once Prisma models land.
-import { LINE_COLOR } from "./colors";
-import type { Kpi, MealComment, MealStat, TrendSeries } from "./types";
-
-export const MANAGER = {
-  name: "Eva Magnusson",
-  initials: "EM",
-  firstName: "Eva",
-  role: "Lunch manager",
-  school: "Chalmers · kårrestaurangen",
-};
-
-export const WEEK_STAT = {
-  week: "Week 17",
-  ratingsThisWeek: 312,
-};
-
-export const SUGGESTIONS_BADGE = 12;
+// In-memory seed backing the create/edit meal flow until that path is
+// wired to the database. Read-only views read from the statistics service.
+import type { MealStat } from "./types";
 
 export const MEALS: MealStat[] = [
   {
@@ -349,6 +334,7 @@ export const MEALS: MealStat[] = [
   },
 ];
 
+<<<<<<< HEAD
 export const COMMENTS: MealComment[] = [
   {
     mealId: "stew",
@@ -593,8 +579,4 @@ export const MEAL_TAG_BARS = [
 
 export function getMealById(id: string): MealStat | undefined {
   return MEALS.find(m => m.id === id);
-}
-
-export function getCommentsForMeal(mealId: string): MealComment[] {
-  return COMMENTS.filter(c => c.mealId === mealId);
 }

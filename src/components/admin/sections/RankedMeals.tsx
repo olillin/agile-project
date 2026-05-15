@@ -21,13 +21,33 @@ const RANGE_DAYS: Record<RangeKey, number> = {
   "30d": 30,
 };
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function daysSinceDate(iso: string | null | undefined): number | null {
+  if (!iso) return null;
+  const parsed = new Date(iso);
+  if (Number.isNaN(parsed.getTime())) return null;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  parsed.setHours(0, 0, 0, 0);
+
+  return Math.round((today.getTime() - parsed.getTime()) / DAY_MS);
+}
+
+function mealRecencyDays(meal: MealStat): number | null {
+  return daysSinceDate(meal.lastServedAt) ?? relativeDays(meal.lastServed);
+}
+
+function mealServedTime(meal: MealStat): number {
+  return meal.lastServedAt ? new Date(meal.lastServedAt).getTime() : 0;
+}
+
 const SORT_COMPARE: Record<SortKey, (a: MealStat, b: MealStat) => number> = {
   top: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
   bottom: (a, b) => (a.rating ?? 0) - (b.rating ?? 0),
   votes: (a, b) => b.votes - a.votes,
-  latest: (a, b) =>
-    (relativeDays(a.lastServed) ?? Infinity) -
-    (relativeDays(b.lastServed) ?? Infinity),
+  latest: (a, b) => mealServedTime(b) - mealServedTime(a),
 };
 
 const RANGE_KEYS = Object.keys(RANGE_DAYS) as RangeKey[];
@@ -49,7 +69,7 @@ export function RankedMeals({ meals }: Props) {
       .filter(m => {
         if (m.rating == null) return false;
         if (line !== "all" && m.line !== line) return false;
-        const days = relativeDays(m.lastServed);
+        const days = mealRecencyDays(m);
         return days != null && days <= maxDays;
       })
       .sort(SORT_COMPARE[sort]);
@@ -207,7 +227,9 @@ export function RankedMeals({ meals }: Props) {
           className="text-ink-soft text-meta text-center"
           style={{ padding: "24px 0" }}
         >
-          No meals match those filters.
+          {meals.length === 0
+            ? "No meals available."
+            : "No meals match those filters."}
         </div>
       ) : filtered.length > 6 ? (
         <button
