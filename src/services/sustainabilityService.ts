@@ -1,11 +1,12 @@
 "use server";
 
 import { IngredientRow } from "@/lib/admin/types";
+import { NewIngredient } from "./lunchService";
 
 const apiUrl = process.env.GREEN_BITE_API_URL || "http://localhost:80/";
 
 export async function getEcoScore(
-  ingredients: IngredientRow[]
+  ingredients: IngredientRow[] | NewIngredient[]
 ): Promise<number> {
   let call = apiUrl + "/score?";
 

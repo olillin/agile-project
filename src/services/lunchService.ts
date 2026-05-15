@@ -2,7 +2,7 @@
 
 import type { Ingredient, Lunch, Prisma } from "@/generated/prisma/client";
 import type { ServingGetPayload } from "@/generated/prisma/models";
-import { IngredientUnit } from "@/lib/admin/types";
+import { IngredientRow, IngredientUnit } from "@/lib/admin/types";
 import {
   formatFeedDayLabel,
   getFeedDateKey,
@@ -31,11 +31,7 @@ export type FeedDaysPage = {
   nextCursor: string | null;
 };
 
-export type NewIngredient = {
-  name: string;
-  unit: string;
-  amount: number;
-};
+export type NewIngredient = Omit<IngredientRow, "id">;
 
 type ServingWithLunch = ServingGetPayload<{
   include: { lunch: { include: { ingredients: true } } };
