@@ -1,4 +1,5 @@
 import {
+  ReviewAlreadyExistsError,
   ReviewServingNotFoundError,
   ReviewUserNotFoundError,
   ReviewValidationError,
@@ -41,6 +42,10 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof ReviewServingNotFoundError) {
       return Response.json({ error: error.message }, { status: 404 });
+    }
+
+    if (error instanceof ReviewAlreadyExistsError) {
+      return Response.json({ error: error.message }, { status: 409 });
     }
 
     if (

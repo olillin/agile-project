@@ -12,9 +12,11 @@ datasource db {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  name    String
-  reviews Review[]
+  id                    String       @unique
+  name                  String
+  reviews               Review[]
+  suggestions           Suggestion[]
+  lastTimeReviewsViewed DateTime?
 }
 
 model Review {
@@ -25,8 +27,11 @@ model Review {
   posted    DateTime
   servingId Int
   serving   Serving  @relation(fields: [servingId], references: [id], onDelete: Cascade)
-  userId    Int?
+  userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  clientId  String?
+
+  @@unique([clientId, servingId])
 }
 
 model Lunch {
@@ -57,4 +62,13 @@ model Ingredient {
   amount  Float
   lunchId Int
   lunch   Lunch  @relation(fields: [lunchId], references: [id], onDelete: Cascade)
+}
+
+model Suggestion {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @default("")
+  postedDate  DateTime
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }

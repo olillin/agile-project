@@ -46,7 +46,7 @@ is stopped. If it does not run this command manually:
 docker compose down
 ```
 
-You can also add example data to the database with:
+If you want starter data in a fresh local database, run:
 
 ```bash
 pnpm prisma db seed

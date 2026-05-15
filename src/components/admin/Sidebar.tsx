@@ -2,30 +2,34 @@
 
 import { Wordmark } from "@/components/brand/Wordmark";
 import { LogoutButton } from "@/components/LogoutButton";
-import { MANAGER, SUGGESTIONS_BADGE, WEEK_STAT } from "@/lib/admin/fixtures";
 import { FOCUS_RING } from "@/lib/styles";
+import { countNewSuggestions } from "@/services/suggestionService";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type NavItem = {
   key: string;
   label: string;
   href?: string;
-  badge?: number;
   matchPrefix?: string;
+  badge?: number;
 };
 
-const ITEMS: NavItem[] = [
-  { key: "home", label: "Overview", href: "/admin", matchPrefix: "/admin" },
-  {
-    key: "meals",
-    label: "Meals",
-    href: "/admin/meals",
-    matchPrefix: "/admin/meals",
-  },
-  { key: "calendar", label: "Calendar" },
-  { key: "suggestions", label: "Suggestions", badge: SUGGESTIONS_BADGE },
-];
+type SidebarManager = {
+  name: string;
+  initials: string;
+  role: string;
+  school: string;
+};
+
+type Props = {
+  manager: SidebarManager;
+  weekStat: {
+    week: string;
+    ratingsThisWeek: number;
+  };
+};
 
 function isActive(item: NavItem, pathname: string) {
   if (!item.matchPrefix) return false;
@@ -34,16 +38,44 @@ function isActive(item: NavItem, pathname: string) {
   );
 }
 
-function activeNavKey(pathname: string): string | null {
-  const activeItem = ITEMS.filter(it => isActive(it, pathname)).sort(
-    (a, b) => (b.matchPrefix?.length ?? 0) - (a.matchPrefix?.length ?? 0)
-  )[0];
-  return activeItem?.key ?? null;
-}
+export function Sidebar({ manager, weekStat }: Props) {
+  const [newSuggestionsCount, setNewSuggestionsCount] = useState(0);
+  const suggestionsBadge = newSuggestionsCount
+    ? {
+        badge: newSuggestionsCount,
+      }
+    : {};
 
-export function Sidebar() {
+  useEffect(() => {
+    countNewSuggestions().then(count => setNewSuggestionsCount(count));
+  }, []);
+
+  const navItems: NavItem[] = [
+    { key: "home", label: "Overview", href: "/admin", matchPrefix: "/admin" },
+    {
+      key: "meals",
+      label: "Meals",
+      href: "/admin/meals",
+      matchPrefix: "/admin/meals",
+    },
+    {
+      key: "suggestions",
+      label: "Suggestions",
+      href: "/admin/suggestions",
+      matchPrefix: "/admin/suggestions",
+      ...suggestionsBadge,
+    },
+    { key: "calendar", label: "Calendar" },
+  ];
+
   const pathname = usePathname() ?? "";
-  const activeKey = activeNavKey(pathname);
+  const activeItem = navItems
+    .filter(it => isActive(it, pathname))
+    .sort(
+      (a, b) => (b.matchPrefix?.length ?? 0) - (a.matchPrefix?.length ?? 0)
+    )[0];
+  const activeKey = activeItem?.key;
+
   return (
     <aside
       className="bg-paper border-ink/[0.06] flex h-full flex-col border-r font-sans"
@@ -56,12 +88,12 @@ export function Sidebar() {
       <div style={{ padding: "0 8px 20px" }}>
         <Wordmark size={18} />
         <div className="text-ink-soft text-meta" style={{ marginTop: 4 }}>
-          {MANAGER.school}
+          {manager.school}
         </div>
       </div>
 
       <nav className="flex flex-col" style={{ gap: 2 }}>
-        {ITEMS.map(it => {
+        {navItems.map(it => {
           const active = activeKey === it.key;
           const stateClass = active
             ? "bg-tea text-paper font-medium"
@@ -77,17 +109,21 @@ export function Sidebar() {
                 cursor: it.href ? "pointer" : "default",
               }}
             >
-              <span>{it.label}</span>
-              {it.badge != null && (
-                <span
-                  className={`text-paper text-tiny font-semibold ${
-                    active ? "bg-paper/20" : "bg-amber"
-                  }`}
-                  style={{ padding: "2px 7px", borderRadius: 999 }}
-                >
-                  {it.badge}
+              <span className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  <span>{it.label}</span>
+                  {it.badge ? (
+                    <span className="bg-paper/20 text-paper text-tiny rounded-full px-2 py-0.5 leading-none">
+                      {it.badge}
+                    </span>
+                  ) : null}
                 </span>
-              )}
+                {it.badge ? (
+                  <span className="bg-paper/20 text-paper text-tiny rounded-full px-2 py-0.5 leading-none">
+                    {it.badge}
+                  </span>
+                ) : null}
+              </span>
             </span>
           );
           return it.href ? (
@@ -120,9 +156,9 @@ export function Sidebar() {
         }}
       >
         <div className="text-tea font-semibold" style={{ marginBottom: 4 }}>
-          {WEEK_STAT.week}
+          {weekStat.week}
         </div>
-        {WEEK_STAT.ratingsThisWeek} ratings this week
+        {weekStat.ratingsThisWeek} ratings this week
       </div>
 
       <div
@@ -138,13 +174,13 @@ export function Sidebar() {
             letterSpacing: 0,
           }}
         >
-          {MANAGER.initials}
+          {manager.initials}
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-ink text-meta truncate font-medium">
-            {MANAGER.name}
+            {manager.name}
           </div>
-          <div className="text-ink-soft text-tiny">{MANAGER.role}</div>
+          <div className="text-ink-soft text-tiny">{manager.role}</div>
         </div>
         <LogoutButton
           title="Log out"

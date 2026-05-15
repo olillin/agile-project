@@ -1,21 +1,25 @@
 // Mostly copied from https://nextjs.org/docs/app/guides/authentication
 
 import "server-only";
-import { JWTPayload, jwtVerify, SignJWT } from "jose";
+import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import z, { ZodError } from "zod";
 
 /** Properties stored in the session token. */
-export interface SessionPayload extends JWTPayload {
+const SessionPayload = z.object({
+  /** JWT subject/user id. */
+  sub: z.string(),
   /** First name of the user. */
-  given_name: string;
+  given_name: z.string(),
   /** Last name of the user. */
-  family_name: string;
+  family_name: z.string(),
   /** Expiration time of the session cookie as a timestamp in seconds. */
-  exp: number;
-}
+  exp: z.number(),
+});
 
+export type SessionPayload = z.infer<typeof SessionPayload>;
 // The mocked authentication does not require a secure secret since it does not
 // intend to offer any actual security
 const secretKey = "my-secret";
@@ -40,33 +44,46 @@ export async function encrypt(payload: SessionPayload) {
 /**
  * Verify and decrypt a JWT session.
  * @param session The JWT string.
- * @returns The decrypted session.
+ * @returns The decrypted session, or undefined if it is invalid.
  */
 export async function decrypt(
   session: string | undefined = ""
 ): Promise<SessionPayload | undefined> {
+  if (session == undefined) {
+    return undefined;
+  }
   try {
     const { payload } = await jwtVerify(session, encodedKey, {
       algorithms: ["HS256"],
     });
-    return payload as SessionPayload;
-  } catch {
-    console.log("Failed to verify session");
+    return SessionPayload.parse(payload);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      console.log(`Failed to validate session. Invalid payload: ${error}`);
+    } else {
+      console.log("Failed to verify session");
+    }
   }
 }
 
 /**
  * Create a new session for an authenticated user.
+ * @param id The user id.
  * @param firstName First name of the user.
- * @param firstName Last name of the user.
+ * @param lastName Last name of the user.
  */
-export async function createSession(firstName: string, lastName: string) {
+export async function createSession(
+  id: string,
+  firstName: string,
+  lastName: string
+) {
   // Calculate the session expiration
   const expiresAt = new Date(Date.now() + sessionExpireAfter);
   const expiresAtSeconds = expiresAt.getTime() / 1000;
 
   // Create a new session
   const session = await encrypt({
+    sub: id,
     given_name: firstName,
     family_name: lastName,
     exp: expiresAtSeconds,
@@ -76,7 +93,7 @@ export async function createSession(firstName: string, lastName: string) {
   const cookieStore = await cookies();
   cookieStore.set("session", session, {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV !== "development",
     expires: expiresAt,
     sameSite: "lax",
     path: "/",
@@ -103,7 +120,7 @@ export async function updateSession() {
   const cookieStore = await cookies();
   cookieStore.set("session", session, {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV !== "development",
     expires: expiresAt,
     sameSite: "lax",
     path: "/",
@@ -130,7 +147,7 @@ export async function deleteSession() {
 export const verifySession = cache(
   async (): Promise<SessionPayload | never> => {
     const cookie = (await cookies()).get("session")?.value;
-    const session = (await decrypt(cookie)) as SessionPayload | undefined;
+    const session = await decrypt(cookie);
 
     // Check if session does not exist or has expired
     const currentTimeSeconds = Date.now() / 1000;

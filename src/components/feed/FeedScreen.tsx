@@ -18,6 +18,7 @@ export function FeedScreen({ onOpen, ratedIds }: Props) {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const hasLunches = days.some(day => day.options.length > 0);
 
   useEffect(() => {
     let ignore = false;
@@ -92,6 +93,11 @@ export function FeedScreen({ onOpen, ratedIds }: Props) {
         {isInitialLoading && (
           <p className="text-ink-muted px-1 py-6 text-center text-sm">
             Loading meals...
+          </p>
+        )}
+        {!isInitialLoading && !loadError && !hasLunches && !nextCursor && (
+          <p className="text-ink-muted px-1 py-6 text-center text-sm">
+            No lunches available
           </p>
         )}
         {loadError && (

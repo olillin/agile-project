@@ -14,7 +14,12 @@ export function FeedHeader() {
         >
           <Wordmark size={20} />
         </Link>
-        <LoginButton />
+        <span className="flex flex-row gap-4">
+          <Link href="/suggest" className="text-ink font-serif">
+            Suggest
+          </Link>
+          <LoginButton />
+        </span>
       </div>
     </header>
   );

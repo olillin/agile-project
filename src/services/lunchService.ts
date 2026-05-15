@@ -19,6 +19,8 @@ export type FeedDaysPage = {
   nextCursor: string | null;
 };
 
+export type NewIngredient = Omit<Ingredient, "id" | "lunchId">;
+
 type ServingWithLunch = ServingGetPayload<{
   include: { lunch: { include: { ingredients: true } } };
 }>;
@@ -136,7 +138,7 @@ function getLunchDetailsData(details: LunchDetailsInput) {
   return data;
 }
 
-function getIngredientData(ingredients: Ingredient[]) {
+function getIngredientData(ingredients: NewIngredient[]) {
   return ingredients.map(ingredient => {
     const name = ingredient.name.trim();
     const unit = ingredient.unit.trim();
@@ -397,7 +399,7 @@ export async function getFeedDaysPage({
 
 export async function addLunch(
   name: string,
-  ingredients: Ingredient[],
+  ingredients: NewIngredient[],
   { line, description = "" }: AddLunchDetailsInput
 ) {
   const ingredientData = getIngredientData(ingredients);
@@ -441,7 +443,7 @@ export async function removeLunch(nameOrId: number | string) {
 
 export async function updateLunch(
   nameOrId: number | string,
-  ingredients: Ingredient[],
+  ingredients: NewIngredient[],
   details: LunchDetailsInput = {}
 ) {
   const where = getLunchIdentifier(nameOrId);
@@ -456,6 +458,7 @@ export async function updateLunch(
         deleteMany: {},
         create: ingredientData,
       },
+      ecoScore: await getEcoScore(ingredientData),
     },
   });
 }
