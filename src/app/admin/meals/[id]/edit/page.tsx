@@ -92,11 +92,13 @@ export default function EditMealPage({
         return <p>din moder</p>;
       }
       const lunch: LunchWithAll = lunch_;
-      console.log(lunch.servings);
-      const votes = lunch.reviews.length;
+
+      const reviews = lunch.servings.map(serving => serving.reviews).concat();
+      const votes = reviews.length;
       const rating =
-        lunch.reviews.map(review => review.rating).reduce((acc, x) => x + acc) /
+        reviews.map(review => review.rating).reduce((acc, x) => x + acc) /
         votes;
+      const distribution = [1, 2, 3, 4, 5].map(rating => reviews.filter(reviews => review.rating == rating).length);
       setMeal({
         id: lunch.name,
         name: lunch.name,
@@ -104,7 +106,7 @@ export default function EditMealPage({
         tags: [],
         rating,
         votes,
-        distribution: [0, 1, 2, 3, 4],
+        distribution,
         co2: lunch.ecoScore,
         climate: null,
         lastServed: lunch.servings[lunch.servings.length - 1].date.toString(),

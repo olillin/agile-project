@@ -20,28 +20,28 @@ async function main() {
       ecoScore: 2.4,
       ingredients: {
         create: [
-          { id: 0, name: "Meat", amount: 100, unit: "g" },
-          { id: 1, name: "Potatoes", amount: 200, unit: "g" },
-          { id: 2, name: "Gravy", amount: 150, unit: "ml" },
+          { name: "Meat", amount: 100, unit: "g" },
+          { name: "Potatoes", amount: 200, unit: "g" },
+          { name: "Gravy", amount: 150, unit: "ml" },
         ],
       },
       servings: {
         create: [
           {
             date: new Date("2024-01-01"),
+            reviews: {
+              create: [
+                {
+                  rating: 5,
+                  comment: "Delicious!",
+                  tags: ["filling", "balanced"],
+                  posted: new Date(),
+                  userId: null,
+                },
+              ],
+            },
           },
           { date: new Date("2024-01-02") },
-        ],
-      },
-      reviews: {
-        create: [
-          {
-            rating: 5,
-            comment: "Delicious!",
-            tags: ["filling", "balanced"],
-            posted: new Date(),
-            userId: null,
-          },
         ],
       },
     },
@@ -55,28 +55,28 @@ async function main() {
       ecoScore: 1.7,
       ingredients: {
         create: [
-          { id: 3, name: "Meat", amount: 100, unit: "g" },
-          { id: 4, name: "Corn", amount: 200, unit: "g" },
-          { id: 5, name: "Salsa", amount: 150, unit: "ml" },
+          { name: "Meat", amount: 100, unit: "g" },
+          { name: "Corn", amount: 200, unit: "g" },
+          { name: "Salsa", amount: 150, unit: "ml" },
         ],
       },
       servings: {
         create: [
           {
             date: new Date("2024-01-01"),
+            reviews: {
+              create: [
+                {
+                  rating: 5,
+                  comment: "Delicious!",
+                  tags: ["fresh"],
+                  posted: new Date(),
+                  userId: null,
+                },
+              ],
+            },
           },
           { date: new Date("2024-01-02") },
-        ],
-      },
-      reviews: {
-        create: [
-          {
-            rating: 5,
-            comment: "Delicious!",
-            tags: ["fresh"],
-            posted: new Date(),
-            userId: null,
-          },
         ],
       },
     },

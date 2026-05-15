@@ -3,14 +3,14 @@
 import { Review } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
-  ReviewLunchNotFoundError,
+  ReviewServiceNotFoundError,
   ReviewUserNotFoundError,
   ReviewValidationError,
 } from "@/services/reviewErrors";
 
 type AddReviewInput = {
   rating: number;
-  lunchId: number;
+  serviceId: number;
   comment?: string;
   tags?: string[];
   userId?: number | null;
@@ -22,7 +22,7 @@ function cleanTags(tags: string[] = []): string[] {
 
 export async function addReview({
   rating,
-  lunchId,
+  servingId,
   comment,
   tags = [],
   userId = null,
@@ -31,13 +31,13 @@ export async function addReview({
     throw new ReviewValidationError("rating must be an integer from 1 to 5");
   }
 
-  const lunch = await prisma.lunch.findUnique({
-    where: { id: lunchId },
+  const serving = await prisma.serving.findUnique({
+    where: { id: servingId },
     select: { id: true },
   });
 
-  if (!lunch) {
-    throw new ReviewLunchNotFoundError(`lunch ${lunchId} does not exist`);
+  if (!serving) {
+    throw new ReviewServingNotFoundError(`serving ${servingId} does not exist`);
   }
 
   if (userId !== null) {
@@ -57,7 +57,7 @@ export async function addReview({
       comment: comment?.trim() || null,
       tags: cleanTags(tags),
       posted: new Date(),
-      lunchId,
+      servingId,
       userId,
     },
   });
@@ -75,12 +75,13 @@ export async function getReviewsByLunchId(lunchId: number): Promise<Review[]> {
 
   return reviews;
 }
+
 export async function getReviewedServingIds(): Promise<string[]> {
   const reviews = await prisma.review.findMany({
-    select: { lunchId: true },
+    select: { servingId: true },
   });
 
-  return [...new Set(reviews.map(review => review.lunchId.toString()))];
+  return [...new Set(reviews.map(review => review.servingId.toString()))];
 }
 
 export async function getReview(id: number) {

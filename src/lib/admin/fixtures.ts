@@ -30,11 +30,11 @@ export const MEALS: MealStat[] = [
     climate: "low",
     lastServed: "2d ago",
     ingredients: [
-      { id: 0, name: "Pasta", amount: 120, unit: "g" },
-      { id: 0, name: "Beef mince", amount: 90, unit: "g" },
-      { id: 0, name: "Tomato sauce", amount: 80, unit: "ml" },
-      { id: 0, name: "Yellow onion", amount: 40, unit: "g" },
-      { id: 0, name: "Parmesan", amount: 10, unit: "g" },
+      { name: "Pasta", amount: 120, unit: "g" },
+      { name: "Beef mince", amount: 90, unit: "g" },
+      { name: "Tomato sauce", amount: 80, unit: "ml" },
+      { name: "Yellow onion", amount: 40, unit: "g" },
+      { name: "Parmesan", amount: 10, unit: "g" },
     ],
   },
   {
@@ -101,11 +101,11 @@ export const MEALS: MealStat[] = [
     climate: "low",
     lastServed: "1w ago",
     ingredients: [
-      { id: 0, name: "Chickpeas", amount: 150, unit: "g" },
-      { id: 0, name: "Coconut milk", amount: 100, unit: "ml" },
-      { id: 0, name: "Basmati rice", amount: 90, unit: "g" },
-      { id: 0, name: "Curry paste", amount: 20, unit: "g" },
-      { id: 0, name: "Spinach", amount: 30, unit: "g" },
+      { name: "Chickpeas", amount: 150, unit: "g" },
+      { name: "Coconut milk", amount: 100, unit: "ml" },
+      { name: "Basmati rice", amount: 90, unit: "g" },
+      { name: "Curry paste", amount: 20, unit: "g" },
+      { name: "Spinach", amount: 30, unit: "g" },
     ],
   },
   {
@@ -133,10 +133,10 @@ export const MEALS: MealStat[] = [
     climate: "med",
     lastServed: "2w ago",
     ingredients: [
-      { id: 0, name: "Halloumi", amount: 80, unit: "g" },
-      { id: 0, name: "Quinoa", amount: 90, unit: "g" },
-      { id: 0, name: "Roast vegetables", amount: 120, unit: "g" },
-      { id: 0, name: "Tahini dressing", amount: 30, unit: "ml" },
+      { name: "Halloumi", amount: 80, unit: "g" },
+      { name: "Quinoa", amount: 90, unit: "g" },
+      { name: "Roast vegetables", amount: 120, unit: "g" },
+      { name: "Tahini dressing", amount: 30, unit: "ml" },
     ],
   },
   {
@@ -351,7 +351,6 @@ export const MEALS: MealStat[] = [
 
 export const COMMENTS: MealComment[] = [
   {
-    id: 1,
     mealId: "stew",
     mealName: "Fish stew",
     rating: 1,
@@ -360,7 +359,6 @@ export const COMMENTS: MealComment[] = [
     tags: ["cold", "weird texture"],
   },
   {
-    id: 2,
     mealId: "tacos",
     mealName: "Tacos",
     rating: 5,
@@ -369,7 +367,6 @@ export const COMMENTS: MealComment[] = [
     tags: ["more please", "loved it"],
   },
   {
-    id: 3,
     mealId: "soup",
     mealName: "Cauliflower soup",
     rating: 2,
@@ -378,7 +375,6 @@ export const COMMENTS: MealComment[] = [
     tags: ["bland"],
   },
   {
-    id: 4,
     mealId: "bolognese",
     mealName: "Pasta bolognese",
     rating: 5,
@@ -387,7 +383,6 @@ export const COMMENTS: MealComment[] = [
     tags: ["perfect"],
   },
   {
-    id: 5,
     mealId: "stew",
     mealName: "Fish stew",
     rating: 2,
@@ -396,7 +391,6 @@ export const COMMENTS: MealComment[] = [
     tags: ["weird texture"],
   },
   {
-    id: 6,
     mealId: "baobuns",
     mealName: "Bulgogi bao buns",
     rating: 5,
@@ -405,7 +399,6 @@ export const COMMENTS: MealComment[] = [
     tags: ["loved it"],
   },
   {
-    id: 7,
     mealId: "lasagna",
     mealName: "Vegetarian lasagna",
     rating: 4,
@@ -414,7 +407,6 @@ export const COMMENTS: MealComment[] = [
     tags: ["too small"],
   },
   {
-    id: 8,
     mealId: "soup",
     mealName: "Cauliflower soup",
     rating: 1,
@@ -423,7 +415,6 @@ export const COMMENTS: MealComment[] = [
     tags: ["cold"],
   },
   {
-    id: 9,
     mealId: "curry",
     mealName: "Chickpea curry",
     rating: 4,
