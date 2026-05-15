@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { SuggestionCreateInput } from "@/generated/prisma/models";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 
@@ -439,6 +440,20 @@ const TAGS_BY_RATING: Record<number, string[]> = {
   1: ["cold", "too salty", "overcooked", "too small"],
 };
 
+const SUGGESTIONS: SuggestionCreateInput[] = [
+  {
+    title: "Tacos",
+    description: "I want more tacos because they are yummy!",
+    postedDate: new Date(),
+  },
+  {
+    title: "I'm confused",
+    description:
+      "Why are so many people complaining about the school food, it's delicious",
+    postedDate: new Date("2026-05-11T13:24"),
+  },
+];
+
 // Mulberry32 — small deterministic PRNG so reseeding gives identical data.
 function makeRng(seed: number): () => number {
   let state = seed >>> 0;
@@ -630,6 +645,7 @@ async function main() {
   await prisma.serving.deleteMany();
   await prisma.ingredient.deleteMany();
   await prisma.lunch.deleteMany();
+  await prisma.suggestion.deleteMany();
 
   const rng = makeRng(20260513);
   const schedule = buildSchedule(rng);
@@ -659,8 +675,14 @@ async function main() {
     });
   }
 
+  for (const suggestion of SUGGESTIONS) {
+    await prisma.suggestion.create({
+      data: suggestion,
+    });
+  }
+
   console.log(
-    `Seeded ${LUNCHES.length} lunches, ${totalServings} servings, ${totalReviews} reviews.`
+    `Seeded ${LUNCHES.length} lunches, ${totalServings} servings, ${totalReviews} reviews, ${SUGGESTIONS.length} suggestions.`
   );
 }
 

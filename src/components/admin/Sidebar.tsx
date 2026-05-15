@@ -3,41 +3,18 @@
 import { Wordmark } from "@/components/brand/Wordmark";
 import { LogoutButton } from "@/components/LogoutButton";
 import { FOCUS_RING } from "@/lib/styles";
+import { countNewSuggestions } from "@/services/suggestionService";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type NavItem = {
   key: string;
   label: string;
   href?: string;
   matchPrefix?: string;
+  badge?: number;
 };
-
-const ITEMS: NavItem[] = [
-  { key: "home", label: "Overview", href: "/admin", matchPrefix: "/admin" },
-  {
-    key: "meals",
-    label: "Meals",
-    href: "/admin/meals",
-    matchPrefix: "/admin/meals",
-  },
-  { key: "calendar", label: "Calendar" },
-  { key: "suggestions", label: "Suggestions" },
-];
-
-function isActive(item: NavItem, pathname: string) {
-  if (!item.matchPrefix) return false;
-  return (
-    pathname === item.matchPrefix || pathname.startsWith(`${item.matchPrefix}/`)
-  );
-}
-
-function activeNavKey(pathname: string): string | null {
-  const activeItem = ITEMS.filter(it => isActive(it, pathname)).sort(
-    (a, b) => (b.matchPrefix?.length ?? 0) - (a.matchPrefix?.length ?? 0)
-  )[0];
-  return activeItem?.key ?? null;
-}
 
 type SidebarManager = {
   name: string;
@@ -54,9 +31,51 @@ type Props = {
   };
 };
 
+function isActive(item: NavItem, pathname: string) {
+  if (!item.matchPrefix) return false;
+  return (
+    pathname === item.matchPrefix || pathname.startsWith(`${item.matchPrefix}/`)
+  );
+}
+
 export function Sidebar({ manager, weekStat }: Props) {
+  const [newSuggestionsCount, setNewSuggestionsCount] = useState(0);
+  const suggestionsBadge = newSuggestionsCount
+    ? {
+        badge: newSuggestionsCount,
+      }
+    : {};
+
+  useEffect(() => {
+    countNewSuggestions().then(count => setNewSuggestionsCount(count));
+  }, []);
+
+  const navItems: NavItem[] = [
+    { key: "home", label: "Overview", href: "/admin", matchPrefix: "/admin" },
+    {
+      key: "meals",
+      label: "Meals",
+      href: "/admin/meals",
+      matchPrefix: "/admin/meals",
+    },
+    {
+      key: "suggestions",
+      label: "Suggestions",
+      href: "/admin/suggestions",
+      matchPrefix: "/admin/suggestions",
+      ...suggestionsBadge,
+    },
+    { key: "calendar", label: "Calendar" },
+  ];
+
   const pathname = usePathname() ?? "";
-  const activeKey = activeNavKey(pathname);
+  const activeItem = navItems
+    .filter(it => isActive(it, pathname))
+    .sort(
+      (a, b) => (b.matchPrefix?.length ?? 0) - (a.matchPrefix?.length ?? 0)
+    )[0];
+  const activeKey = activeItem?.key;
+
   return (
     <aside
       className="bg-paper border-ink/[0.06] flex h-full flex-col border-r font-sans"
@@ -74,7 +93,7 @@ export function Sidebar({ manager, weekStat }: Props) {
       </div>
 
       <nav className="flex flex-col" style={{ gap: 2 }}>
-        {ITEMS.map(it => {
+        {navItems.map(it => {
           const active = activeKey === it.key;
           const stateClass = active
             ? "bg-tea text-paper font-medium"
@@ -90,7 +109,21 @@ export function Sidebar({ manager, weekStat }: Props) {
                 cursor: it.href ? "pointer" : "default",
               }}
             >
-              <span>{it.label}</span>
+              <span className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  <span>{it.label}</span>
+                  {it.badge ? (
+                    <span className="bg-paper/20 text-paper text-tiny rounded-full px-2 py-0.5 leading-none">
+                      {it.badge}
+                    </span>
+                  ) : null}
+                </span>
+                {it.badge ? (
+                  <span className="bg-paper/20 text-paper text-tiny rounded-full px-2 py-0.5 leading-none">
+                    {it.badge}
+                  </span>
+                ) : null}
+              </span>
             </span>
           );
           return it.href ? (
