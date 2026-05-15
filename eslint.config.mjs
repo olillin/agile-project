@@ -9,7 +9,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     rules: {
-      "no-commented-code/no-commented-code": "warn",
+      "no-commented-code/no-commented-code": "error",
       "no-warning-comments": "warn",
     },
     plugins: { "no-commented-code": noCommentedCodePlugin },

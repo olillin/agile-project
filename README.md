@@ -37,14 +37,19 @@ pnpm dev
 This will also do a few tasks automatically:
 
 1. Run a development database and [Green Bite API](https://github.com/arienshibani/green-bite) instance with Docker compose
-1. Migrate the development database to the latest Prisma schema
-1. Seed the database with example data
+1. Update the database with the latest Prisma migrations
 
 The compose file should be stopped automatically after the development server
 is stopped. If it does not run this command manually:
 
 ```bash
 docker compose down
+```
+
+You can also add example data to the database with:
+
+```bash
+pnpm prisma db seed
 ```
 
 Open <http://localhost:3000> with your browser to see the current website.
