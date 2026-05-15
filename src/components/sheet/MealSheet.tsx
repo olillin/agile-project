@@ -7,6 +7,7 @@ import { FOCUS_RING } from "@/lib/styles";
 import type { Day, Option, RatingPayload } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
 import { Drawer } from "vaul";
+import { CupRating } from "../brand/CupRating";
 import { ClimateTag } from "./ClimateTag";
 import { RatingBlock } from "./RatingBlock";
 import { ThankYouView } from "./ThankYouView";
@@ -337,4 +338,3 @@ function ReadOnlyView({ option, day, rating, onClose }: ReadOnlyViewProps) {
     </div>
   );
 }
-

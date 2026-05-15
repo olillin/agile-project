@@ -5,7 +5,7 @@ import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import z from "zod";
+import z, { ZodError } from "zod";
 
 /** Properties stored in the session token. */
 const SessionPayload = z.object({
@@ -16,7 +16,7 @@ const SessionPayload = z.object({
   /** Last name of the user. */
   family_name: z.string(),
   /** Expiration time of the session cookie as a timestamp in seconds. */
-  exp: z.int().min(0),
+  exp: z.number(),
 });
 
 export type SessionPayload = z.infer<typeof SessionPayload>;
@@ -44,7 +44,7 @@ export async function encrypt(payload: SessionPayload) {
 /**
  * Verify and decrypt a JWT session.
  * @param session The JWT string.
- * @returns The decrypted session.
+ * @returns The decrypted session, or undefined if it is invalid.
  */
 export async function decrypt(
   session: string | undefined = ""
@@ -57,8 +57,12 @@ export async function decrypt(
       algorithms: ["HS256"],
     });
     return SessionPayload.parse(payload);
-  } catch {
-    console.log("Failed to verify session");
+  } catch (error) {
+    if (error instanceof ZodError) {
+      console.log(`Failed to validate session. Invalid payload: ${error}`);
+    } else {
+      console.log("Failed to verify session");
+    }
   }
 }
 
