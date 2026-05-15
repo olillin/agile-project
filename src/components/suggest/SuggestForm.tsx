@@ -1,24 +1,49 @@
 import { FOCUS_RING } from "@/lib/styles";
 import { submitSuggestion } from "@/services/suggestionService";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ThankYouView } from "../sheet/ThankYouView";
 import { Card } from "../ui/Card";
+
+const SUBMIT_CLOSE_DELAY = 1600;
 
 export function SuggestForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const isComplete = title && description;
   const buttonLabel = isComplete
     ? "Submit suggestion"
     : "Complete form to submit";
 
+  const submitTimerRef = useRef<number | null>(null);
+  useEffect(
+    () => () => {
+      if (submitTimerRef.current !== null) {
+        window.clearTimeout(submitTimerRef.current);
+      }
+    },
+    []
+  );
+
   const handleSubmit = async (formData: FormData): Promise<void> => {
+    if (submitted) return;
     setError(null);
     await submitSuggestion(formData)
       .then(() => {
+        setSubmitted(true);
+        if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+          navigator.vibrate(10);
+        }
+
         setTitle("");
         setDescription("");
+
+        submitTimerRef.current = window.setTimeout(() => {
+          submitTimerRef.current = null;
+          setSubmitted(false);
+        }, SUBMIT_CLOSE_DELAY);
       })
       .catch(reason => {
         if (reason instanceof Error) {
@@ -30,8 +55,11 @@ export function SuggestForm() {
   };
 
   return (
-    <Card className="m-4">
-      <form action={handleSubmit}>
+    <Card className="relative m-4 min-h-64">
+      <form
+        action={handleSubmit}
+        className={`transition-opacity duration-200 ease-out ${submitted ? "pointer-events-none opacity-0" : "opacity-100"}`}
+      >
         <div className="flex flex-col">
           <label htmlFor="title" className="text-l font-serif">
             Title
@@ -76,6 +104,8 @@ export function SuggestForm() {
           </div>
         </div>
       </form>
+
+      {submitted && <ThankYouView rating={5} label="You left a review" />}
     </Card>
   );
 }

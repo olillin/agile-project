@@ -1,4 +1,3 @@
-import { CupRating } from "@/components/brand/CupRating";
 import { Eyebrow } from "@/components/brand/Eyebrow";
 import { LinePill } from "@/components/brand/LinePill";
 import { MealPhoto } from "@/components/brand/MealPhoto";
@@ -10,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { Drawer } from "vaul";
 import { ClimateTag } from "./ClimateTag";
 import { RatingBlock } from "./RatingBlock";
+import { ThankYouView } from "./ThankYouView";
 
 const SUBMIT_CLOSE_DELAY = 1200;
 
@@ -239,40 +239,6 @@ function MealSheetContent({ option, day, onSubmit }: ContentProps) {
       </div>
 
       {submitted && <ThankYouView rating={rating} />}
-    </div>
-  );
-}
-
-function ThankYouView({ rating }: { rating: number }) {
-  const base = 120;
-  const step = 70;
-  const delay = (i: number) => ({
-    animationDelay: `${base + i * step}ms`,
-    animationFillMode: "both" as const,
-  });
-
-  return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-      <h2
-        className="text-ink animate-thanks-in font-serif"
-        style={{ fontSize: 40, letterSpacing: -0.5, ...delay(0) }}
-      >
-        Thanks
-      </h2>
-      <p
-        className="text-ink-muted animate-thanks-in mt-1.5"
-        style={{ fontSize: 14, lineHeight: 1.5, ...delay(1) }}
-      >
-        We heard you.
-      </p>
-
-      <div
-        className="animate-thanks-in mt-7"
-        style={delay(2)}
-        aria-label={`You rated ${rating} out of 5`}
-      >
-        <CupRating value={rating} size={44} />
-      </div>
     </div>
   );
 }
