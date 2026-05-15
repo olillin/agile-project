@@ -24,7 +24,7 @@ model Review {
   tags      String[] @default([])
   posted    DateTime
   servingId Int
-  serving   Serving  @relation(fields: [servingId], references: [id])
+  serving   Serving  @relation(fields: [servingId], references: [id], onDelete: Cascade)
   userId    Int?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   clientId  String?
@@ -45,9 +45,9 @@ model Lunch {
 model Serving {
   id      Int      @id @default(autoincrement())
   date    DateTime @db.Date
-  reviews Review[]
   lunchId Int
   lunch   Lunch    @relation(fields: [lunchId], references: [id], onDelete: Cascade)
+  reviews Review[]
 
   @@unique([lunchId, date])
   @@index([date])
