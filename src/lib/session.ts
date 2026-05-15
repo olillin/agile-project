@@ -5,19 +5,21 @@ import { JWTPayload, jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import z from "zod";
 
 /** Properties stored in the session token. */
-export interface SessionPayload extends JWTPayload {
+const SessionPayload = z.object({
   /** JWT subject/user id. */
-  sub: string;
+  sub: z.string(),
   /** First name of the user. */
-  given_name: string;
+  given_name: z.string(),
   /** Last name of the user. */
-  family_name: string;
+  family_name: z.string(),
   /** Expiration time of the session cookie as a timestamp in seconds. */
-  exp: number;
-}
+  exp: z.int().min(0),
+})
 
+export type SessionPayload = z.infer<typeof SessionPayload>
 // The mocked authentication does not require a secure secret since it does not
 // intend to offer any actual security
 const secretKey = "my-secret";
@@ -47,11 +49,14 @@ export async function encrypt(payload: SessionPayload) {
 export async function decrypt(
   session: string | undefined = ""
 ): Promise<SessionPayload | undefined> {
+  if (session == undefined) {
+    return undefined
+  }
   try {
     const { payload } = await jwtVerify(session, encodedKey, {
       algorithms: ["HS256"],
     });
-    return payload as SessionPayload;
+    return SessionPayload.parse(payload);
   } catch {
     console.log("Failed to verify session");
   }
@@ -138,7 +143,7 @@ export async function deleteSession() {
 export const verifySession = cache(
   async (): Promise<SessionPayload | never> => {
     const cookie = (await cookies()).get("session")?.value;
-    const session = (await decrypt(cookie)) as SessionPayload | undefined;
+    const session = await decrypt(cookie);
 
     // Check if session does not exist or has expired
     const currentTimeSeconds = Date.now() / 1000;

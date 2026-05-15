@@ -65,18 +65,20 @@ export function isFeedDateToday(date: Date | string): boolean {
 export function formatPostedDate(date: Date): string {
   const time = date.getTime();
   const now = Date.now();
+  const elapsed = time - now;
+  if (elapsed <= 0) return "Just now";
 
-  const daysAgo = Math.round((now - time) / DAY_IN_MS);
+  const daysAgo = Math.floor(elapsed / DAY_IN_MS);
   if (daysAgo > 0) {
     return `${daysAgo}d ago`;
   }
 
-  const hoursAgo = Math.round((now - time) / HOUR_IN_MS);
+  const hoursAgo = Math.floor(elapsed / HOUR_IN_MS);
   if (hoursAgo > 0) {
     return `${hoursAgo}h ago`;
   }
 
-  const minutesAgo = Math.round((now - time) / MINUTE_IN_MS);
+  const minutesAgo = Math.floor(elapsed / MINUTE_IN_MS);
   if (minutesAgo > 0) {
     return `${minutesAgo}m ago`;
   }

@@ -10,7 +10,7 @@ export function isNewSuggestion(
   lastViewed: Date | null | undefined
 ): boolean {
   // TODO: Fetch actual last viewed time
-  if (lastViewed instanceof Date) {
+  if (lastViewed instanceof Date && !Number.isNaN(lastViewed.getTime())) {
     return suggestion.postedDate > lastViewed;
   }
   return true;

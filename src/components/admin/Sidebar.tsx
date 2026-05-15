@@ -13,6 +13,7 @@ type NavItem = {
   label: string;
   href?: string;
   matchPrefix?: string;
+  badge?: number;
 };
 
 type SidebarManager = {
@@ -41,8 +42,8 @@ export function Sidebar({ manager, weekStat }: Props) {
   const [newSuggestionsCount, setNewSuggestionsCount] = useState(0);
   const suggestionsBadge = newSuggestionsCount
     ? {
-        badge: newSuggestionsCount,
-      }
+      badge: newSuggestionsCount,
+    }
     : {};
 
   useEffect(() => {
@@ -108,7 +109,21 @@ export function Sidebar({ manager, weekStat }: Props) {
                 cursor: it.href ? "pointer" : "default",
               }}
             >
-              <span>{it.label}</span>
+              <span className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  <span>{it.label}</span>
+                  {it.badge ? (
+                    <span className="bg-paper/20 text-paper text-tiny rounded-full px-2 py-0.5 leading-none">
+                      {it.badge}
+                    </span>
+                  ) : null}
+                </span>
+                {it.badge ? (
+                  <span className="bg-paper/20 text-paper text-tiny rounded-full px-2 py-0.5 leading-none">
+                    {it.badge}
+                  </span>
+                ) : null}
+              </span>
             </span>
           );
           return it.href ? (

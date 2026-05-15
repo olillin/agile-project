@@ -11,6 +11,7 @@ export function SuggestForm() {
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isComplete = title && description;
   const buttonLabel = isComplete
@@ -29,6 +30,8 @@ export function SuggestForm() {
 
   const handleSubmit = async (formData: FormData): Promise<void> => {
     if (submitted) return;
+    if (submitted || isSubmitting) return;
+    setIsSubmitting(true);
     setError(null);
     await submitSuggestion(formData)
       .then(() => {
@@ -51,7 +54,7 @@ export function SuggestForm() {
         } else {
           setError("Something went wrong, try again later");
         }
-      });
+      }).finally(() => setIsSubmitting(false));
   };
 
   return (
@@ -65,7 +68,9 @@ export function SuggestForm() {
             Title
           </label>
           <input
+            id="title"
             type="text"
+            value={title}
             onChange={e => setTitle(e.target.value.trim())}
             name="title"
             placeholder="What I want is..."
@@ -76,6 +81,8 @@ export function SuggestForm() {
             Description
           </label>
           <textarea
+            id="description"
+            value={description}
             onChange={e => setDescription(e.target.value.trim())}
             name="description"
             placeholder="I want this because..."
@@ -92,12 +99,11 @@ export function SuggestForm() {
 
             <button
               type="submit"
-              disabled={!isComplete}
-              className={`text-body w-full rounded-[14px] p-2 font-semibold transition-colors ${FOCUS_RING.cream} ${
-                isComplete
-                  ? "bg-ink text-paper cursor-pointer"
-                  : "bg-ink/10 text-ink-muted cursor-not-allowed"
-              }`}
+              disabled={!isComplete || isSubmitting}
+              className={`text-body w-full rounded-[14px] p-2 font-semibold transition-colors ${FOCUS_RING.cream} ${isComplete
+                ? "bg-ink text-paper cursor-pointer"
+                : "bg-ink/10 text-ink-muted cursor-not-allowed"
+                }`}
             >
               {buttonLabel}
             </button>
@@ -105,7 +111,7 @@ export function SuggestForm() {
         </div>
       </form>
 
-      {submitted && <ThankYouView rating={5} label="You left a review" />}
+      {submitted && <ThankYouView rating={5} label="You left a suggestion" />}
     </Card>
   );
 }
