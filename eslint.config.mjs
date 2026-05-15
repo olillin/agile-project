@@ -11,6 +11,14 @@ const eslintConfig = defineConfig([
     rules: {
       "no-commented-code/no-commented-code": "error",
       "no-warning-comments": "warn",
+      camelcase: [
+        "warn",
+        {
+          properties: "always",
+          ignoreImports: true,
+          allow: ["given_name", "family_name"],
+        },
+      ],
     },
     plugins: { "no-commented-code": noCommentedCodePlugin },
   },
