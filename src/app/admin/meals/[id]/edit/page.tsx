@@ -84,12 +84,14 @@ export default function EditMealPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const [isLoading, setIsLoading] = useState(true);
   const [meal, setMeal] = useState<MealStat | null>(null);
 
   useEffect(() => {
     getLunchById(Number(id)).then(lunch_ => {
+      setIsLoading(false);
       if (lunch_ == null) {
-        return <p>din moder</p>;
+        return;
       }
       const lunch: LunchWithAll = lunch_;
 
@@ -130,9 +132,15 @@ export default function EditMealPage({
       });
     });
   }, [id]);
-  if (!meal) {
-    return <p>loading</p>;
+
+  if (isLoading) {
+    return <p>Loading...</p>;
   }
+
+  if (!meal) {
+    return <p>Could not find meal</p>;
+  }
+
   const meal_: MealStat = meal;
   return <EditMealForm meal={meal_} />;
 }
