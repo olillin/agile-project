@@ -34,8 +34,14 @@ Then run the development server:
 pnpm dev
 ```
 
-This will also run a development environment in the background using Docker
-Compose. When you are done you can stop it by running:
+This will also do a few tasks automatically:
+
+1. Run a development database and [Green Bite API](https://github.com/arienshibani/green-bite) instance with Docker compose
+1. Migrate the development database to the latest Prisma schema
+1. Seed the database with example data
+
+The compose file should be stopped automatically after the development server
+is stopped. If it does not run this command manually:
 
 ```bash
 docker compose down
@@ -76,17 +82,8 @@ Remember to regenerate the Prisma Client afterwards with [`pnpm prisma generate`
 When you are done you can create a migration with the [migrate](https://www.prisma.io/docs/orm/reference/prisma-cli-reference#migrate-dev) command:
 
 ```bash
-pnpm prisma migrate dev --name add_lorem_ipsum_example
+pnpm prisma migrate dev --name add_table_for_thingy
 ```
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deployment
 
