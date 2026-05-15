@@ -51,8 +51,9 @@ export const isValidRow = (r: IngredientRow): boolean =>
 
 // Fresh row for editor / page initial state. The id is only used as a
 // React key, never persisted, so server/client divergence is harmless.
+let rowKeyCounter = 0;
 export const newIngredientRow = (): IngredientRow => ({
-  id: 0,
+  id: rowKeyCounter++,
   name: "",
   amount: 0,
   unit: "g",
