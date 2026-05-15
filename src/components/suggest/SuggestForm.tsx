@@ -6,6 +6,7 @@ import { Card } from "../ui/Card";
 export function SuggestForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const isComplete = title && description;
   const buttonLabel = isComplete
@@ -13,7 +14,19 @@ export function SuggestForm() {
     : "Complete form to submit";
 
   const handleSubmit = async (formData: FormData): Promise<void> => {
-    await submitSuggestion(formData);
+    setError(null);
+    await submitSuggestion(formData)
+      .then(() => {
+        setTitle("");
+        setDescription("");
+      })
+      .catch(reason => {
+        if (reason instanceof Error) {
+          setError(`Failed to submit: ${reason.message}`);
+        } else {
+          setError("Something went wrong, try again later");
+        }
+      });
   };
 
   return (
@@ -42,17 +55,25 @@ export function SuggestForm() {
             className="border-ink/10 bg-cream text-ink mt-1 w-full resize-none rounded-[12px] border px-3 py-2.5 outline-none"
           />
 
-          <button
-            type="submit"
-            disabled={!isComplete}
-            className={`text-body mt-6 w-full rounded-[14px] p-2 font-semibold transition-colors ${FOCUS_RING.cream} ${
-              isComplete
-                ? "bg-ink text-paper cursor-pointer"
-                : "bg-ink/10 text-ink-muted cursor-not-allowed"
-            }`}
-          >
-            {buttonLabel}
-          </button>
+          <div className="mt-6">
+            {error && (
+              <p className="text-meta text-rose-deep mb-2 text-center">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={!isComplete}
+              className={`text-body w-full rounded-[14px] p-2 font-semibold transition-colors ${FOCUS_RING.cream} ${
+                isComplete
+                  ? "bg-ink text-paper cursor-pointer"
+                  : "bg-ink/10 text-ink-muted cursor-not-allowed"
+              }`}
+            >
+              {buttonLabel}
+            </button>
+          </div>
         </div>
       </form>
     </Card>

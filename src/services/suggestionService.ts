@@ -93,11 +93,28 @@ export async function submitSuggestion(formData: FormData) {
     description: formData.get("description"),
   };
 
+  // Check null
+  if (!rawFormData.title) {
+    throw new Error("Suggestion must have a title");
+  }
+  if (!rawFormData.description) {
+    throw new Error("Suggestion must have a description");
+  }
+
+  // Check entry type
   if (typeof rawFormData.title != "string") {
     throw new Error("Title must be string");
   }
   if (typeof rawFormData.description != "string") {
     throw new Error("Description must be string");
+  }
+
+  // Check blank string
+  if (rawFormData.title.trim() === "") {
+    throw new Error("Suggestion must have a title");
+  }
+  if (rawFormData.description.trim() === "") {
+    throw new Error("Suggestion must have a description");
   }
 
   const review = await createSuggestion(
