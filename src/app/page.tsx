@@ -15,16 +15,13 @@ export default function Home() {
   useEffect(() => {
     let ignore = false;
 
-    async function loadReviewedServings() {
-      try {
-        const reviewedServingIds = await getReviewedServingIds();
+    getReviewedServingIds()
+      .then(reviewedServingIds => {
         if (!ignore) setRatedIds(new Set(reviewedServingIds));
-      } catch (error) {
-        console.error("Failed to load reviewed meals", error);
-      }
-    }
-
-    loadReviewedServings();
+      })
+      .catch(error => {
+        console.log("Failed to fetch reviewed IDs: ", error);
+      });
 
     return () => {
       ignore = true;

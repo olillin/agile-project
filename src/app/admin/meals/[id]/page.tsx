@@ -10,16 +10,12 @@ import { CupRating } from "@/components/brand/CupRating";
 import { Button, buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
-  getCommentsForMeal,
-  getMealById,
-  MEAL_TAG_BARS,
-} from "@/lib/admin/fixtures";
-import {
   interpretRatingDistribution,
   ratingAverage,
   ratingTotal,
 } from "@/lib/admin/ratings";
 import { NEW_TAG } from "@/lib/admin/types";
+import { getAdminMealDetail } from "@/services/statisticsService";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -27,12 +23,17 @@ type PageProps = { params: Promise<{ id: string }> };
 
 export default async function MealDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const meal = getMealById(id);
+  const lunchId = Number(id);
+
+  if (!Number.isInteger(lunchId) || lunchId <= 0) notFound();
+
+  const meal = await getAdminMealDetail(lunchId);
   if (!meal) notFound();
 
-  const comments = getCommentsForMeal(meal.id);
+  const comments = meal.comments;
   const total = ratingTotal(meal.distribution);
   const avg = ratingAverage(meal.distribution);
+  const avgLabel = total > 0 ? avg.toFixed(1) : "—";
   const visibleTags = meal.tags.filter(t => t !== NEW_TAG);
 
   return (
@@ -80,9 +81,9 @@ export default async function MealDetailPage({ params }: PageProps) {
               className="text-ink text-kpi font-serif"
               style={{ lineHeight: 1 }}
             >
-              {avg.toFixed(1)}
+              {avgLabel}
             </div>
-            <CupRating value={Math.round(avg)} size={14} />
+            {total > 0 && <CupRating value={Math.round(avg)} size={14} />}
           </div>
           <div className="text-ink-muted text-meta" style={{ marginTop: 8 }}>
             {total} ratings · {comments.length} comments
@@ -94,10 +95,11 @@ export default async function MealDetailPage({ params }: PageProps) {
             className="text-ink text-kpi font-serif"
             style={{ lineHeight: 1, marginTop: 4 }}
           >
-            9<span className="text-ink-muted text-back"> times</span>
+            {meal.timesServed ?? 0}
+            <span className="text-ink-muted text-back"> times</span>
           </div>
           <div className="text-ink-muted text-meta" style={{ marginTop: 8 }}>
-            Last on {meal.lastServed}
+            Last {meal.lastServed}
           </div>
         </Card>
         <Card padding={18}>
@@ -141,7 +143,7 @@ export default async function MealDetailPage({ params }: PageProps) {
             Distribution is {interpretRatingDistribution(meal.distribution)}
           </div>
         </Card>
-        <MealTrendCard />
+        <MealTrendCard mealId={meal.id} initialTrend={meal.trend} />
       </div>
 
       <div
@@ -150,7 +152,16 @@ export default async function MealDetailPage({ params }: PageProps) {
       >
         <Card>
           <SectionHead title="What students said" sub="Quick-tag frequencies" />
-          <TagBars items={MEAL_TAG_BARS} />
+          {meal.tagBars.length > 0 ? (
+            <TagBars items={meal.tagBars} />
+          ) : (
+            <div
+              className="text-ink-soft text-meta text-center"
+              style={{ padding: "24px 0" }}
+            >
+              No tags yet.
+            </div>
+          )}
         </Card>
         <Card>
           <CommentList comments={comments} />

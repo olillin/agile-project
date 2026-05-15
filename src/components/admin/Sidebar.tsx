@@ -2,7 +2,6 @@
 
 import { Wordmark } from "@/components/brand/Wordmark";
 import { LogoutButton } from "@/components/LogoutButton";
-import { MANAGER, WEEK_STAT } from "@/lib/admin/fixtures";
 import { FOCUS_RING } from "@/lib/styles";
 import { countNewSuggestions } from "@/services/suggestionService";
 import Link from "next/link";
@@ -13,8 +12,22 @@ type NavItem = {
   key: string;
   label: string;
   href?: string;
-  badge?: number;
   matchPrefix?: string;
+};
+
+type SidebarManager = {
+  name: string;
+  initials: string;
+  role: string;
+  school: string;
+};
+
+type Props = {
+  manager: SidebarManager;
+  weekStat: {
+    week: string;
+    ratingsThisWeek: number;
+  };
 };
 
 function isActive(item: NavItem, pathname: string) {
@@ -24,7 +37,7 @@ function isActive(item: NavItem, pathname: string) {
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ manager, weekStat }: Props) {
   const [newSuggestionsCount, setNewSuggestionsCount] = useState(0);
   const suggestionsBadge = newSuggestionsCount
     ? {
@@ -74,7 +87,7 @@ export function Sidebar() {
       <div style={{ padding: "0 8px 20px" }}>
         <Wordmark size={18} />
         <div className="text-ink-soft text-meta" style={{ marginTop: 4 }}>
-          {MANAGER.school}
+          {manager.school}
         </div>
       </div>
 
@@ -96,16 +109,6 @@ export function Sidebar() {
               }}
             >
               <span>{it.label}</span>
-              {it.badge != null && (
-                <span
-                  className={`text-paper text-tiny font-semibold ${
-                    active ? "bg-paper/20" : "bg-amber"
-                  }`}
-                  style={{ padding: "2px 7px", borderRadius: 999 }}
-                >
-                  {it.badge}
-                </span>
-              )}
             </span>
           );
           return it.href ? (
@@ -138,9 +141,9 @@ export function Sidebar() {
         }}
       >
         <div className="text-tea font-semibold" style={{ marginBottom: 4 }}>
-          {WEEK_STAT.week}
+          {weekStat.week}
         </div>
-        {WEEK_STAT.ratingsThisWeek} ratings this week
+        {weekStat.ratingsThisWeek} ratings this week
       </div>
 
       <div
@@ -156,13 +159,13 @@ export function Sidebar() {
             letterSpacing: 0,
           }}
         >
-          {MANAGER.initials}
+          {manager.initials}
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-ink text-meta truncate font-medium">
-            {MANAGER.name}
+            {manager.name}
           </div>
-          <div className="text-ink-soft text-tiny">{MANAGER.role}</div>
+          <div className="text-ink-soft text-tiny">{manager.role}</div>
         </div>
         <LogoutButton
           title="Log out"
