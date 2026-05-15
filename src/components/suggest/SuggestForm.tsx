@@ -54,7 +54,8 @@ export function SuggestForm() {
         } else {
           setError("Something went wrong, try again later");
         }
-      }).finally(() => setIsSubmitting(false));
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
   return (
@@ -100,10 +101,11 @@ export function SuggestForm() {
             <button
               type="submit"
               disabled={!isComplete || isSubmitting}
-              className={`text-body w-full rounded-[14px] p-2 font-semibold transition-colors ${FOCUS_RING.cream} ${isComplete
-                ? "bg-ink text-paper cursor-pointer"
-                : "bg-ink/10 text-ink-muted cursor-not-allowed"
-                }`}
+              className={`text-body w-full rounded-[14px] p-2 font-semibold transition-colors ${FOCUS_RING.cream} ${
+                isComplete
+                  ? "bg-ink text-paper cursor-pointer"
+                  : "bg-ink/10 text-ink-muted cursor-not-allowed"
+              }`}
             >
               {buttonLabel}
             </button>

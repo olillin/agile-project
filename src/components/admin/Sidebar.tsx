@@ -42,8 +42,8 @@ export function Sidebar({ manager, weekStat }: Props) {
   const [newSuggestionsCount, setNewSuggestionsCount] = useState(0);
   const suggestionsBadge = newSuggestionsCount
     ? {
-      badge: newSuggestionsCount,
-    }
+        badge: newSuggestionsCount,
+      }
     : {};
 
   useEffect(() => {

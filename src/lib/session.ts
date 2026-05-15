@@ -1,7 +1,7 @@
 // Mostly copied from https://nextjs.org/docs/app/guides/authentication
 
 import "server-only";
-import { JWTPayload, jwtVerify, SignJWT } from "jose";
+import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
@@ -17,9 +17,9 @@ const SessionPayload = z.object({
   family_name: z.string(),
   /** Expiration time of the session cookie as a timestamp in seconds. */
   exp: z.int().min(0),
-})
+});
 
-export type SessionPayload = z.infer<typeof SessionPayload>
+export type SessionPayload = z.infer<typeof SessionPayload>;
 // The mocked authentication does not require a secure secret since it does not
 // intend to offer any actual security
 const secretKey = "my-secret";
@@ -50,7 +50,7 @@ export async function decrypt(
   session: string | undefined = ""
 ): Promise<SessionPayload | undefined> {
   if (session == undefined) {
-    return undefined
+    return undefined;
   }
   try {
     const { payload } = await jwtVerify(session, encodedKey, {

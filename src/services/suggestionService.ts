@@ -38,7 +38,7 @@ export async function createSuggestion(
       title,
       description,
       postedDate: new Date(),
-      userId
+      userId,
     },
   });
 
