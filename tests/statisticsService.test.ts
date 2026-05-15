@@ -88,7 +88,7 @@ describe("statisticsService", () => {
 
     await expect(getAdminMealCatalog()).resolves.toEqual([
       expect.objectContaining({
-        id: "2",
+        id: 2,
         name: "Tacos",
         line: "Street food",
         tags: ["meat"],
@@ -143,7 +143,7 @@ describe("statisticsService", () => {
 
     expect(detail).toEqual(
       expect.objectContaining({
-        id: "2",
+        id: 2,
         distribution: [0, 1, 0, 0, 1],
         comments: [
           expect.objectContaining({ id: 101, text: "Too cold" }),
