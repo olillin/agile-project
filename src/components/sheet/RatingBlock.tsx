@@ -1,7 +1,11 @@
 import { CupRating } from "@/components/brand/CupRating";
 import { Eyebrow } from "@/components/brand/Eyebrow";
-import { QUICK_TAGS } from "@/lib/fixtures";
 import { FOCUS_RING } from "@/lib/styles";
+
+const QUICK_TAGS = {
+  positive: ["filling", "fresh", "balanced"],
+  negative: ["bland", "dry", "overcooked", "small portion"],
+} as const;
 
 type Props = {
   rating: number;
