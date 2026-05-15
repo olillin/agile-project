@@ -60,6 +60,7 @@ export default function NewMealPage() {
     line !== DEFAULT_LINE ||
     tags.length > 0 ||
     ingredients.some(r => r.name.trim() !== "") ||
+    ingredients.some(r => r.amount !== 0) ||
     photo !== null ||
     climate.state !== "idle";
 
@@ -68,7 +69,7 @@ export default function NewMealPage() {
     setSubmitting(true);
     try {
       const lunch = await addLunch(name, ingredients, { line: line });
-      router.push(`/admin/meals/${lunch.name}`);
+      router.push(`/admin/meals/${lunch.id}`);
     } catch {
       setSubmitting(false);
     }

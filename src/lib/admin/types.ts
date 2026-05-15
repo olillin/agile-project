@@ -11,9 +11,6 @@ export const DEFAULT_LINE: MealLine = "Vegetarian";
 
 export const parseAmount = (s: string | number): number =>
   Number(s.toString().replace(",", "."));
-
-export type Ingredient = IngredientRow;
-
 // TODO: storage pipeline. Picked Files are captured locally and only
 // `filename` is set. `url` is populated once a real upload lands.
 export type PhotoRef = {
@@ -36,7 +33,7 @@ export type MealStat = {
   firstServedAt?: string | null;
   lastServedAt?: string | null;
   timesServed?: number;
-  ingredients: Ingredient[];
+  ingredients: IngredientRow[];
   photo?: PhotoRef;
 };
 

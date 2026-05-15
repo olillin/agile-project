@@ -154,6 +154,13 @@ function getLunchDetailsData(details: LunchDetailsInput) {
   return data;
 }
 
+function isUnit(maybeUnit: unknown): maybeUnit is IngredientUnit {
+  if (typeof maybeUnit !== "string") {
+    return false;
+  }
+  return ["g", "kg", "ml", "dl", "l", "st"].includes(maybeUnit);
+}
+
 function getIngredientData(ingredients: NewIngredient[]) {
   return ingredients.map(ingredient => {
     const name = ingredient.name.trim();
@@ -171,8 +178,11 @@ function getIngredientData(ingredients: NewIngredient[]) {
       throw new Error("Ingredient amount must be a non-negative number");
     }
 
+    if (!isUnit(unit)) {
+      throw new Error("Unit must be one of the followng: g, kg, ml, dl, l, st");
+    }
+
     return {
-      id: 0,
       name,
       unit: unit as IngredientUnit,
       amount: ingredient.amount,

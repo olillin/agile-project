@@ -40,10 +40,15 @@ export function ClimateImpact({ rows, state, onChange }: Props) {
   const visualState: VisualState = isStale ? "stale" : state.state;
 
   const calculate = async () => {
-    if (!ready || state.state === "loading") return;
+    const validRows = rows.filter(isValidRow);
+    if (validRows.length === 0 || state.state === "loading") return;
     onChange({ ...state, state: "loading" });
-    const kg = await getEcoScore(rows);
-    onChange({ state: "done", kg, calculatedFromCount: validCount });
+    try {
+      const kg = await getEcoScore(validRows);
+      onChange({ state: "done", kg, calculatedFromCount: validRows.length });
+    } catch {
+      onChange({ ...state, state: "idle" });
+    }
   };
 
   const { kg } = state;

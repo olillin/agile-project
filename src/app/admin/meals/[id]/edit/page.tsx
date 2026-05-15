@@ -31,11 +31,11 @@ import {
   getLunchById,
   removeLunch,
   updateLunch,
-  type LunchWithAll,
 } from "@/services/lunchService";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useMemo, useState } from "react";
+import z from "zod";
 
 const FORM_ID = "edit-meal-form";
 
@@ -52,21 +52,21 @@ function seedForm(meal: MealStat): Initial {
   const ingredients: IngredientRow[] =
     meal.ingredients.length > 0
       ? meal.ingredients.map(ingredient => ({
-          id: ingredient.id,
-          name: ingredient.name,
-          amount: ingredient.amount,
-          unit: ingredient.unit,
-        }))
+        id: ingredient.id,
+        name: ingredient.name,
+        amount: ingredient.amount,
+        unit: ingredient.unit,
+      }))
       : [newIngredientRow()];
   // Form only manages diet tags
   const tags = meal.tags.filter((t): t is DietTag => DIET_TAG_SET.has(t));
   const climate: ClimateFormState =
     meal.co2 != null && meal.co2 > 0
       ? {
-          state: "done",
-          kg: meal.co2,
-          calculatedFromCount: meal.ingredients.length,
-        }
+        state: "done",
+        kg: meal.co2,
+        calculatedFromCount: meal.ingredients.length,
+      }
       : { state: "idle", kg: null, calculatedFromCount: 0 };
   return {
     name: meal.name,
@@ -87,11 +87,16 @@ export default function EditMealPage({
   const [meal, setMeal] = useState<MealStat | null>(null);
 
   useEffect(() => {
-    getLunchById(Number(id)).then(lunch_ => {
-      if (lunch_ == null) {
-        return <p>din moder</p>;
+    getLunchById(Number(id)).catch((reason) => {
+      console.warn(reason);
+      return null
+    }).then(lunch => {
+      if (lunch == null) {
+        return <p>Lunch not found</p>;
       }
-      const lunch: LunchWithAll = lunch_;
+
+      const MealLine = z.enum(["Vegetarian", "Nordic", "Street food"] as const);
+      const line = MealLine.parse(lunch.line);
 
       const reviews = lunch.servings.map(serving => serving.reviews).flat(1);
       const votes = reviews.length;
@@ -107,10 +112,11 @@ export default function EditMealPage({
         count_reviews(4),
         count_reviews(5),
       ];
+
       setMeal({
         id: lunch.id,
         name: lunch.name,
-        line: "Nordic",
+        line,
         tags: [],
         rating,
         votes,
@@ -133,8 +139,7 @@ export default function EditMealPage({
   if (!meal) {
     return <p>loading</p>;
   }
-  const meal_: MealStat = meal;
-  return <EditMealForm meal={meal_} />;
+  return <EditMealForm meal={meal} />;
 }
 
 function EditMealForm({ meal }: { meal: MealStat }) {
@@ -194,13 +199,12 @@ function EditMealForm({ meal }: { meal: MealStat }) {
     if (!isValid || submitting) return;
     setSubmitting(true);
     try {
-      console.log(ingredients);
       const updated = await updateLunch(meal.id, ingredients, {
         name,
         line,
         description: "",
       });
-      router.push(`/admin/meals/${updated.name}/edit`);
+      router.push(`/admin/meals/${updated.id}/edit`);
     } catch {
       setSubmitting(false);
     }
