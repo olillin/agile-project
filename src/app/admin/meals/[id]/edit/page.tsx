@@ -102,17 +102,17 @@ export default function EditMealPage({
 
       const reviews = lunch.servings.map(serving => serving.reviews).flat(1);
       const votes = reviews.length;
-      const rating =
+      const rating = reviews.length === 0 ? null :
         reviews.map(review => review.rating).reduce((acc, x) => x + acc) /
         votes;
-      const count_reviews = (rating: number) =>
+      const countReviews = (rating: number) =>
         reviews.filter(review => review.rating == rating).length;
       const distribution: [number, number, number, number, number] = [
-        count_reviews(1),
-        count_reviews(2),
-        count_reviews(3),
-        count_reviews(4),
-        count_reviews(5),
+        countReviews(1),
+        countReviews(2),
+        countReviews(3),
+        countReviews(4),
+        countReviews(5),
       ];
 
       setMeal({
