@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
+    "build": "tsc --noEmit && next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "clean": "rm -r .next/",
     "db:migrate": "pnpm prisma migrate deploy",
     "dev": "docker compose up -d --wait && prisma migrate deploy && next dev;docker compose down",
