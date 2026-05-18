@@ -1,0 +1,17 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: Don't Spill the Tea ${{ github.tag }}
+          draft: true
