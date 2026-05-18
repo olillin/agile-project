@@ -8,10 +8,12 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v6
       - name: Release
         uses: softprops/action-gh-release@v3
         with:
-          name: Don't Spill the Tea ${{ github.tag }}
+          name: Don't Spill the Tea ${{ github.ref_name }}
           draft: true
