@@ -1,4 +1,4 @@
-ARG NODE_VERSION=24.13.0-slim
+ARG NODE_VERSION=24.13.0-alpine
 
 FROM node:${NODE_VERSION} AS base
 
@@ -26,6 +26,9 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
 # ============================================
 
 FROM base AS builder
+
+# Install openssl
+RUN apk add --no-cache openssl
 
 # Copy project dependencies from dependencies stage
 COPY --from=dependencies /app/node_modules ./node_modules
@@ -55,6 +58,9 @@ RUN --mount=type=cache,target=/app/.next/cache \
 
 FROM base AS runner
 
+# Install openssl
+RUN apk add --no-cache openssl
+
 # Set production environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
@@ -82,7 +88,7 @@ USER node
 
 # Install Prisma
 RUN --mount=type=cache,target=/pnpm/store \
-    pnpm add prisma
+    pnpm add prisma@7.8.0
 
 # Expose port 3000 to allow HTTP traffic
 EXPOSE 3000
