@@ -41,7 +41,7 @@ export function ClimateImpact({ rows, state, onChange }: Props) {
 
   const calculate = async () => {
     const validRows = rows.filter(isValidRow);
-    console.log(validRows)
+    console.log(validRows);
     if (validRows.length === 0 || state.state === "loading") return;
     onChange({ ...state, state: "loading" });
     try {
