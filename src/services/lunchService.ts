@@ -43,9 +43,11 @@ type LunchDetailsInput = {
   name?: string;
   line?: MealLine;
   description?: string;
+  tags?: string[];
 };
 
 type AddLunchDetailsInput = {
+  tags: string[];
   line: MealLine;
   description?: string;
 };
@@ -441,7 +443,7 @@ export async function getFeedDaysPage({
 export async function addLunch(
   name: string,
   ingredients: NewIngredient[],
-  { line, description = "" }: AddLunchDetailsInput
+  { line, tags, description = "" }: AddLunchDetailsInput
 ) {
   const ingredientData = getIngredientData(ingredients);
   const ecoScore = await getEcoScore(ingredientData);
@@ -455,6 +457,7 @@ export async function addLunch(
       ingredients: {
         create: ingredientData,
       },
+      tags,
     },
   });
   return lunch;
@@ -500,6 +503,7 @@ export async function updateLunch(
         create: ingredientData,
       },
       ecoScore: await getEcoScore(ingredientData),
+      tags: details?.tags ? details.tags : [],
     },
   });
 }

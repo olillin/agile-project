@@ -1,9 +1,8 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+    "lastTimeReviewsViewed" TIMESTAMP(3)
 );
 
 -- CreateTable
@@ -14,7 +13,8 @@ CREATE TABLE "Review" (
     "tags" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "posted" TIMESTAMP(3) NOT NULL,
     "servingId" INTEGER NOT NULL,
-    "userId" INTEGER,
+    "userId" TEXT,
+    "clientId" TEXT,
 
     CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
 );
@@ -24,6 +24,7 @@ CREATE TABLE "Lunch" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "line" TEXT NOT NULL,
+    "tags" TEXT[],
     "description" TEXT NOT NULL DEFAULT '',
     "ecoScore" DOUBLE PRECISION NOT NULL,
 
@@ -50,6 +51,23 @@ CREATE TABLE "Ingredient" (
     CONSTRAINT "Ingredient_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Suggestion" (
+    "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL DEFAULT '',
+    "postedDate" TIMESTAMP(3) NOT NULL,
+    "userId" TEXT,
+
+    CONSTRAINT "Suggestion_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Review_clientId_servingId_key" ON "Review"("clientId", "servingId");
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Lunch_name_key" ON "Lunch"("name");
 
@@ -70,3 +88,6 @@ ALTER TABLE "Serving" ADD CONSTRAINT "Serving_lunchId_fkey" FOREIGN KEY ("lunchI
 
 -- AddForeignKey
 ALTER TABLE "Ingredient" ADD CONSTRAINT "Ingredient_lunchId_fkey" FOREIGN KEY ("lunchId") REFERENCES "Lunch"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Suggestion" ADD CONSTRAINT "Suggestion_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

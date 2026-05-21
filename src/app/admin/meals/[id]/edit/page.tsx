@@ -127,7 +127,7 @@ export default function EditMealPage({
           id: lunch.id,
           name: lunch.name,
           line,
-          tags: [],
+          tags: lunch.tags,
           rating,
           votes,
           distribution,
@@ -222,6 +222,7 @@ function EditMealForm({ meal }: { meal: MealStat }) {
         name,
         line,
         description: "",
+        tags: tags,
       });
       const currentKey = JSON.stringify({
         name,
