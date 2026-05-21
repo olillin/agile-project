@@ -14,13 +14,15 @@ If using [Nix](https://nixos.org), simply run `nix develop` to install these.
 
 ## Getting Started
 
-First, install dependencies:
+First, run the command below to install dependencies.
 
 ```bash
 pnpm install
 ```
 
-And generate the Prisma Client:
+This will also create a `.env` file and generate the Prisma Client
+automatically. However, this is a best-effort and you may need to generate the
+Prisma client manually. To do so run this command:
 
 ```bash
 pnpm prisma generate
@@ -32,8 +34,13 @@ Then run the development server:
 pnpm dev
 ```
 
-This will also run a development database in the background using Docker Compose.
-To stop the database, run:
+This will also do a few tasks automatically:
+
+1. Run a development database and [Green Bite API](https://github.com/arienshibani/green-bite) instance with Docker compose
+1. Update the database with the latest Prisma migrations
+
+The compose file should be stopped automatically after the development server
+is stopped. If it does not run this command manually:
 
 ```bash
 docker compose down
@@ -47,7 +54,7 @@ pnpm prisma db seed
 
 Open <http://localhost:3000> with your browser to see the current website.
 
-You can edit the page by modifying the files in `src/app`. The page auto-updates as you edit.
+You can edit the page by modifying the files in `src/`. The page auto-updates as you edit.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
@@ -58,6 +65,10 @@ To work with Prisma you need to generate the Prisma client. You can do so by run
 ```bash
 pnpm prisma generate
 ```
+
+> [!TIP]
+> In this project this happens automatically when installing dependencies
+> using the [`postinstall` script](https://docs.npmjs.com/cli/v8/using-npm/scripts#pre--post-scripts).
 
 Then you can import the Prisma Client in your code:
 
@@ -76,17 +87,8 @@ Remember to regenerate the Prisma Client afterwards with [`pnpm prisma generate`
 When you are done you can create a migration with the [migrate](https://www.prisma.io/docs/orm/reference/prisma-cli-reference#migrate-dev) command:
 
 ```bash
-pnpm prisma migrate dev --name add_lorem_ipsum_example
+pnpm prisma migrate dev --name add_table_for_thingy
 ```
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deployment
 

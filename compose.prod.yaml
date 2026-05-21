@@ -9,6 +9,7 @@ services:
     restart: always
     environment:
       NODE_ENV: production
+      GREEN_BITE_API_URL: http://green-bite:80
       DATABASE_URL: postgresql://postgres:<DATABASE PASSWORD>@db:5432/dont-spill-the-tea
 
     ports:
@@ -37,7 +38,7 @@ services:
     image: arienshibani/green-bite:latest
     restart: unless-stopped
 
-    ports:
-      - "80:80"
+    expose:
+      - 80
 volumes:
   db-data:
