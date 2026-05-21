@@ -10,6 +10,7 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://postgres:<DATABASE PASSWORD>@db:5432/dont-spill-the-tea
+      GREEN_BITE_API_URL: http://green-bite:80
 
     ports:
       - "3000:3000"
@@ -24,7 +25,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql
     environment:
-      - POSTGRES_DB=strecklista
+      - POSTGRES_DB=dont-spill-the-tea
       - POSTGRES_PASSWORD=<DATABASE PASSWORD>
     expose:
       - 5432
@@ -36,8 +37,7 @@ services:
   green-bite:
     image: arienshibani/green-bite:latest
     restart: unless-stopped
-
-    ports:
-      - "80:80"
+    expose:
+      - 80
 volumes:
   db-data:
