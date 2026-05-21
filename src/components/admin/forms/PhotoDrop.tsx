@@ -49,12 +49,12 @@ export function PhotoDrop({ value, onChange, square }: Props) {
         onClick={() => inputRef.current?.click()}
         onDragOver={e => e.preventDefault()}
         onDrop={onDrop}
-        className={`border-ink/[0.18] relative flex w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[12px] border-2 border-dashed ${
-          filename ? "" : "bg-ink/[0.02]"
-        } ${FOCUS_RING.paper}`}
+        className={`border-ink/[0.18] relative flex w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[12px] border-2 border-dashed ${filename ? "" : "bg-ink/[0.02]"
+          } ${FOCUS_RING.paper}`}
         style={{
           aspectRatio: square ? "1 / 1" : "4 / 3",
           gap: 8,
+          cursor: "not-allowed"
         }}
       >
         <input

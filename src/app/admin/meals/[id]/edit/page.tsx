@@ -52,21 +52,21 @@ function seedForm(meal: MealStat): Initial {
   const ingredients: IngredientRow[] =
     meal.ingredients.length > 0
       ? meal.ingredients.map(ingredient => ({
-          id: ingredient.id,
-          name: ingredient.name,
-          amount: ingredient.amount,
-          unit: ingredient.unit,
-        }))
+        id: ingredient.id,
+        name: ingredient.name,
+        amount: ingredient.amount,
+        unit: ingredient.unit,
+      }))
       : [newIngredientRow()];
   // Form only manages diet tags
   const tags = meal.tags.filter((t): t is DietTag => DIET_TAG_SET.has(t));
   const climate: ClimateFormState =
     meal.co2 != null && meal.co2 > 0
       ? {
-          state: "done",
-          kg: meal.co2,
-          calculatedFromCount: meal.ingredients.length,
-        }
+        state: "done",
+        kg: meal.co2,
+        calculatedFromCount: meal.ingredients.length,
+      }
       : { state: "idle", kg: null, calculatedFromCount: 0 };
   return {
     name: meal.name,
@@ -112,7 +112,7 @@ export default function EditMealPage({
           reviews.length === 0
             ? null
             : reviews.map(review => review.rating).reduce((acc, x) => x + acc) /
-              votes;
+            votes;
         const countReviews = (rating: number) =>
           reviews.filter(review => review.rating == rating).length;
         const distribution: [number, number, number, number, number] = [
@@ -133,7 +133,7 @@ export default function EditMealPage({
           distribution,
           co2: lunch.ecoScore,
           climate: null,
-          lastServed: lunch.servings[lunch.servings.length - 1].date.toString(),
+          lastServed: lunch.servings[lunch.servings.length - 1]?.date.toString(),
           ingredients: lunch.ingredients.map(dbIngredient => {
             return {
               id: dbIngredient.id,
@@ -171,6 +171,17 @@ function EditMealForm({ meal }: { meal: MealStat }) {
   const [submitting, setSubmitting] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [initialKey, setInitialKey] = useState(
+    () =>
+      JSON.stringify({
+        name: initial.name,
+        line: initial.line,
+        tags: initial.tags,
+        ingredients: initial.ingredients,
+        photo: initial.photo,
+        kg: initial.climate.kg,
+      })
+  );
 
   const toggleTag = (tag: DietTag) =>
     setTags(prev =>
@@ -181,8 +192,8 @@ function EditMealForm({ meal }: { meal: MealStat }) {
     name.trim().length > 0 &&
     ingredients.some(r => r.name.trim() && parseAmount(r.amount) > 0);
 
-  const initialKey = useMemo(
-    () =>
+  useEffect(() => {
+    setInitialKey(
       JSON.stringify({
         name: initial.name,
         line: initial.line,
@@ -190,9 +201,9 @@ function EditMealForm({ meal }: { meal: MealStat }) {
         ingredients: initial.ingredients,
         photo: initial.photo,
         kg: initial.climate.kg,
-      }),
-    [initial]
-  );
+      })
+    );
+  }, [initial]);
 
   const isDirty = useMemo(() => {
     const current = JSON.stringify({
@@ -220,6 +231,17 @@ function EditMealForm({ meal }: { meal: MealStat }) {
         line,
         description: "",
       });
+      const currentKey = JSON.stringify({
+        name,
+        line,
+        tags,
+        ingredients,
+        photo,
+        kg: climate.kg,
+      });
+      setInitialKey(currentKey);
+      setSubmitting(false);
+
       router.push(`/admin/meals/${updated.id}/edit`);
     } catch {
       setSubmitting(false);

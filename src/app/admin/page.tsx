@@ -28,7 +28,6 @@ export default async function AdminOverviewPage() {
         </>
       }
       subtitle={formatToday()}
-      actions={<Button primary>+ New meal</Button>}
     >
       <KpiStrip kpis={overview.kpis} />
       <Card style={{ marginBottom: 16 }}>

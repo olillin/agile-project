@@ -41,10 +41,13 @@ export function ClimateImpact({ rows, state, onChange }: Props) {
 
   const calculate = async () => {
     const validRows = rows.filter(isValidRow);
+    console.log(validRows)
     if (validRows.length === 0 || state.state === "loading") return;
     onChange({ ...state, state: "loading" });
     try {
       const kg = await getEcoScore(validRows);
+      console.log(kg);
+
       onChange({ state: "done", kg, calculatedFromCount: validRows.length });
     } catch {
       onChange({ ...state, state: "idle" });
