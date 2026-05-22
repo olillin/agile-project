@@ -16,6 +16,7 @@ import {
   type TrendFootnote,
   type TrendSeries,
 } from "@/lib/admin/types";
+import { getFeedDateKey } from "@/lib/dateFormat";
 import { prisma } from "@/lib/prisma";
 import type { DietTag, MealLine } from "@/lib/types";
 
@@ -322,9 +323,11 @@ function toMealStat(lunch: LunchSnapshot): MealStat {
   const ratings = reviews.map(review => review.rating).filter(isValidRating);
   const rating = averageRating(ratings);
   const distribution = getDistribution(ratings);
-  const todayKey = getLocalDateKey(new Date());
+  // Compare via UTC date keys so the past/future partition matches
+  // scheduleServing's storage (UTC midnight) regardless of server timezone.
+  const todayKey = getFeedDateKey(new Date());
   const pastServings = lunch.servings.filter(
-    serving => getLocalDateKey(serving.date) <= todayKey
+    serving => getFeedDateKey(serving.date) <= todayKey
   );
   const { firstServedAt, lastServedAt } = getServingDateRange(pastServings);
   const tags: string[] = getDietTags(lunch.ingredients);
@@ -795,7 +798,13 @@ export async function getAdminMealTrend(
   lunchId: number,
   servingLimit = 30
 ): Promise<AdminMealTrend | null> {
-  const startOfTomorrow = addDays(getStartOfToday(new Date()), 1);
+  // UTC-midnight boundary to match scheduleServing's storage. Using a
+  // local-midnight Date here would mix coordinate systems with the
+  // serving.date `@db.Date` column (UTC midnight) and miss servings near
+  // the timezone boundary.
+  const todayKey = getFeedDateKey(new Date());
+  const startOfTomorrow = new Date(`${todayKey}T00:00:00.000Z`);
+  startOfTomorrow.setUTCDate(startOfTomorrow.getUTCDate() + 1);
   const lunch = await prisma.lunch.findUnique({
     where: { id: lunchId },
     select: {
@@ -841,16 +850,16 @@ export async function getAdminMealDetail(
 
   const reviews = getAllReviews(lunch);
   const meal = toMealStat(lunch);
-  const todayKey = getLocalDateKey(new Date());
+  const todayKey = getFeedDateKey(new Date());
   const pastServings = lunch.servings.filter(
-    serving => getLocalDateKey(serving.date) <= todayKey
+    serving => getFeedDateKey(serving.date) <= todayKey
   );
   const upcomingServings: UpcomingServing[] = lunch.servings
-    .filter(serving => getLocalDateKey(serving.date) > todayKey)
+    .filter(serving => getFeedDateKey(serving.date) > todayKey)
     .sort((a, b) => a.date.getTime() - b.date.getTime())
     .map(serving => ({
       id: serving.id,
-      date: getLocalDateKey(serving.date),
+      date: getFeedDateKey(serving.date),
     }));
 
   return {

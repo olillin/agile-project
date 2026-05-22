@@ -16,6 +16,7 @@ import { Button, buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ratingColor } from "@/lib/admin/colors";
 import { ratingAverage, ratingTotal } from "@/lib/admin/ratings";
+import { getFeedDateKey } from "@/lib/dateFormat";
 import {
   DIET_TAG_SET,
   newIngredientRow,
@@ -123,10 +124,11 @@ export default function EditMealPage({
           countReviews(5),
         ];
 
-        // Future-scheduled servings shouldn't appear as "last served".
-        const todayKey = new Date().toISOString().slice(0, 10);
+        // Future-scheduled servings shouldn't appear as "last served". Use
+        // the shared UTC date-key helper so this matches statisticsService.
+        const todayKey = getFeedDateKey(new Date());
         const pastServingTimes = lunch.servings
-          .filter(s => s.date.toISOString().slice(0, 10) <= todayKey)
+          .filter(s => getFeedDateKey(s.date) <= todayKey)
           .map(s => s.date.getTime());
         const lastServedDate = pastServingTimes.length
           ? new Date(Math.max(...pastServingTimes))
