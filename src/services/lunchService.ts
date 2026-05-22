@@ -516,7 +516,7 @@ const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
  * Schedules a meal to be served on a given date.
- * `date` must be a `YYYY-MM-DD` string. Past dates are rejected.
+ * `date` must be a `YYYY-MM-DD` string strictly in the future (tomorrow or later).
  * Throws `ServingAlreadyScheduledError` if the lunch is already scheduled
  * on that date.
  */
@@ -535,8 +535,8 @@ export async function scheduleServing(lunchId: number, date: string) {
   }
 
   const todayKey = getFeedDateKey(new Date());
-  if (date < todayKey) {
-    throw new InvalidServingDateError("Date cannot be in the past");
+  if (date <= todayKey) {
+    throw new InvalidServingDateError("Pick a future date");
   }
 
   try {

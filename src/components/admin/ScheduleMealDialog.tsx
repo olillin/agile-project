@@ -15,8 +15,10 @@ type Props = {
 
 const FORM_ID = "schedule-meal-form";
 
-function todayKey(): string {
-  return new Date().toISOString().slice(0, 10);
+function tomorrowKey(): string {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString().slice(0, 10);
 }
 
 function formatPretty(dateKey: string): string {
@@ -31,13 +33,13 @@ function formatPretty(dateKey: string): string {
 export function ScheduleMealDialog({ mealId, mealName }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState(todayKey);
+  const [date, setDate] = useState(tomorrowKey);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scheduledDate, setScheduledDate] = useState<string | null>(null);
 
   const openDialog = () => {
-    setDate(todayKey());
+    setDate(tomorrowKey());
     setError(null);
     setScheduledDate(null);
     setOpen(true);
@@ -121,7 +123,7 @@ export function ScheduleMealDialog({ mealId, mealName }: Props) {
                   type="date"
                   value={date}
                   onChange={setDate}
-                  min={todayKey()}
+                  min={tomorrowKey()}
                   autoFocus
                 />
               </Field>
