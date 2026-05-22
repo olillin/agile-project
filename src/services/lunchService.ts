@@ -12,8 +12,10 @@ import {
 import { prisma } from "@/lib/prisma";
 import type { ClimateLabel, Day, DietTag, MealLine } from "@/lib/types";
 import {
+  CannotUnschedulePastServingError,
   InvalidServingDateError,
   ServingAlreadyScheduledError,
+  ServingNotFoundError,
 } from "./lunchErrors";
 import { getEcoScore } from "./sustainabilityService";
 
@@ -557,13 +559,30 @@ export async function scheduleServing(lunchId: number, date: string) {
 }
 
 /**
- * Removes a scheduled serving by id. Intended for cancelling upcoming
- * servings before they happen; nothing prevents removing past servings,
- * but doing so cascades to reviews via the schema's `onDelete: Cascade`.
+ * Removes a scheduled serving by id. Only future servings can be
+ * removed — past servings carry reviews that would cascade-delete via
+ * the schema's `onDelete: Cascade`, so we reject those server-side
+ * regardless of what the UI exposes.
  */
 export async function unscheduleServing(servingId: number) {
   if (!Number.isInteger(servingId) || servingId <= 0) {
     throw new Error("Serving id must be a positive integer");
+  }
+
+  const serving = await prisma.serving.findUnique({
+    where: { id: servingId },
+    select: { date: true },
+  });
+
+  if (!serving) {
+    throw new ServingNotFoundError(`Serving ${servingId} does not exist`);
+  }
+
+  const todayKey = getFeedDateKey(new Date());
+  if (getFeedDateKey(serving.date) <= todayKey) {
+    throw new CannotUnschedulePastServingError(
+      "Past servings can't be unscheduled"
+    );
   }
 
   await prisma.serving.delete({
