@@ -4,7 +4,7 @@ export const NEW_TAG = "new";
 
 export type ClimateBucket = "low" | "med" | "high" | null;
 
-export const INGREDIENT_UNITS = ["g", "kg", "ml", "dl", "l", "st"] as const;
+export const INGREDIENT_UNITS = ["g", "kg", "st"] as const;
 export type IngredientUnit = (typeof INGREDIENT_UNITS)[number];
 
 export const DEFAULT_LINE: MealLine = "Vegetarian";
