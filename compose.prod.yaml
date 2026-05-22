@@ -9,6 +9,7 @@ services:
     restart: always
     environment:
       NODE_ENV: production
+      GREEN_BITE_API_URL: http://green-bite:80
       DATABASE_URL: postgresql://postgres:<DATABASE PASSWORD>@db:5432/dont-spill-the-tea
       GREEN_BITE_API_URL: http://green-bite:80
 
