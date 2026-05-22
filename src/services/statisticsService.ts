@@ -314,21 +314,21 @@ function getServingDateRange(servings: ServingSnapshot[]) {
   };
 }
 
-function getAllReviews(lunch: LunchSnapshot): ReviewSnapshot[] {
-  return lunch.servings.flatMap(serving => serving.reviews);
+function getAllReviews(servings: ServingSnapshot[]): ReviewSnapshot[] {
+  return servings.flatMap(serving => serving.reviews);
 }
 
 function toMealStat(lunch: LunchSnapshot): MealStat {
-  const reviews = getAllReviews(lunch);
-  const ratings = reviews.map(review => review.rating).filter(isValidRating);
-  const rating = averageRating(ratings);
-  const distribution = getDistribution(ratings);
   // Compare via UTC date keys so the past/future partition matches
   // scheduleServing's storage (UTC midnight) regardless of server timezone.
   const todayKey = getFeedDateKey(new Date());
   const pastServings = lunch.servings.filter(
     serving => getFeedDateKey(serving.date) <= todayKey
   );
+  const reviews = getAllReviews(pastServings);
+  const ratings = reviews.map(review => review.rating).filter(isValidRating);
+  const rating = averageRating(ratings);
+  const distribution = getDistribution(ratings);
   const { firstServedAt, lastServedAt } = getServingDateRange(pastServings);
   const tags: string[] = getDietTags(lunch.ingredients);
 
@@ -379,8 +379,11 @@ function getTagBars(reviews: ReviewSnapshot[]): TagBarItem[] {
     .slice(0, MAX_TAG_BARS);
 }
 
-function getComments(lunch: LunchSnapshot): MealComment[] {
-  return getAllReviews(lunch)
+function getComments(
+  lunch: Pick<LunchSnapshot, "id" | "name">,
+  servings: ServingSnapshot[]
+): MealComment[] {
+  return getAllReviews(servings)
     .filter(review => review.comment?.trim())
     .sort((a, b) => b.posted.getTime() - a.posted.getTime())
     .map(review => ({
@@ -848,12 +851,12 @@ export async function getAdminMealDetail(
 
   if (!lunch) return null;
 
-  const reviews = getAllReviews(lunch);
   const meal = toMealStat(lunch);
   const todayKey = getFeedDateKey(new Date());
   const pastServings = lunch.servings.filter(
     serving => getFeedDateKey(serving.date) <= todayKey
   );
+  const reviews = getAllReviews(pastServings);
   const upcomingServings: UpcomingServing[] = lunch.servings
     .filter(serving => getFeedDateKey(serving.date) > todayKey)
     .sort((a, b) => a.date.getTime() - b.date.getTime())
@@ -864,7 +867,7 @@ export async function getAdminMealDetail(
 
   return {
     ...meal,
-    comments: getComments(lunch),
+    comments: getComments(lunch, pastServings),
     tagBars: getTagBars(reviews),
     trend: buildMealTrend(pastServings.slice(0, 30)),
     upcomingServings,
