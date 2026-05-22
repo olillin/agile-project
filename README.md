@@ -1,6 +1,11 @@
 # Don't Spill the Tea
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Welcome to _Don't Spill the Tea_, a solution for reducing food waste by
+simplifying the collection of feedback about school lunches from students.
+
+For setting up your own instance, see [SETUP.md](./SETUP.md).
+
+For developing, continue reading below.
 
 ## Prerequisites
 

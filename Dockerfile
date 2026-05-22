@@ -1,6 +1,6 @@
-ARG NODE_VERSION=24.13.0-slim
+ARG NODE_VERSION=24.13.0
 
-FROM node:${NODE_VERSION} AS base
+FROM node:${NODE_VERSION}-alpine AS base
 
 # Set working directory
 WORKDIR /app
@@ -26,6 +26,9 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
 # ============================================
 
 FROM base AS builder
+
+# Install openssl
+RUN apk add --no-cache openssl
 
 # Copy project dependencies from dependencies stage
 COPY --from=dependencies /app/node_modules ./node_modules
@@ -55,6 +58,9 @@ RUN --mount=type=cache,target=/app/.next/cache \
 
 FROM base AS runner
 
+# Install openssl
+RUN apk add --no-cache openssl
+
 # Set production environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
@@ -80,12 +86,8 @@ COPY --from=builder --chown=node:node /app/prisma.config.ts ./prisma.config.ts
 # Switch to non-root user for security best practices
 USER node
 
-# Install Prisma
-RUN --mount=type=cache,target=/pnpm/store \
-    pnpm add prisma
-
 # Expose port 3000 to allow HTTP traffic
 EXPOSE 3000
 
 # Start Next.js standalone server
-CMD ["/bin/sh", "-c", "pnpm exec prisma migrate deploy && node server.js"]
+CMD ["/bin/sh", "-c", "pnpm dlx prisma@7.8.0 migrate deploy && node server.js"]

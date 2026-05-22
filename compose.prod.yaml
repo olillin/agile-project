@@ -25,7 +25,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql
     environment:
-      - POSTGRES_DB=strecklista
+      - POSTGRES_DB=dont-spill-the-tea
       - POSTGRES_PASSWORD=<DATABASE PASSWORD>
     expose:
       - 5432
@@ -37,7 +37,6 @@ services:
   green-bite:
     image: arienshibani/green-bite:latest
     restart: unless-stopped
-
     expose:
       - 80
 volumes:
