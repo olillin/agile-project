@@ -555,3 +555,18 @@ export async function scheduleServing(lunchId: number, date: string) {
     throw e;
   }
 }
+
+/**
+ * Removes a scheduled serving by id. Intended for cancelling upcoming
+ * servings before they happen; nothing prevents removing past servings,
+ * but doing so cascades to reviews via the schema's `onDelete: Cascade`.
+ */
+export async function unscheduleServing(servingId: number) {
+  if (!Number.isInteger(servingId) || servingId <= 0) {
+    throw new Error("Serving id must be a positive integer");
+  }
+
+  await prisma.serving.delete({
+    where: { id: servingId },
+  });
+}

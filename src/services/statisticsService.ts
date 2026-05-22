@@ -40,10 +40,16 @@ export type AdminOverview = {
   trend: AdminOverviewTrend;
 };
 
+export type UpcomingServing = {
+  id: number;
+  date: string;
+};
+
 export type AdminMealDetail = MealStat & {
   comments: MealComment[];
   tagBars: TagBarItem[];
   trend: AdminMealTrend;
+  upcomingServings: UpcomingServing[];
 };
 
 export type AdminSidebarStats = {
@@ -839,11 +845,19 @@ export async function getAdminMealDetail(
   const pastServings = lunch.servings.filter(
     serving => getLocalDateKey(serving.date) <= todayKey
   );
+  const upcomingServings: UpcomingServing[] = lunch.servings
+    .filter(serving => getLocalDateKey(serving.date) > todayKey)
+    .sort((a, b) => a.date.getTime() - b.date.getTime())
+    .map(serving => ({
+      id: serving.id,
+      date: getLocalDateKey(serving.date),
+    }));
 
   return {
     ...meal,
     comments: getComments(lunch),
     tagBars: getTagBars(reviews),
     trend: buildMealTrend(pastServings.slice(0, 30)),
+    upcomingServings,
   };
 }
