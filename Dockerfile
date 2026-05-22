@@ -90,4 +90,4 @@ USER node
 EXPOSE 3000
 
 # Start Next.js standalone server
-CMD ["/bin/sh", "-c", "pnpm dlx prisma migrate deploy && node server.js"]
+CMD ["/bin/sh", "-c", "pnpm dlx prisma@7.8.0 migrate deploy && node server.js"]
