@@ -266,7 +266,11 @@ function EditMealForm({ meal }: { meal: MealStat }) {
           <span>Edit meal</span>
         </>
       }
-      subtitle={`Last served ${meal.lastServed} · ${total} ratings · ${visibleAvg} avg`}
+      subtitle={
+        meal.lastServed === "never"
+          ? `Not served yet · ${total} ratings · ${visibleAvg} avg`
+          : `Last served ${meal.lastServed} · ${total} ratings · ${visibleAvg} avg`
+      }
       actions={
         <>
           <Button
