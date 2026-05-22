@@ -1,6 +1,7 @@
 "use server";
 
-import type { Ingredient, Lunch, Prisma } from "@/generated/prisma/client";
+import { Prisma } from "@/generated/prisma/client";
+import type { Ingredient, Lunch } from "@/generated/prisma/client";
 import type { ServingGetPayload } from "@/generated/prisma/models";
 import { IngredientRow, IngredientUnit } from "@/lib/admin/types";
 import {
@@ -10,6 +11,10 @@ import {
 } from "@/lib/dateFormat";
 import { prisma } from "@/lib/prisma";
 import type { ClimateLabel, Day, DietTag, MealLine } from "@/lib/types";
+import {
+  InvalidServingDateError,
+  ServingAlreadyScheduledError,
+} from "./lunchErrors";
 import { getEcoScore } from "./sustainabilityService";
 
 export type LunchWithAll = Prisma.LunchGetPayload<{
@@ -502,4 +507,51 @@ export async function updateLunch(
       ecoScore: await getEcoScore(ingredientData),
     },
   });
+}
+
+const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Schedules a meal to be served on a given date.
+ * `date` must be a `YYYY-MM-DD` string. Past dates are rejected.
+ * Throws `ServingAlreadyScheduledError` if the lunch is already scheduled
+ * on that date.
+ */
+export async function scheduleServing(lunchId: number, date: string) {
+  if (!Number.isInteger(lunchId) || lunchId <= 0) {
+    throw new Error("Lunch id must be a positive integer");
+  }
+
+  if (!DATE_KEY_PATTERN.test(date)) {
+    throw new InvalidServingDateError("Date must be in YYYY-MM-DD format");
+  }
+
+  const parsed = new Date(`${date}T00:00:00.000Z`);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new InvalidServingDateError(`Invalid date: ${date}`);
+  }
+
+  const todayKey = getFeedDateKey(new Date());
+  if (date < todayKey) {
+    throw new InvalidServingDateError("Date cannot be in the past");
+  }
+
+  try {
+    return await prisma.serving.create({
+      data: {
+        lunchId,
+        date: parsed,
+      },
+    });
+  } catch (e) {
+    if (
+      e instanceof Prisma.PrismaClientKnownRequestError &&
+      e.code === "P2002"
+    ) {
+      throw new ServingAlreadyScheduledError(
+        `Lunch ${lunchId} is already scheduled on ${date}`
+      );
+    }
+    throw e;
+  }
 }
