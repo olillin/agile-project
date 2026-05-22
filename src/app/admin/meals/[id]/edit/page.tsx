@@ -16,7 +16,6 @@ import { Button, buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ratingColor } from "@/lib/admin/colors";
 import { ratingAverage, ratingTotal } from "@/lib/admin/ratings";
-import { getFeedDateKey } from "@/lib/dateFormat";
 import {
   DIET_TAG_SET,
   isValidRow,
@@ -28,6 +27,7 @@ import {
   type MealStat,
   type PhotoRef,
 } from "@/lib/admin/types";
+import { getFeedDateKey } from "@/lib/dateFormat";
 import type { DietTag } from "@/lib/types";
 import {
   getLunchById,

@@ -74,11 +74,7 @@ export function UpcomingServingsSection({ upcomingServings }: Props) {
             <span className="text-ink text-meta tabular-nums">
               {formatUpcoming(serving.date)}
             </span>
-            <Button
-              danger
-              type="button"
-              onClick={() => setRemoving(serving)}
-            >
+            <Button danger type="button" onClick={() => setRemoving(serving)}>
               Remove
             </Button>
           </li>
@@ -110,10 +106,7 @@ export function UpcomingServingsSection({ upcomingServings }: Props) {
           <>
             <p>This will unschedule {formatUpcoming(removing.date)}.</p>
             {error && (
-              <p
-                className="text-rose-deep text-meta"
-                style={{ marginTop: 10 }}
-              >
+              <p className="text-rose-deep text-meta" style={{ marginTop: 10 }}>
                 {error}
               </p>
             )}
