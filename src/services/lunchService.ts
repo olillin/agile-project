@@ -534,6 +534,10 @@ export async function scheduleServing(lunchId: number, date: string) {
   if (Number.isNaN(parsed.getTime())) {
     throw new InvalidServingDateError(`Invalid date: ${date}`);
   }
+  // Reject out-of-range days (e.g. 2026-02-30 → 2026-03-02).
+  if (getFeedDateKey(parsed) !== date) {
+    throw new InvalidServingDateError(`Invalid date: ${date}`);
+  }
 
   const todayKey = getFeedDateKey(new Date());
   if (date <= todayKey) {
