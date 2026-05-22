@@ -109,6 +109,7 @@ export function ScheduleMealDialog({ mealId, mealName }: Props) {
         ) : (
           <form
             id={FORM_ID}
+            noValidate
             onSubmit={e => {
               e.preventDefault();
               submit();
