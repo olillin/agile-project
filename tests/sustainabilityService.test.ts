@@ -4,18 +4,16 @@ import { expect, test } from "vitest";
 
 describe("getEcoScore", () => {
   test("returns a score for beef", async () => {
-    const score = await getEcoScore([
-      { name: "beef", amount: 100, unit: "grams" },
-    ]);
+    const score = await getEcoScore([{ name: "beef", amount: 100, unit: "g" }]);
     expect(score).toBeDefined();
     expect(score).toBeCloseTo(9.29115921655555555, 5);
   });
 
   test("multiple ingredients", async () => {
     const score = await getEcoScore([
-      { name: "milk", amount: 1, unit: "cups" },
-      { name: "sugar", amount: 3, unit: "tablespoons" },
-      { name: "cornstarch", amount: 2, unit: "tablespoons" },
+      { name: "milk", amount: 2, unit: "dl" },
+      { name: "sugar", amount: 45, unit: "ml" },
+      { name: "cornstarch", amount: 30, unit: "ml" },
     ]);
     expect(score).toBeDefined();
     expect(score).toBeCloseTo(0.7855314915881078, 5);
