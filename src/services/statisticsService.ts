@@ -316,7 +316,11 @@ function toMealStat(lunch: LunchSnapshot): MealStat {
   const ratings = reviews.map(review => review.rating).filter(isValidRating);
   const rating = averageRating(ratings);
   const distribution = getDistribution(ratings);
-  const { firstServedAt, lastServedAt } = getServingDateRange(lunch.servings);
+  const todayKey = getLocalDateKey(new Date());
+  const pastServings = lunch.servings.filter(
+    serving => getLocalDateKey(serving.date) <= todayKey
+  );
+  const { firstServedAt, lastServedAt } = getServingDateRange(pastServings);
   const tags: string[] = getDietTags(lunch.ingredients);
 
   if (!lastServedAt) tags.push(NEW_TAG);
@@ -335,7 +339,7 @@ function toMealStat(lunch: LunchSnapshot): MealStat {
     firstServed: formatRelativeDate(firstServedAt),
     firstServedAt: dateToIso(firstServedAt),
     lastServedAt: dateToIso(lastServedAt),
-    timesServed: lunch.servings.length,
+    timesServed: pastServings.length,
     ingredients: lunch.ingredients.map(toAdminIngredient),
   };
 }
@@ -785,11 +789,15 @@ export async function getAdminMealTrend(
   lunchId: number,
   servingLimit = 30
 ): Promise<AdminMealTrend | null> {
+  const startOfTomorrow = addDays(getStartOfToday(new Date()), 1);
   const lunch = await prisma.lunch.findUnique({
     where: { id: lunchId },
     select: {
       id: true,
       servings: {
+        where: {
+          date: { lt: startOfTomorrow },
+        },
         orderBy: {
           date: "desc",
         },
@@ -827,11 +835,15 @@ export async function getAdminMealDetail(
 
   const reviews = getAllReviews(lunch);
   const meal = toMealStat(lunch);
+  const todayKey = getLocalDateKey(new Date());
+  const pastServings = lunch.servings.filter(
+    serving => getLocalDateKey(serving.date) <= todayKey
+  );
 
   return {
     ...meal,
     comments: getComments(lunch),
     tagBars: getTagBars(reviews),
-    trend: buildMealTrend(lunch.servings.slice(0, 30)),
+    trend: buildMealTrend(pastServings.slice(0, 30)),
   };
 }

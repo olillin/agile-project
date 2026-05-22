@@ -123,6 +123,15 @@ export default function EditMealPage({
           countReviews(5),
         ];
 
+        // Future-scheduled servings shouldn't appear as "last served".
+        const todayKey = new Date().toISOString().slice(0, 10);
+        const pastServingTimes = lunch.servings
+          .filter(s => s.date.toISOString().slice(0, 10) <= todayKey)
+          .map(s => s.date.getTime());
+        const lastServedDate = pastServingTimes.length
+          ? new Date(Math.max(...pastServingTimes))
+          : null;
+
         setMeal({
           id: lunch.id,
           name: lunch.name,
@@ -133,7 +142,7 @@ export default function EditMealPage({
           distribution,
           co2: lunch.ecoScore,
           climate: null,
-          lastServed: lunch.servings[lunch.servings.length - 1].date.toString(),
+          lastServed: lastServedDate ? lastServedDate.toString() : "never",
           ingredients: lunch.ingredients.map(dbIngredient => {
             return {
               id: dbIngredient.id,
