@@ -1,6 +1,6 @@
-ARG NODE_VERSION=24.13.0-alpine
+ARG NODE_VERSION=24.13.0
 
-FROM node:${NODE_VERSION} AS base
+FROM node:${NODE_VERSION}-alpine AS base
 
 # Set working directory
 WORKDIR /app
@@ -86,12 +86,8 @@ COPY --from=builder --chown=node:node /app/prisma.config.ts ./prisma.config.ts
 # Switch to non-root user for security best practices
 USER node
 
-# Install Prisma
-RUN --mount=type=cache,target=/pnpm/store \
-    pnpm add prisma@7.8.0
-
 # Expose port 3000 to allow HTTP traffic
 EXPOSE 3000
 
 # Start Next.js standalone server
-CMD ["/bin/sh", "-c", "pnpm exec prisma migrate deploy && node server.js"]
+CMD ["/bin/sh", "-c", "pnpm dlx prisma migrate deploy && node server.js"]
