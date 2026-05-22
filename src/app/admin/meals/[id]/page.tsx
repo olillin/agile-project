@@ -171,9 +171,7 @@ export default async function MealDetailPage({ params }: PageProps) {
           </Card>
           <Card>
             <SectionHead title="Upcoming servings" sub="Scheduled ahead" />
-            <UpcomingServingsSection
-              upcomingServings={meal.upcomingServings}
-            />
+            <UpcomingServingsSection upcomingServings={meal.upcomingServings} />
           </Card>
         </div>
         <Card>
