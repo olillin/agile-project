@@ -3,11 +3,13 @@ import { RatingHistogram } from "@/components/admin/charts/RatingHistogram";
 import { TagBars } from "@/components/admin/charts/TagBars";
 import { PageShell } from "@/components/admin/PageShell";
 import { Pill } from "@/components/admin/Pill";
+import { ScheduleMealDialog } from "@/components/admin/ScheduleMealDialog";
 import { SectionHead } from "@/components/admin/SectionHead";
 import { CommentList } from "@/components/admin/sections/CommentList";
 import { MealTrendCard } from "@/components/admin/sections/MealTrendCard";
+import { UpcomingServingsSection } from "@/components/admin/sections/UpcomingServingsSection";
 import { CupRating } from "@/components/brand/CupRating";
-import { Button, buttonClassName } from "@/components/ui/Button";
+import { buttonClassName } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
   interpretRatingDistribution,
@@ -62,7 +64,7 @@ export default async function MealDetailPage({ params }: PageProps) {
           >
             Edit
           </Link>
-          <Button primary>Schedule</Button>
+          <ScheduleMealDialog mealId={meal.id} mealName={meal.name} />
         </>
       }
     >
@@ -150,19 +152,30 @@ export default async function MealDetailPage({ params }: PageProps) {
         className="grid"
         style={{ gridTemplateColumns: "1fr 1.5fr", gap: 16 }}
       >
-        <Card>
-          <SectionHead title="What students said" sub="Quick-tag frequencies" />
-          {meal.tagBars.length > 0 ? (
-            <TagBars items={meal.tagBars} />
-          ) : (
-            <div
-              className="text-ink-soft text-meta text-center"
-              style={{ padding: "24px 0" }}
-            >
-              No tags yet.
-            </div>
-          )}
-        </Card>
+        <div className="flex flex-col" style={{ gap: 16 }}>
+          <Card>
+            <SectionHead
+              title="What students said"
+              sub="Quick-tag frequencies"
+            />
+            {meal.tagBars.length > 0 ? (
+              <TagBars items={meal.tagBars} />
+            ) : (
+              <div
+                className="text-ink-soft text-meta text-center"
+                style={{ padding: "24px 0" }}
+              >
+                No tags yet.
+              </div>
+            )}
+          </Card>
+          <Card>
+            <SectionHead title="Upcoming servings" sub="Scheduled ahead" />
+            <UpcomingServingsSection
+              upcomingServings={meal.upcomingServings}
+            />
+          </Card>
+        </div>
         <Card>
           <CommentList comments={comments} />
         </Card>
