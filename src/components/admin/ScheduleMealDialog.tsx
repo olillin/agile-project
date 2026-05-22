@@ -13,6 +13,8 @@ type Props = {
   mealName: string;
 };
 
+const FORM_ID = "schedule-meal-form";
+
 function todayKey(): string {
   return new Date().toISOString().slice(0, 10);
 }
@@ -67,7 +69,7 @@ export function ScheduleMealDialog({ mealId, mealName }: Props) {
 
   return (
     <>
-      <Button primary onClick={openDialog}>
+      <Button primary type="button" onClick={openDialog}>
         Schedule
       </Button>
       <Dialog
@@ -87,8 +89,8 @@ export function ScheduleMealDialog({ mealId, mealName }: Props) {
               </Button>
               <Button
                 primary
-                type="button"
-                onClick={submit}
+                type="submit"
+                form={FORM_ID}
                 disabled={submitting || !date}
               >
                 {submitting ? "Scheduling…" : "Schedule"}
@@ -103,7 +105,13 @@ export function ScheduleMealDialog({ mealId, mealName }: Props) {
             {formatPretty(scheduledDate)}.
           </p>
         ) : (
-          <>
+          <form
+            id={FORM_ID}
+            onSubmit={e => {
+              e.preventDefault();
+              submit();
+            }}
+          >
             <p style={{ marginBottom: 14 }}>
               Pick a date to serve <strong>{mealName}</strong>.
             </p>
@@ -126,7 +134,7 @@ export function ScheduleMealDialog({ mealId, mealName }: Props) {
                 {error}
               </p>
             )}
-          </>
+          </form>
         )}
       </Dialog>
     </>

@@ -47,15 +47,9 @@ export function Dialog({
   };
 
   const onBackdropClick = (e: MouseEvent<HTMLDialogElement>) => {
-    const dialog = ref.current;
-    if (!dialog) return;
-    const r = dialog.getBoundingClientRect();
-    const inside =
-      e.clientX >= r.left &&
-      e.clientX <= r.right &&
-      e.clientY >= r.top &&
-      e.clientY <= r.bottom;
-    if (!inside && !preventClose) onClose();
+    if (e.target !== ref.current) return;
+    if (preventClose) return;
+    onClose();
   };
 
   return (
