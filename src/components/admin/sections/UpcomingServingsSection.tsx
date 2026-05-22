@@ -24,19 +24,28 @@ export function UpcomingServingsSection({ upcomingServings }: Props) {
   const router = useRouter();
   const [removing, setRemoving] = useState<UpcomingServing | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const closeConfirm = () => {
     if (submitting) return;
     setRemoving(null);
+    setError(null);
   };
 
   const confirm = async () => {
     if (!removing || submitting) return;
     setSubmitting(true);
+    setError(null);
     try {
       await unscheduleServing(removing.id);
       setRemoving(null);
       router.refresh();
+    } catch (e) {
+      setError(
+        e instanceof Error && e.message
+          ? e.message
+          : "Failed to remove. Try again."
+      );
     } finally {
       setSubmitting(false);
     }
@@ -96,9 +105,19 @@ export function UpcomingServingsSection({ upcomingServings }: Props) {
           </>
         }
       >
-        {removing
-          ? `This will unschedule ${formatUpcoming(removing.date)}.`
-          : null}
+        {removing ? (
+          <>
+            <p>This will unschedule {formatUpcoming(removing.date)}.</p>
+            {error && (
+              <p
+                className="text-rose-deep text-meta"
+                style={{ marginTop: 10 }}
+              >
+                {error}
+              </p>
+            )}
+          </>
+        ) : null}
       </Dialog>
     </>
   );

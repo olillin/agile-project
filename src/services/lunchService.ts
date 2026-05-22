@@ -11,6 +11,7 @@ import {
 } from "@/lib/dateFormat";
 import { prisma } from "@/lib/prisma";
 import type { ClimateLabel, Day, DietTag, MealLine } from "@/lib/types";
+import { revalidatePath } from "next/cache";
 import {
   CannotUnschedulePastServingError,
   InvalidServingDateError,
@@ -539,12 +540,14 @@ export async function scheduleServing(lunchId: number, date: string) {
   }
 
   try {
-    return await prisma.serving.create({
+    const serving = await prisma.serving.create({
       data: {
         lunchId,
         date: parsed,
       },
     });
+    revalidatePath(`/admin/meals/${lunchId}`);
+    return serving;
   } catch (e) {
     if (
       e instanceof Prisma.PrismaClientKnownRequestError &&
@@ -571,7 +574,7 @@ export async function unscheduleServing(servingId: number) {
 
   const serving = await prisma.serving.findUnique({
     where: { id: servingId },
-    select: { date: true },
+    select: { date: true, lunchId: true },
   });
 
   if (!serving) {
@@ -588,4 +591,5 @@ export async function unscheduleServing(servingId: number) {
   await prisma.serving.delete({
     where: { id: servingId },
   });
+  revalidatePath(`/admin/meals/${serving.lunchId}`);
 }
