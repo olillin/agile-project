@@ -38,6 +38,7 @@ model Lunch {
   id          Int          @id @default(autoincrement())
   name        String       @unique
   line        String
+  tags        String[]
   description String       @default("")
   ecoScore    Float
   ingredients Ingredient[]
