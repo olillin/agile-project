@@ -144,7 +144,7 @@ export default function EditMealPage({
           distribution,
           co2: lunch.ecoScore,
           climate: null,
-          lastServed: lastServedDate ? lastServedDate.toString() : "never",
+          lastServed: lastServedDate ? lastServedDate.toString() : "—",
           ingredients: lunch.ingredients.map(dbIngredient => {
             return {
               id: dbIngredient.id,
@@ -267,7 +267,7 @@ function EditMealForm({ meal }: { meal: MealStat }) {
         </>
       }
       subtitle={
-        meal.lastServed === "never"
+        meal.lastServed === "—"
           ? `Not served yet · ${total} ratings · ${visibleAvg} avg`
           : `Last served ${meal.lastServed} · ${total} ratings · ${visibleAvg} avg`
       }

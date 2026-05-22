@@ -2,7 +2,18 @@
 // `e.message`. Keep these classes here for the server-internal call sites
 // and as documentation of the failure modes.
 
-export class InvalidServingDateError extends Error {}
-export class ServingAlreadyScheduledError extends Error {}
-export class ServingNotFoundError extends Error {}
-export class CannotUnschedulePastServingError extends Error {}
+export class InvalidServingDateError extends Error {
+  name = "InvalidServingDateError";
+}
+export class ServingAlreadyScheduledError extends Error {
+  name = "ServingAlreadyScheduledError";
+}
+export class ServingNotFoundError extends Error {
+  name = "ServingNotFoundError";
+}
+export class CannotUnschedulePastServingError extends Error {
+  name = "CannotUnschedulePastServingError";
+}
+export class LunchNotFoundError extends Error {
+  name = "LunchNotFoundError";
+}

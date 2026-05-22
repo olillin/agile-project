@@ -15,6 +15,7 @@ import { revalidatePath } from "next/cache";
 import {
   CannotUnschedulePastServingError,
   InvalidServingDateError,
+  LunchNotFoundError,
   ServingAlreadyScheduledError,
   ServingNotFoundError,
 } from "./lunchErrors";
@@ -549,13 +550,15 @@ export async function scheduleServing(lunchId: number, date: string) {
     revalidatePath(`/admin/meals/${lunchId}`);
     return serving;
   } catch (e) {
-    if (
-      e instanceof Prisma.PrismaClientKnownRequestError &&
-      e.code === "P2002"
-    ) {
-      throw new ServingAlreadyScheduledError(
-        "This meal is already scheduled on that date"
-      );
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        throw new ServingAlreadyScheduledError(
+          "This meal is already scheduled on that date"
+        );
+      }
+      if (e.code === "P2003") {
+        throw new LunchNotFoundError(`Lunch ${lunchId} does not exist`);
+      }
     }
     throw e;
   }
