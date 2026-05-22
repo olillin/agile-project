@@ -18,6 +18,7 @@ import { ratingColor } from "@/lib/admin/colors";
 import { ratingAverage, ratingTotal } from "@/lib/admin/ratings";
 import {
   DIET_TAG_SET,
+  isValidRow,
   newIngredientRow,
   parseAmount,
   type ClimateFormState,
@@ -134,7 +135,7 @@ export default function EditMealPage({
           co2: lunch.ecoScore,
           climate: null,
           lastServed:
-            lunch.servings[lunch.servings.length - 1]?.date.toString(),
+            lunch.servings[lunch.servings.length - 1]?.date.toString() ?? "—",
           ingredients: lunch.ingredients.map(dbIngredient => {
             return {
               id: dbIngredient.id,
@@ -222,7 +223,12 @@ function EditMealForm({ meal }: { meal: MealStat }) {
         name,
         line,
         description: "",
-        tags: tags,
+        tags,
+      });
+      setClimate({
+        state: "done",
+        kg: updated.ecoScore,
+        calculatedFromCount: ingredients.filter(isValidRow).length,
       });
       const currentKey = JSON.stringify({
         name,
@@ -230,7 +236,7 @@ function EditMealForm({ meal }: { meal: MealStat }) {
         tags,
         ingredients,
         photo,
-        kg: climate.kg,
+        kg: updated.ecoScore,
       });
       setSavedInitialKey(currentKey);
       setSubmitting(false);

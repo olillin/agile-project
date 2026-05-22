@@ -2,7 +2,11 @@
 
 import type { Ingredient, Lunch, Prisma } from "@/generated/prisma/client";
 import type { ServingGetPayload } from "@/generated/prisma/models";
-import { IngredientRow, IngredientUnit } from "@/lib/admin/types";
+import {
+  INGREDIENT_UNITS,
+  IngredientRow,
+  IngredientUnit,
+} from "@/lib/admin/types";
 import {
   formatFeedDayLabel,
   getFeedDateKey,
@@ -149,6 +153,10 @@ function getLunchDetailsData(details: LunchDetailsInput) {
     data.description = details.description.trim();
   }
 
+  if (details.tags !== undefined) {
+    data.tags = details.tags;
+  }
+
   return data;
 }
 
@@ -156,7 +164,7 @@ function isUnit(maybeUnit: unknown): maybeUnit is IngredientUnit {
   if (typeof maybeUnit !== "string") {
     return false;
   }
-  return ["g", "kg", "ml", "dl", "l", "st"].includes(maybeUnit);
+  return (INGREDIENT_UNITS as readonly string[]).includes(maybeUnit);
 }
 
 function getIngredientData(ingredients: NewIngredient[]) {
@@ -503,7 +511,6 @@ export async function updateLunch(
         create: ingredientData,
       },
       ecoScore: await getEcoScore(ingredientData),
-      tags: details?.tags ? details.tags : [],
     },
   });
 }

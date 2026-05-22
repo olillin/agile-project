@@ -3,21 +3,34 @@
 import { IngredientRow } from "@/lib/admin/types";
 import { NewIngredient } from "./lunchService";
 
-const apiUrl = process.env.GREEN_BITE_API_URL || "http://localhost:80/";
+const apiUrl = (
+  process.env.GREEN_BITE_API_URL || "http://localhost:80"
+).replace(/\/$/, "");
+
+// Green Bite's parser only handles full unit words. Short codes like "g" get
+// parsed as the ingredient name, producing a garlic-matched fallback score.
+function formatIngredient({ amount, unit, name }: NewIngredient): string {
+  switch (unit) {
+    case "g":
+      return `${amount} grams of ${name}`;
+    case "kg":
+      return `${amount} kg of ${name}`;
+    case "st":
+      return `${amount} ${name}`;
+  }
+}
 
 export async function getEcoScore(
   ingredients: IngredientRow[] | NewIngredient[]
 ): Promise<number> {
-  let call = apiUrl + "/score?";
-
-  call += ingredients
+  const query = ingredients
     .map(
-      ({ amount, unit, name }) =>
-        `ingredients=${encodeURIComponent(`${amount} ${unit} of ${name}`)}`
+      ingredient =>
+        `ingredients=${encodeURIComponent(formatIngredient(ingredient))}`
     )
     .join("&");
 
-  const response = await fetch(call, {
+  const response = await fetch(`${apiUrl}/score?${query}`, {
     method: "POST",
   });
 

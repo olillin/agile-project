@@ -38,7 +38,7 @@ const LUNCHES: LunchSeed[] = [
       { name: "Beef", amount: 80, unit: "g" },
       { name: "Pork", amount: 40, unit: "g" },
       { name: "Potatoes", amount: 200, unit: "g" },
-      { name: "Cream", amount: 80, unit: "ml" },
+      { name: "Cream", amount: 80, unit: "g" },
     ],
     ratingBias: 4.4,
   },
@@ -73,7 +73,7 @@ const LUNCHES: LunchSeed[] = [
     ecoScore: 1.3,
     ingredients: [
       { name: "Cod", amount: 160, unit: "g" },
-      { name: "Cream", amount: 100, unit: "ml" },
+      { name: "Cream", amount: 100, unit: "g" },
       { name: "Leek", amount: 60, unit: "g" },
     ],
     ratingBias: 3.8,
@@ -86,7 +86,7 @@ const LUNCHES: LunchSeed[] = [
     ingredients: [
       { name: "Peas", amount: 180, unit: "g" },
       { name: "Egg", amount: 1, unit: "st" },
-      { name: "Milk", amount: 100, unit: "ml" },
+      { name: "Milk", amount: 100, unit: "g" },
     ],
     ratingBias: 3.4,
   },
@@ -98,7 +98,7 @@ const LUNCHES: LunchSeed[] = [
     ingredients: [
       { name: "Potatoes", amount: 220, unit: "g" },
       { name: "Herring", amount: 60, unit: "g" },
-      { name: "Cream", amount: 120, unit: "ml" },
+      { name: "Cream", amount: 120, unit: "g" },
     ],
     ratingBias: 3.5,
   },
@@ -133,7 +133,7 @@ const LUNCHES: LunchSeed[] = [
     ecoScore: 2.6,
     ingredients: [
       { name: "Beef", amount: 150, unit: "g" },
-      { name: "Cream", amount: 90, unit: "ml" },
+      { name: "Cream", amount: 90, unit: "g" },
       { name: "Rice", amount: 180, unit: "g" },
     ],
     ratingBias: 4.1,
@@ -157,7 +157,7 @@ const LUNCHES: LunchSeed[] = [
     ecoScore: 2.5,
     ingredients: [
       { name: "Lamb", amount: 140, unit: "g" },
-      { name: "Yogurt", amount: 60, unit: "ml" },
+      { name: "Yogurt", amount: 60, unit: "g" },
       { name: "Bulgur", amount: 120, unit: "g" },
     ],
     ratingBias: 3.8,
@@ -207,7 +207,7 @@ const LUNCHES: LunchSeed[] = [
     ecoScore: 1.6,
     ingredients: [
       { name: "Chicken", amount: 140, unit: "g" },
-      { name: "Yogurt", amount: 40, unit: "ml" },
+      { name: "Yogurt", amount: 40, unit: "g" },
       { name: "Tortilla", amount: 1, unit: "st" },
     ],
     ratingBias: 4.2,
@@ -243,7 +243,7 @@ const LUNCHES: LunchSeed[] = [
     ecoScore: 0.6,
     ingredients: [
       { name: "Chickpeas", amount: 150, unit: "g" },
-      { name: "Tahini", amount: 25, unit: "ml" },
+      { name: "Tahini", amount: 25, unit: "g" },
       { name: "Pita", amount: 1, unit: "st" },
     ],
     ratingBias: 4.0,
@@ -343,7 +343,7 @@ const LUNCHES: LunchSeed[] = [
     ecoScore: 1.2,
     ingredients: [
       { name: "Egg", amount: 2, unit: "st" },
-      { name: "Cream", amount: 80, unit: "ml" },
+      { name: "Cream", amount: 80, unit: "g" },
       { name: "Spinach", amount: 90, unit: "g" },
       { name: "Cheese", amount: 60, unit: "g" },
     ],
@@ -356,7 +356,7 @@ const LUNCHES: LunchSeed[] = [
     ecoScore: 0.7,
     ingredients: [
       { name: "Chickpeas", amount: 180, unit: "g" },
-      { name: "Coconut milk", amount: 120, unit: "ml" },
+      { name: "Coconut milk", amount: 120, unit: "g" },
       { name: "Rice", amount: 160, unit: "g" },
     ],
     ratingBias: 4.2,
