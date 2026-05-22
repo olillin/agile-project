@@ -549,7 +549,7 @@ export async function scheduleServing(lunchId: number, date: string) {
       e.code === "P2002"
     ) {
       throw new ServingAlreadyScheduledError(
-        `Lunch ${lunchId} is already scheduled on ${date}`
+        "This meal is already scheduled on that date"
       );
     }
     throw e;
