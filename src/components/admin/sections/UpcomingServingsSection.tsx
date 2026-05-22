@@ -87,6 +87,7 @@ export function UpcomingServingsSection({ upcomingServings }: Props) {
       <Dialog
         open={removing !== null}
         onClose={closeConfirm}
+        preventClose={submitting}
         title="Remove scheduled serving?"
         footer={
           <>

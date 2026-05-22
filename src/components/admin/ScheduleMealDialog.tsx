@@ -73,6 +73,7 @@ export function ScheduleMealDialog({ mealId, mealName }: Props) {
       <Dialog
         open={open}
         onClose={close}
+        preventClose={submitting}
         title={scheduledDate ? "Scheduled" : "Schedule serving"}
         footer={
           scheduledDate ? (

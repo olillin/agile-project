@@ -6,6 +6,7 @@ import {
   useRef,
   type MouseEvent,
   type ReactNode,
+  type SyntheticEvent,
 } from "react";
 
 type Props = {
@@ -14,11 +15,19 @@ type Props = {
   title: ReactNode;
   children: ReactNode;
   footer: ReactNode;
+  preventClose?: boolean;
 };
 
 // Wraps the native <dialog> element so we get focus trap, Escape handling, and
 // inert background.
-export function Dialog({ open, onClose, title, children, footer }: Props) {
+export function Dialog({
+  open,
+  onClose,
+  title,
+  children,
+  footer,
+  preventClose,
+}: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
 
@@ -29,6 +38,14 @@ export function Dialog({ open, onClose, title, children, footer }: Props) {
     else if (!open && dialog.open) dialog.close();
   }, [open]);
 
+  const onCancel = (e: SyntheticEvent<HTMLDialogElement>) => {
+    if (preventClose) {
+      e.preventDefault();
+      return;
+    }
+    onClose();
+  };
+
   const onBackdropClick = (e: MouseEvent<HTMLDialogElement>) => {
     const dialog = ref.current;
     if (!dialog) return;
@@ -38,14 +55,13 @@ export function Dialog({ open, onClose, title, children, footer }: Props) {
       e.clientX <= r.right &&
       e.clientY >= r.top &&
       e.clientY <= r.bottom;
-    if (!inside) onClose();
+    if (!inside && !preventClose) onClose();
   };
 
   return (
     <dialog
       ref={ref}
-      onClose={onClose}
-      onCancel={onClose}
+      onCancel={onCancel}
       onClick={onBackdropClick}
       className="bg-paper backdrop:bg-ink/50 fixed border-0"
       style={{
