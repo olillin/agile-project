@@ -3,7 +3,11 @@
 import { Prisma } from "@/generated/prisma/client";
 import type { Ingredient, Lunch } from "@/generated/prisma/client";
 import type { ServingGetPayload } from "@/generated/prisma/models";
-import { IngredientRow, IngredientUnit } from "@/lib/admin/types";
+import {
+  INGREDIENT_UNITS,
+  IngredientRow,
+  IngredientUnit,
+} from "@/lib/admin/types";
 import {
   formatFeedDayLabel,
   getFeedDateKey,
@@ -52,9 +56,11 @@ type LunchDetailsInput = {
   name?: string;
   line?: MealLine;
   description?: string;
+  tags?: string[];
 };
 
 type AddLunchDetailsInput = {
+  tags: string[];
   line: MealLine;
   description?: string;
 };
@@ -156,6 +162,10 @@ function getLunchDetailsData(details: LunchDetailsInput) {
     data.description = details.description.trim();
   }
 
+  if (details.tags !== undefined) {
+    data.tags = details.tags;
+  }
+
   return data;
 }
 
@@ -163,7 +173,7 @@ function isUnit(maybeUnit: unknown): maybeUnit is IngredientUnit {
   if (typeof maybeUnit !== "string") {
     return false;
   }
-  return ["g", "kg", "ml", "dl", "l", "st"].includes(maybeUnit);
+  return (INGREDIENT_UNITS as readonly string[]).includes(maybeUnit);
 }
 
 function getIngredientData(ingredients: NewIngredient[]) {
@@ -450,7 +460,7 @@ export async function getFeedDaysPage({
 export async function addLunch(
   name: string,
   ingredients: NewIngredient[],
-  { line, description = "" }: AddLunchDetailsInput
+  { line, tags, description = "" }: AddLunchDetailsInput
 ) {
   const ingredientData = getIngredientData(ingredients);
   const ecoScore = await getEcoScore(ingredientData);
@@ -464,6 +474,7 @@ export async function addLunch(
       ingredients: {
         create: ingredientData,
       },
+      tags,
     },
   });
   return lunch;

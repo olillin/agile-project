@@ -19,6 +19,7 @@ import { ratingAverage, ratingTotal } from "@/lib/admin/ratings";
 import { getFeedDateKey } from "@/lib/dateFormat";
 import {
   DIET_TAG_SET,
+  isValidRow,
   newIngredientRow,
   parseAmount,
   type ClimateFormState,
@@ -138,7 +139,7 @@ export default function EditMealPage({
           id: lunch.id,
           name: lunch.name,
           line,
-          tags: [],
+          tags: lunch.tags,
           rating,
           votes,
           distribution,
@@ -182,6 +183,7 @@ function EditMealForm({ meal }: { meal: MealStat }) {
   const [submitting, setSubmitting] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [savedInitialKey, setSavedInitialKey] = useState<string | null>(null);
 
   const toggleTag = (tag: DietTag) =>
     setTags(prev =>
@@ -194,6 +196,7 @@ function EditMealForm({ meal }: { meal: MealStat }) {
 
   const initialKey = useMemo(
     () =>
+      savedInitialKey ??
       JSON.stringify({
         name: initial.name,
         line: initial.line,
@@ -202,7 +205,7 @@ function EditMealForm({ meal }: { meal: MealStat }) {
         photo: initial.photo,
         kg: initial.climate.kg,
       }),
-    [initial]
+    [initial, savedInitialKey]
   );
 
   const isDirty = useMemo(() => {
@@ -230,7 +233,24 @@ function EditMealForm({ meal }: { meal: MealStat }) {
         name,
         line,
         description: "",
+        tags,
       });
+      setClimate({
+        state: "done",
+        kg: updated.ecoScore,
+        calculatedFromCount: ingredients.filter(isValidRow).length,
+      });
+      const currentKey = JSON.stringify({
+        name,
+        line,
+        tags,
+        ingredients,
+        photo,
+        kg: updated.ecoScore,
+      });
+      setSavedInitialKey(currentKey);
+      setSubmitting(false);
+
       router.push(`/admin/meals/${updated.id}/edit`);
     } catch {
       setSubmitting(false);

@@ -2,7 +2,6 @@ import { PageShell } from "@/components/admin/PageShell";
 import { KpiStrip } from "@/components/admin/sections/KpiStrip";
 import { RankedMeals } from "@/components/admin/sections/RankedMeals";
 import { TrendCard } from "@/components/admin/sections/TrendCard";
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { verifySession } from "@/lib/session";
 import { getAdminOverview } from "@/services/statisticsService";
@@ -28,7 +27,6 @@ export default async function AdminOverviewPage() {
         </>
       }
       subtitle={formatToday()}
-      actions={<Button primary>+ New meal</Button>}
     >
       <KpiStrip kpis={overview.kpis} />
       <Card style={{ marginBottom: 16 }}>
