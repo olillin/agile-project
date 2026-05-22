@@ -1,8 +1,13 @@
 "use server";
 
-import type { Ingredient, Lunch, Prisma } from "@/generated/prisma/client";
+import { Prisma } from "@/generated/prisma/client";
+import type { Ingredient, Lunch } from "@/generated/prisma/client";
 import type { ServingGetPayload } from "@/generated/prisma/models";
-import { IngredientRow, IngredientUnit } from "@/lib/admin/types";
+import {
+  INGREDIENT_UNITS,
+  IngredientRow,
+  IngredientUnit,
+} from "@/lib/admin/types";
 import {
   formatFeedDayLabel,
   getFeedDateKey,
@@ -10,6 +15,14 @@ import {
 } from "@/lib/dateFormat";
 import { prisma } from "@/lib/prisma";
 import type { ClimateLabel, Day, DietTag, MealLine } from "@/lib/types";
+import { revalidatePath } from "next/cache";
+import {
+  CannotUnschedulePastServingError,
+  InvalidServingDateError,
+  LunchNotFoundError,
+  ServingAlreadyScheduledError,
+  ServingNotFoundError,
+} from "./lunchErrors";
 import { getEcoScore } from "./sustainabilityService";
 
 export type LunchWithAll = Prisma.LunchGetPayload<{
@@ -43,9 +56,11 @@ type LunchDetailsInput = {
   name?: string;
   line?: MealLine;
   description?: string;
+  tags?: string[];
 };
 
 type AddLunchDetailsInput = {
+  tags: string[];
   line: MealLine;
   description?: string;
 };
@@ -147,6 +162,10 @@ function getLunchDetailsData(details: LunchDetailsInput) {
     data.description = details.description.trim();
   }
 
+  if (details.tags !== undefined) {
+    data.tags = details.tags;
+  }
+
   return data;
 }
 
@@ -154,7 +173,7 @@ function isUnit(maybeUnit: unknown): maybeUnit is IngredientUnit {
   if (typeof maybeUnit !== "string") {
     return false;
   }
-  return ["g", "kg", "ml", "dl", "l", "st"].includes(maybeUnit);
+  return (INGREDIENT_UNITS as readonly string[]).includes(maybeUnit);
 }
 
 function getIngredientData(ingredients: NewIngredient[]) {
@@ -441,7 +460,7 @@ export async function getFeedDaysPage({
 export async function addLunch(
   name: string,
   ingredients: NewIngredient[],
-  { line, description = "" }: AddLunchDetailsInput
+  { line, tags, description = "" }: AddLunchDetailsInput
 ) {
   const ingredientData = getIngredientData(ingredients);
   const ecoScore = await getEcoScore(ingredientData);
@@ -455,6 +474,7 @@ export async function addLunch(
       ingredients: {
         create: ingredientData,
       },
+      tags,
     },
   });
   return lunch;
@@ -502,4 +522,92 @@ export async function updateLunch(
       ecoScore: await getEcoScore(ingredientData),
     },
   });
+}
+
+const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Schedules a meal to be served on a given date.
+ * `date` must be a `YYYY-MM-DD` string strictly in the future (tomorrow or later).
+ * Throws `ServingAlreadyScheduledError` if the lunch is already scheduled
+ * on that date.
+ */
+export async function scheduleServing(lunchId: number, date: string) {
+  if (!Number.isInteger(lunchId) || lunchId <= 0) {
+    throw new Error("Lunch id must be a positive integer");
+  }
+
+  if (!DATE_KEY_PATTERN.test(date)) {
+    throw new InvalidServingDateError("Date must be in YYYY-MM-DD format");
+  }
+
+  const parsed = new Date(`${date}T00:00:00.000Z`);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new InvalidServingDateError(`Invalid date: ${date}`);
+  }
+  // Reject out-of-range days (e.g. 2026-02-30 → 2026-03-02).
+  if (getFeedDateKey(parsed) !== date) {
+    throw new InvalidServingDateError(`Invalid date: ${date}`);
+  }
+
+  const todayKey = getFeedDateKey(new Date());
+  if (date <= todayKey) {
+    throw new InvalidServingDateError("Pick a future date");
+  }
+
+  try {
+    const serving = await prisma.serving.create({
+      data: {
+        lunchId,
+        date: parsed,
+      },
+    });
+    revalidatePath(`/admin/meals/${lunchId}`);
+    return serving;
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2002") {
+        throw new ServingAlreadyScheduledError(
+          "This meal is already scheduled on that date"
+        );
+      }
+      if (e.code === "P2003") {
+        throw new LunchNotFoundError(`Lunch ${lunchId} does not exist`);
+      }
+    }
+    throw e;
+  }
+}
+
+/**
+ * Removes a scheduled serving by id. Only future servings can be
+ * removed — past servings carry reviews that would cascade-delete via
+ * the schema's `onDelete: Cascade`, so we reject those server-side
+ * regardless of what the UI exposes.
+ */
+export async function unscheduleServing(servingId: number) {
+  if (!Number.isInteger(servingId) || servingId <= 0) {
+    throw new Error("Serving id must be a positive integer");
+  }
+
+  const serving = await prisma.serving.findUnique({
+    where: { id: servingId },
+    select: { date: true, lunchId: true },
+  });
+
+  if (!serving) {
+    throw new ServingNotFoundError(`Serving ${servingId} does not exist`);
+  }
+
+  const todayKey = getFeedDateKey(new Date());
+  if (getFeedDateKey(serving.date) <= todayKey) {
+    throw new CannotUnschedulePastServingError(
+      "Past servings can't be unscheduled"
+    );
+  }
+
+  await prisma.serving.delete({
+    where: { id: servingId },
+  });
+  revalidatePath(`/admin/meals/${serving.lunchId}`);
 }
