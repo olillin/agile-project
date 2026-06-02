@@ -1,5 +1,12 @@
 # Don't Spill the Tea
 
+> [!IMPORTANT]
+> This project has been archived and is no longer being developed. It was the
+> project of our group during the _DAT257 Agile software project development_
+> course. It is now used as the base for
+> [Spill the Tea](https://github.com/ASmaller/spill-the-tea), the tea website
+> for the Software Engineering Student Division (IT).
+
 Welcome to _Don't Spill the Tea_, a solution for reducing food waste by
 simplifying the collection of feedback about school lunches from students.
 
